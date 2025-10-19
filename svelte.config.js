@@ -33,9 +33,8 @@ const config = {
 			runtime: 'nodejs20.x',
 		}),
 		paths: {
-			// Only set assets path for production deployment
-			// Local builds and dev need this to be undefined
-			...(process.env.VERCEL ? { assets: 'https://ninochavez.co/gallery' } : {}),
+			// base is set in vite.config.ts to '/gallery'
+			// This ensures assets are prefixed correctly for Vercel proxy
 			// Use absolute paths (not relative) so proxy rewrites work correctly
 			relative: false
 		},
