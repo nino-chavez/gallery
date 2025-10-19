@@ -104,7 +104,7 @@
 				<!-- Social Links -->
 				<div class="space-y-4">
 					<Typography variant="h3" class="text-lg">Connect</Typography>
-					<div class="flex gap-4" role="list">
+					<div class="flex gap-4">
 						{#each socialLinks as link}
 							{@const Icon = link.icon}
 							<Motion let:motion whileHover={{ scale: 1.1, y: -2 }} transition={MOTION.spring.snappy}>

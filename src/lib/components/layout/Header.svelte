@@ -77,7 +77,7 @@
 					class="flex items-center gap-3 cursor-pointer group"
 					role="button"
 					tabindex="0"
-					aria-label="Navigate to home"
+					aria-label="Go to homepage"
 					onclick={() => handleNavClick('/')}
 					onkeydown={(e) => handleKeyDown(e, '/')}
 				>

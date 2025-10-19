@@ -15,6 +15,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Nino Chavez Gallery</title>
+</svelte:head>
+
 <div class="min-h-screen flex items-center justify-center p-8">
 	<div class="max-w-4xl w-full space-y-12">
 		<!-- Hero Section -->
@@ -52,7 +56,8 @@
 					class="group cursor-pointer"
 					role="button"
 					tabindex="0"
-					aria-label="Navigate to Explore Gallery page"
+					data-testid="nav-card-explore"
+				aria-label="Navigate to Explore Gallery page"
 					onclick={() => goto('/explore')}
 					onkeydown={(e) => handleKeyDown(e, '/explore')}
 				>
@@ -92,7 +97,8 @@
 				class="group cursor-pointer"
 				role="button"
 				tabindex="0"
-				aria-label="Navigate to Collections page"
+				data-testid="nav-card-collections"
+			aria-label="Navigate to Collections page"
 				onclick={() => goto('/collections')}
 				onkeydown={(e) => handleKeyDown(e, '/collections')}
 			>
@@ -132,7 +138,8 @@
 					class="group cursor-pointer"
 					role="button"
 					tabindex="0"
-					aria-label="Navigate to Albums page"
+					data-testid="nav-card-albums"
+				aria-label="Navigate to Albums page"
 					onclick={() => goto('/albums')}
 					onkeydown={(e) => handleKeyDown(e, '/albums')}
 				>
