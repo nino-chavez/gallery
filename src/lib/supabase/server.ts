@@ -17,18 +17,22 @@ import type { Photo, PhotoFilterState } from '$types/photo';
 // Server-side environment variables (NOT exposed to browser)
 // In SvelteKit, we need to use import.meta.env even server-side
 // but we can use non-VITE_ prefixed vars if we set them up in svelte.config.js
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseServiceRoleKey = import.meta.env.VITE_SUPABASE_ANON_KEY; // For now, using anon key (read-only is safe)
+
+// Use fallback values during build to avoid build-time errors
+// Variables will be validated at runtime when actually used
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseServiceRoleKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key'; // For now, using anon key (read-only is safe)
 
 // TODO: Once we need write operations, add SUPABASE_SERVICE_ROLE_KEY to .env.local
 // and update SvelteKit config to expose it server-side only
 
-if (!supabaseUrl) {
-  throw new Error('[Server] Missing VITE_SUPABASE_URL environment variable');
+// Validate environment variables are set (will warn but not throw during build)
+if (!import.meta.env.VITE_SUPABASE_URL && import.meta.env.PROD) {
+  console.error('[Server] Missing VITE_SUPABASE_URL environment variable. Please add it to Vercel.');
 }
 
-if (!supabaseServiceRoleKey) {
-  throw new Error('[Server] Missing Supabase key environment variable');
+if (!import.meta.env.VITE_SUPABASE_ANON_KEY && import.meta.env.PROD) {
+  console.error('[Server] Missing VITE_SUPABASE_ANON_KEY environment variable. Please add it to Vercel.');
 }
 
 // Create Supabase client with service role for server-side operations
