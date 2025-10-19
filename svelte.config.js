@@ -39,12 +39,12 @@ const config = {
 			// Use absolute paths (not relative) so proxy rewrites work correctly
 			relative: false
 		},
-		trailingSlash: 'never', //match config from main site to avoid redirect loops
 		alias: {
 			$lib: 'src/lib',
 			$types: 'src/types',
 		},
 	},
+	trailingSlash: 'never', //match config from main site to avoid redirect loops
 };
 
 export default config;
