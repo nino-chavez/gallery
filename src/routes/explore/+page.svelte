@@ -10,6 +10,7 @@
 	import Card from '$lib/components/ui/Card.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
+	import SportFilter from '$lib/components/filters/SportFilter.svelte'; // NEW: Sport filter
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
 
@@ -38,6 +39,19 @@
 	function handlePhotoClick(photo: Photo) {
 		selectedPhoto = photo;
 		modalOpen = true;
+	}
+
+	// NEW: Handle sport filter selection
+	function handleSportSelect(sport: string | null) {
+		const url = new URL($page.url);
+		if (sport) {
+			url.searchParams.set('sport', sport);
+		} else {
+			url.searchParams.delete('sport');
+		}
+		// Reset to page 1 when filtering
+		url.searchParams.delete('page');
+		goto(url.toString());
 	}
 
 	function handleSortChange(event: Event) {
@@ -98,6 +112,17 @@
 					</Typography>
 				</div>
 			</div>
+
+			<!-- Sport Filter (NEW - Week 2) -->
+			{#if data.sports && data.sports.length > 0}
+				<div class="mb-6">
+					<SportFilter
+						sports={data.sports}
+						selectedSport={data.selectedSport}
+						onSelect={handleSportSelect}
+					/>
+				</div>
+			{/if}
 
 			<!-- Search & Sort Controls -->
 			<div class="flex flex-col sm:flex-row gap-4 mb-6">

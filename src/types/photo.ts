@@ -54,9 +54,14 @@ export interface PhotoMetadata {
   composition: string;
   time_of_day: string;
 
-  // Volleyball-specific
+  // Volleyball-specific (legacy)
   play_type: PlayType;
   action_intensity: ActionIntensity;
+
+  // Sport taxonomy (NEW - Week 1 multi-sport migration)
+  sport_type?: string;       // volleyball, basketball, soccer, portrait, etc.
+  photo_category?: string;   // action, celebration, candid, portrait, warmup, ceremony
+  action_type?: string | null;      // Sport-specific action type (e.g., attack, dunk, goal)
 
   // Use cases
   use_cases: string[];
@@ -132,6 +137,11 @@ export interface PhotoFilterState {
   actionIntensity?: ActionIntensity[];
   compositions?: CompositionType[];
   timeOfDay?: string[];
+
+  // Sport taxonomy filters (NEW - Week 2)
+  sportType?: string;           // volleyball, basketball, soccer, etc.
+  photoCategory?: string;       // action, celebration, candid, portrait, etc.
+  actionType?: string;          // Sport-specific action type
 
   // Album filter
   albumKey?: string;

@@ -119,6 +119,11 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
     query = query.eq('album_key', filters.albumKey);
   }
 
+  // Sport type filter (NEW - Week 2)
+  if (filters?.sportType) {
+    query = query.eq('sport_type', filters.sportType);
+  }
+
   // Apply pagination
   if (limit) {
     query = query.limit(limit);
@@ -163,6 +168,10 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
         time_of_day: row.time_of_day || '',
         play_type: row.play_type,
         action_intensity: row.action_intensity || 'medium',
+        // Sport taxonomy (NEW - Week 1)
+        sport_type: row.sport_type,
+        photo_category: row.photo_category,
+        action_type: row.action_type,
         use_cases: row.use_cases || [],
         ai_provider: row.ai_provider || 'gemini',
         ai_cost: parseFloat(row.ai_cost) || 0,
@@ -200,6 +209,11 @@ export async function getPhotoCount(filters?: PhotoFilterState): Promise<number>
     query = query.in('emotion', filters.emotions);
   }
 
+  // Sport type filter (NEW - Week 2)
+  if (filters?.sportType) {
+    query = query.eq('sport_type', filters.sportType);
+  }
+
   const { count, error } = await query;
 
   if (error) {
@@ -208,4 +222,41 @@ export async function getPhotoCount(filters?: PhotoFilterState): Promise<number>
   }
 
   return count || 0;
+}
+
+/**
+ * Get sport distribution statistics (SERVER-SIDE)
+ * Returns count and percentage for each sport type
+ */
+export async function getSportDistribution(): Promise<Array<{ name: string; count: number; percentage: number }>> {
+  const { data, error } = await supabaseServer
+    .from('photo_metadata')
+    .select('sport_type')
+    .not('sharpness', 'is', null); // Only enriched photos
+
+  if (error) {
+    console.error('[Supabase Server] Error fetching sport distribution:', error);
+    throw new Error(`Failed to fetch sport distribution: ${error.message}`);
+  }
+
+  // Count occurrences of each sport
+  const sportCounts: Record<string, number> = {};
+  let total = 0;
+
+  (data || []).forEach((row: any) => {
+    const sport = row.sport_type || 'unknown';
+    sportCounts[sport] = (sportCounts[sport] || 0) + 1;
+    total++;
+  });
+
+  // Convert to array with percentages
+  const sports = Object.entries(sportCounts)
+    .map(([name, count]) => ({
+      name,
+      count,
+      percentage: parseFloat(((count / total) * 100).toFixed(1))
+    }))
+    .sort((a, b) => b.count - a.count); // Sort by count descending
+
+  return sports;
 }
