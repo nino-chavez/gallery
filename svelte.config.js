@@ -12,7 +12,10 @@ const config = {
 		}),
 		paths: {
 			// Configure base path for ninochavez.co/gallery proxy
-			base: process.env.NODE_ENV === 'production' ? '/gallery' : ''
+			// Use environment variable to control base path:
+			// - VITE_BASE_PATH='/gallery' for ninochavez.co proxy
+			// - Unset (or empty) for standalone Vercel deployment at root
+			base: process.env.VITE_BASE_PATH || ''
 		},
 		alias: {
 			$lib: 'src/lib',

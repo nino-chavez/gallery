@@ -25,11 +25,19 @@ VITE_SUPABASE_URL=https://skywzpcekhntecegyjoj.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNreXd6cGNla2hudGVjZWd5am9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NjUwNzUsImV4cCI6MjA3NjA0MTA3NX0.XAmv9k6nsqYv8dqFBSkhWd2OX7ZTHprpRLQKFrc-S7Y
 ```
 
-**Optional (for server-side operations):**
+**Optional Environment Variables:**
 
 ```bash
+# For server-side operations (if needed in future)
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Base path configuration (if deploying behind a proxy)
+# Leave UNSET for standalone Vercel deployment at root
+# Set to '/gallery' if deploying to ninochavez.co/gallery via rewrites
+VITE_BASE_PATH=/gallery
 ```
+
+**Important:** For standalone Vercel deployments (e.g., `your-app.vercel.app`), do NOT set `VITE_BASE_PATH`. Only set it if you're deploying behind a reverse proxy or URL rewrite that serves the app from a subdirectory.
 
 ### Step 3: Configure Build Settings
 
