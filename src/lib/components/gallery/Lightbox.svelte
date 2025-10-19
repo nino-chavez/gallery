@@ -11,6 +11,7 @@
 	} from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
+	import DownloadButton from '$lib/components/photo/DownloadButton.svelte';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
@@ -203,6 +204,11 @@
 							>
 								<ZoomIn class="w-5 h-5 text-white" />
 							</button>
+						</div>
+
+						<!-- Download Button (NEW - Week 3) -->
+						<div class="mr-4">
+							<DownloadButton {photo} variant="compact" />
 						</div>
 
 						<!-- Close Button -->

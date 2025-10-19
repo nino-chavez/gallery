@@ -21,6 +21,7 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
 	import SocialShareButtons from '$lib/components/social/SocialShareButtons.svelte';
+	import DownloadButton from '$lib/components/photo/DownloadButton.svelte';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
@@ -184,8 +185,17 @@
 										{/if}
 									</div>
 
-									<!-- Social Sharing (NEW - Week 3) -->
-									<div class="border-t border-charcoal-800 pt-6">
+									<!-- Download & Social Sharing (NEW - Week 3) -->
+									<div class="border-t border-charcoal-800 pt-6 space-y-6">
+										<!-- Download Button -->
+										<div>
+											<Typography variant="caption" class="text-charcoal-400 mb-3 block">
+												Download Photo
+											</Typography>
+											<DownloadButton photo={photo} variant="default" />
+										</div>
+
+										<!-- Social Sharing -->
 										<SocialShareButtons photo={photo} url={photoUrl} />
 									</div>
 
