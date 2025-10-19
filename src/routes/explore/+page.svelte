@@ -12,6 +12,7 @@
 	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
 	import SportFilter from '$lib/components/filters/SportFilter.svelte'; // NEW: Sport filter
 	import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte'; // NEW: Category filter
+	import SearchAutocomplete from '$lib/components/search/SearchAutocomplete.svelte'; // NEW: Search autocomplete
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
 
@@ -22,7 +23,7 @@
 	let modalOpen = $state(false);
 	let selectedPhoto = $state<Photo | null>(null);
 
-	// Simple search (client-side for now)
+	// Search with autocomplete
 	let searchQuery = $state('');
 
 	// Filter photos by search
@@ -66,6 +67,18 @@
 		// Reset to page 1 when filtering
 		url.searchParams.delete('page');
 		goto(url.toString());
+	}
+
+	// NEW: Handle search from autocomplete
+	function handleSearch(query: string) {
+		searchQuery = query;
+		// Future: Could trigger server-side search via URL param
+		// For now, client-side filtering in displayPhotos works
+	}
+
+	// NEW: Handle clear search
+	function handleClearSearch() {
+		searchQuery = '';
 	}
 
 	function handleSortChange(event: Event) {
@@ -151,13 +164,14 @@
 
 			<!-- Search & Sort Controls -->
 			<div class="flex flex-col sm:flex-row gap-4 mb-6">
-				<!-- Search Bar -->
+				<!-- Search Bar with Autocomplete (NEW - Week 2) -->
 				<div class="flex-1">
-					<input
-						type="search"
-						placeholder="Search photos..."
+					<SearchAutocomplete
 						bind:value={searchQuery}
-						class="w-full px-4 py-3 rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-500"
+						sportContext={data.selectedSport}
+						categoryContext={data.selectedCategory}
+						onSearch={handleSearch}
+						onClear={handleClearSearch}
 					/>
 				</div>
 
