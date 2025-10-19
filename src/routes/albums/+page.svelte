@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { Motion } from 'svelte-motion';
 	import { FolderOpen } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
 	import AlbumCard from '$lib/components/gallery/AlbumCard.svelte';
+	import SportFilter from '$lib/components/filters/SportFilter.svelte'; // NEW: Sport filter
+	import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte'; // NEW: Category filter
 	import type { PageData } from './$types';
 
 	// Svelte 5 Runes: $props to receive server data
@@ -25,9 +28,76 @@
 		);
 	});
 
-	function handleAlbumClick(album: { albumKey: string; albumName: string; photoCount: number }) {
+	function handleAlbumClick(album: any) {
 		goto(`/albums/${album.albumKey}`);
 	}
+
+	// NEW: Handle sport filter selection
+	function handleSportSelect(sport: string | null) {
+		const url = new URL($page.url);
+		if (sport) {
+			url.searchParams.set('sport', sport);
+		} else {
+			url.searchParams.delete('sport');
+		}
+		goto(url.toString());
+	}
+
+	// NEW: Handle category filter selection
+	function handleCategorySelect(category: string | null) {
+		const url = new URL($page.url);
+		if (category) {
+			url.searchParams.set('category', category);
+		} else {
+			url.searchParams.delete('category');
+		}
+		goto(url.toString());
+	}
+
+	// NEW: Fetch sport/category distributions for filters
+	// This is a simplified version - in production, you'd want to fetch this from the server
+	// For now, we'll derive it from the albums data
+	const sports = $derived.by(() => {
+		const sportCounts = new Map<string, number>();
+		let totalPhotos = 0;
+
+		data.albums.forEach((album) => {
+			if (album.primarySport && album.primarySport !== 'unknown') {
+				const current = sportCounts.get(album.primarySport) || 0;
+				sportCounts.set(album.primarySport, current + album.photoCount);
+				totalPhotos += album.photoCount;
+			}
+		});
+
+		return Array.from(sportCounts.entries())
+			.map(([name, count]) => ({
+				name,
+				count,
+				percentage: parseFloat(((count / totalPhotos) * 100).toFixed(1))
+			}))
+			.sort((a, b) => b.count - a.count);
+	});
+
+	const categories = $derived.by(() => {
+		const categoryCounts = new Map<string, number>();
+		let totalPhotos = 0;
+
+		data.albums.forEach((album) => {
+			if (album.primaryCategory && album.primaryCategory !== 'unknown') {
+				const current = categoryCounts.get(album.primaryCategory) || 0;
+				categoryCounts.set(album.primaryCategory, current + album.photoCount);
+				totalPhotos += album.photoCount;
+			}
+		});
+
+		return Array.from(categoryCounts.entries())
+			.map(([name, count]) => ({
+				name,
+				count,
+				percentage: parseFloat(((count / totalPhotos) * 100).toFixed(1))
+			}))
+			.sort((a, b) => b.count - a.count);
+	});
 </script>
 
 <!-- Header Section -->
@@ -51,6 +121,28 @@
 					</Typography>
 				</div>
 			</div>
+
+			<!-- Sport Filter (NEW - Week 2) -->
+			{#if sports && sports.length > 0}
+				<div class="mb-6">
+					<SportFilter
+						sports={sports}
+						selectedSport={data.selectedSport}
+						onSelect={handleSportSelect}
+					/>
+				</div>
+			{/if}
+
+			<!-- Category Filter (NEW - Week 2) -->
+			{#if categories && categories.length > 0}
+				<div class="mb-6">
+					<CategoryFilter
+						categories={categories}
+						selectedCategory={data.selectedCategory}
+						onSelect={handleCategorySelect}
+					/>
+				</div>
+			{/if}
 
 			<!-- Search Bar -->
 			<div class="mb-6">

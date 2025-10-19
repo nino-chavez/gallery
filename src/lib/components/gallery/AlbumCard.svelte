@@ -16,6 +16,12 @@
 		albumName: string;
 		photoCount: number;
 		coverImageUrl: string | null;
+		sports?: string[];
+		categories?: string[];
+		portfolioCount?: number;
+		avgQualityScore?: number;
+		primarySport?: string;
+		primaryCategory?: string;
 	}
 
 	interface Props {
@@ -50,6 +56,18 @@
 		imageError = true;
 		imageLoaded = false;
 	}
+
+	// Sport emojis for badges
+	const sportEmojis: Record<string, string> = {
+		volleyball: '🏐',
+		basketball: '🏀',
+		soccer: '⚽',
+		softball: '🥎',
+		football: '🏈',
+		baseball: '⚾',
+		track: '🏃',
+		portrait: '📸'
+	};
 </script>
 
 <Motion
@@ -98,14 +116,48 @@
 
 		<!-- Album Info Overlay -->
 		<div
-			class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-6"
+			class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-between p-4"
 		>
-			<Typography variant="h3" class="text-xl font-semibold text-white mb-2 line-clamp-2">
-				{album.albumName}
-			</Typography>
-			<Typography variant="caption" class="text-charcoal-300">
-				{album.photoCount.toLocaleString()} {album.photoCount === 1 ? 'photo' : 'photos'}
-			</Typography>
+			<!-- Top Badges -->
+			<div class="flex items-start justify-between">
+				<!-- Sport Badge (NEW - Week 2) -->
+				{#if album.primarySport && album.primarySport !== 'unknown'}
+					<div
+						class="px-2 py-1 rounded-full text-xs font-medium bg-charcoal-900/80 text-white border border-charcoal-700 backdrop-blur-sm"
+					>
+						{sportEmojis[album.primarySport] || '🏆'}
+						<span class="capitalize ml-1">{album.primarySport}</span>
+					</div>
+				{/if}
+
+				<!-- Portfolio Badge (NEW - Week 2) -->
+				{#if album.portfolioCount && album.portfolioCount > 0}
+					<div
+						class="px-2 py-1 rounded-full text-xs font-medium bg-gold-500/90 text-black"
+						title="{album.portfolioCount} portfolio photos"
+					>
+						⭐ {album.portfolioCount}
+					</div>
+				{/if}
+			</div>
+
+			<!-- Bottom Info -->
+			<div>
+				<Typography variant="h3" class="text-xl font-semibold text-white mb-2 line-clamp-2">
+					{album.albumName}
+				</Typography>
+				<div class="flex items-center justify-between">
+					<Typography variant="caption" class="text-charcoal-300">
+						{album.photoCount.toLocaleString()} {album.photoCount === 1 ? 'photo' : 'photos'}
+					</Typography>
+					<!-- Quality Badge (NEW - Week 2) -->
+					{#if album.avgQualityScore && album.avgQualityScore > 7.5}
+						<div class="px-2 py-0.5 rounded text-xs font-medium bg-green-500/20 text-green-400">
+							High Quality
+						</div>
+					{/if}
+				</div>
+			</div>
 		</div>
 
 		<!-- Hover Effect Border -->
