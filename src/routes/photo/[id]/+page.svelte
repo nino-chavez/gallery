@@ -7,6 +7,11 @@
 
 	let showModal = $state(true);
 
+	// Debug logging
+	console.log('Photo page data:', data);
+	console.log('Photo object:', data.photo);
+	console.log('Show modal:', showModal);
+
 	function handleClose() {
 		// Navigate back to referring page, or home if no referrer
 		if (document.referrer && document.referrer.includes(window.location.hostname)) {
@@ -82,8 +87,22 @@
 	{@html `<script type="application/ld+json">${JSON.stringify(schemaData)}</script>`}
 </svelte:head>
 
-{#if showModal}
-	<PhotoDetailModal photo={data.photo} onClose={handleClose} />
+{#if showModal && data.photo}
+	<!-- Temporary direct render to test -->
+	<div class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+		<div class="bg-charcoal-900 rounded-lg max-w-4xl w-full p-6">
+			<h1 class="text-2xl font-bold text-white mb-4">{data.photo.title}</h1>
+			<img src={data.photo.image_url} alt={data.photo.title} class="w-full h-auto rounded-lg mb-4" />
+			<p class="text-charcoal-300 mb-4">{data.photo.caption}</p>
+			<p class="text-charcoal-400 text-sm mb-4">Sport: {data.photo.metadata.sport_type}</p>
+			<button
+				onclick={handleClose}
+				class="px-6 py-3 bg-gold-500 text-charcoal-950 rounded-md hover:bg-gold-400 transition-colors"
+			>
+				Close
+			</button>
+		</div>
+	</div>
 {:else}
 	<!-- Fallback if modal is closed but route still loaded -->
 	<div class="min-h-screen flex items-center justify-center bg-charcoal-950">

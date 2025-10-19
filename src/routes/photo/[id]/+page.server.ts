@@ -29,12 +29,12 @@ export const load: PageServerLoad = async ({ params }) => {
 	const photo: Photo = {
 		id: photoData.image_key,
 		image_key: photoData.image_key,
-		image_url: photoData.ImageUrl || photoData.image_url,
-		thumbnail_url: photoData.ThumbnailUrl || photoData.thumbnail_url,
-		original_url: photoData.OriginalUrl || photoData.original_url,
-		title: photoData.title || 'Untitled Photo',
-		caption: photoData.caption || '',
-		keywords: photoData.keywords || [],
+		image_url: photoData.ImageUrl,
+		thumbnail_url: photoData.ThumbnailUrl,
+		original_url: photoData.OriginalUrl,
+		title: photoData.album_name || 'Untitled Photo',
+		caption: photoData.composition || '',
+		keywords: photoData.use_cases || [],
 		created_at: photoData.photo_date || photoData.enriched_at || photoData.upload_date,
 		metadata: {
 			// Quality scores
