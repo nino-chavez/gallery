@@ -36,7 +36,10 @@ const config = {
 			// Configure base path for ninochavez.co/gallery proxy
 			// Hardcoded to '/gallery' for production deployment
 			// Local dev will override this in vite.config.ts if needed
-			base: '/gallery'
+			base: '/gallery',
+			// Use absolute paths (not relative) so proxy rewrites work correctly
+			// relative: false means assets use /gallery/_app/... instead of ./_app/...
+			relative: false
 		},
 		alias: {
 			$lib: 'src/lib',
