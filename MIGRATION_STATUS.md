@@ -370,44 +370,139 @@ curl http://localhost:5175/collections         # 200 ✅ (was 500)
 
 ---
 
+## ✅ Phase 5: Week 3 Engagement & Performance (Complete)
+
+### **Week 3: Engagement & Performance Features**
+
+1. **Social Sharing** (`src/lib/components/social/SocialShareButtons.svelte`)
+   - Multi-platform sharing (Twitter, Facebook, LinkedIn, Pinterest, Email)
+   - Copy-to-clipboard functionality with success feedback
+   - Platform-specific URL encoding and share text
+   - Responsive compact/full layout modes
+   - Integrated into PhotoDetailModal and Lightbox
+
+2. **Lightbox Viewer** (`src/lib/components/gallery/Lightbox.svelte`)
+   - Full-screen photo viewing with backdrop blur
+   - Zoom functionality (1x, 1.5x, 2x, 2.5x, 3x)
+   - Drag-to-pan when zoomed in
+   - Keyboard navigation (←/→ for prev/next, +/- for zoom, ESC to close)
+   - Photo counter (current / total)
+   - Smooth animations with svelte-motion
+   - ARIA accessibility attributes
+
+3. **Download Options** (`src/lib/components/photo/DownloadButton.svelte`)
+   - Three size options (Original, Web, Thumbnail)
+   - File size indicators
+   - Usage notice for personal/non-commercial use
+   - Blob creation and download triggering
+   - Loading states during download
+   - Error handling with user feedback
+
+4. **Image Optimization** (`src/lib/components/ui/OptimizedImage.svelte`)
+   - Lazy loading with native browser support
+   - Blur-up placeholders using thumbnail images
+   - Smooth fade-in animations
+   - Cached image detection
+   - Proper aspect ratio preservation
+   - Error state handling
+   - Priority loading option for above-fold images
+
+5. **Favorites System**
+   - **Favorites Store** (`src/lib/stores/favorites.svelte.ts`)
+     - Reactive Svelte 5 runes-based store
+     - localStorage persistence
+     - 100-photo limit with overflow warning
+     - JSON export/import functionality
+     - Type-safe Photo storage
+   - **Favorite Button** (`src/lib/components/photo/FavoriteButton.svelte`)
+     - Heart icon toggle (filled/outline)
+     - Optimistic UI updates
+     - Success feedback with brief check icon
+     - Integrated into PhotoCard and PhotoDetailModal
+   - **Favorites Page** (`src/routes/favorites/+page.svelte`)
+     - Browse all favorited photos
+     - Export favorites as JSON
+     - Import favorites from JSON
+     - Clear all favorites functionality
+     - Empty state with call-to-action
+
+6. **Navigation Enhancements** (`src/lib/components/layout/Header.svelte`)
+   - Added Favorites link to main navigation
+   - Added Timeline link to main navigation
+   - Badge count on Favorites link (shows count > 0)
+   - Responsive badge design (99+ max display)
+   - Active route highlighting for all nav items
+
+**Week 3 Deployment Fixes:**
+- ✅ Fixed 404 error on Vercel deployment (base path configuration)
+- ✅ Added `vercel.json` with SvelteKit framework specification
+- ✅ Implemented `VITE_BASE_PATH` environment variable for flexible deployment
+- ✅ Created `DEPLOYMENT.md` with comprehensive deployment guide
+- ✅ Added base path validation in `svelte.config.js`
+
+---
+
 ## 🎯 Next Steps
 
-### **Phase 5: Performance Optimization**
+### **Phase 6: Testing & Production Polish** (Current Priority)
 
-1. **Performance Optimization**
-   - Implement virtual scrolling for large photo grids (10K+ photos in /explore)
-   - Add service worker for offline support
-   - Optimize Supabase queries with indexes
-   - Add caching layer for frequently accessed data
-   - Implement image CDN or Supabase Storage transforms
+1. **Testing Infrastructure**
+   - Set up Playwright for E2E testing
+   - Configure test environment with Supabase test database
+   - Add visual regression testing
+   - Implement accessibility testing (axe-core)
+   - Unit tests for utility functions
 
-2. **Advanced Features** (Future Enhancements)
-   - Add share functionality for photos and albums
-   - Add download functionality for high-res photos
-   - Implement fullscreen photo viewer with keyboard navigation
-   - Add photo comparison mode (side-by-side)
-   - Implement album sharing with permissions
+2. **Critical User Journey Tests**
+   - Homepage load and navigation
+   - Explore page filtering and search
+   - Photo detail modal interactions
+   - Favorites add/remove/export
+   - Lightbox navigation and zoom
+   - Social sharing functionality
+   - Download functionality
 
-3. **Search & Filtering Improvements** (Phase 5)
+3. **Performance Optimization**
+   - Lighthouse CI integration
+   - Bundle size optimization
+   - Image loading performance
+   - Virtual scrolling for large grids
+   - Service worker for offline support
+
+4. **Accessibility Improvements**
+   - WAVE audit and fixes
+   - Keyboard navigation improvements
+   - Screen reader testing
+   - Focus management
+   - Color contrast validation
+
+5. **Documentation**
+   - Component documentation
+   - API documentation
+   - Testing guide
+   - Contributing guidelines
+
+### **Phase 7: Advanced Features** (Future)
+
+1. **Advanced Features** (From React Archive)
+   - Port Magnetic Filter Orbs (Browse route)
+   - Port Portfolio Quality Gradient view
+   - Port 3D Gravity visualization
+   - Port Story viewer and curation
+   - Port Badge/gamification system
+
+2. **Search & Filtering**
    - Natural language search using embeddings
-   - Advanced filter combinations (AND/OR logic)
-   - Filter persistence in URL params
-   - Recent searches and saved filters
-   - Search suggestions and autocomplete
+   - Advanced filter combinations
+   - Filter persistence
+   - Recent searches
+   - Search suggestions
 
-4. **Testing** (Quality Assurance)
-   - Write Playwright E2E tests for critical user journeys
-   - Add visual regression tests for components
-   - Implement accessibility testing (WAVE, axe-core)
-   - Add unit tests for utility functions
-   - Performance testing with Lighthouse CI
-
-5. **Documentation** (Developer Experience)
-   - Component documentation with Storybook
-   - API documentation for Supabase schema
-   - Deployment guide for Vercel/Netlify
-   - Contributing guide for developers
-   - Migration guide for future framework updates
+3. **Additional Features**
+   - Print shop integration
+   - Mobile app (PWA)
+   - Analytics dashboard
+   - Admin panel
 
 ---
 
