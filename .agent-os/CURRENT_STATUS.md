@@ -205,7 +205,8 @@ All specs from the React implementation are available in `.agent-os/specs/` and 
 
 ### Planning & Status
 - **Migration Status:** [`../MIGRATION_STATUS.md`](../MIGRATION_STATUS.md) - Detailed SvelteKit migration progress
-- **Migration Audit:** [`../MIGRATION_AUDIT_REPORT.md`](../MIGRATION_AUDIT_REPORT.md) - React vs SvelteKit comparison
+- **Migration Audit:** [`../MIGRATION_AUDIT_REPORT.md`](../MIGRATION_AUDIT_REPORT.md) - React vs SvelteKit comparison (Score: 7.2/10)
+- **UX/UI Design Philosophy:** [`../UX_UI_APPROACH.md`](../UX_UI_APPROACH.md) - **"Simplicity First, AI Second"** (overrides conflicting specs)
 - **Overall Roadmap:** [`.agent-os/product/roadmap.md`](.agent-os/product/roadmap.md) - 10 phases (needs SvelteKit update)
 - **Mission:** [`.agent-os/product/mission.md`](.agent-os/product/mission.md) - Product vision
 - **This Document:** `.agent-os/CURRENT_STATUS.md` - Current status and priorities
