@@ -194,3 +194,5 @@ Add Google Analytics 4:
 - **SvelteKit Docs**: https://svelte.dev/docs/kit
 - **Supabase Docs**: https://supabase.com/docs
 - **GitHub Issues**: https://github.com/nino-chavez/gallery/issues
+
+<!-- Rebuild triggered after removing VITE_BASE_PATH env var -->
