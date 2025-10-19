@@ -10,6 +10,10 @@ const config = {
 			// Vercel adapter configuration
 			runtime: 'nodejs20.x',
 		}),
+		paths: {
+			// Configure base path for ninochavez.co/gallery proxy
+			base: process.env.NODE_ENV === 'production' ? '/gallery' : ''
+		},
 		alias: {
 			$lib: 'src/lib',
 			$types: 'src/types',
