@@ -227,36 +227,67 @@ export async function getPhotoCount(filters?: PhotoFilterState): Promise<number>
 /**
  * Get sport distribution statistics (SERVER-SIDE)
  * Returns count and percentage for each sport type
+ * Uses SQL aggregation for efficiency (no row limit issues)
  */
 export async function getSportDistribution(): Promise<Array<{ name: string; count: number; percentage: number }>> {
-  const { data, error } = await supabaseServer
+  // First, get total count
+  const { count: totalCount, error: countError } = await supabaseServer
     .from('photo_metadata')
-    .select('sport_type')
-    .not('sharpness', 'is', null); // Only enriched photos
+    .select('*', { count: 'exact', head: true })
+    .not('sharpness', 'is', null);
 
-  if (error) {
-    console.error('[Supabase Server] Error fetching sport distribution:', error);
-    throw new Error(`Failed to fetch sport distribution: ${error.message}`);
+  if (countError) {
+    console.error('[Supabase Server] Error fetching total count:', countError);
+    throw new Error(`Failed to fetch total count: ${countError.message}`);
   }
 
-  // Count occurrences of each sport
-  const sportCounts: Record<string, number> = {};
-  let total = 0;
+  const total = totalCount || 0;
 
-  (data || []).forEach((row: any) => {
-    const sport = row.sport_type || 'unknown';
-    sportCounts[sport] = (sportCounts[sport] || 0) + 1;
-    total++;
-  });
+  // Then, get sport distribution using PostgreSQL aggregation
+  // This avoids the 1000 row limit by doing aggregation server-side
+  const { data, error } = await supabaseServer
+    .rpc('get_sport_distribution');
 
-  // Convert to array with percentages
-  const sports = Object.entries(sportCounts)
-    .map(([name, count]) => ({
-      name,
-      count,
-      percentage: parseFloat(((count / total) * 100).toFixed(1))
-    }))
-    .sort((a, b) => b.count - a.count); // Sort by count descending
+  if (error) {
+    // If RPC doesn't exist, fall back to fetching all rows with explicit limit
+    console.warn('[Supabase Server] RPC not found, using fallback method');
 
-  return sports;
+    const { data: allPhotos, error: fetchError } = await supabaseServer
+      .from('photo_metadata')
+      .select('sport_type')
+      .not('sharpness', 'is', null')
+      .limit(25000); // Explicit large limit to get all photos
+
+    if (fetchError) {
+      console.error('[Supabase Server] Error fetching sport distribution:', fetchError);
+      throw new Error(`Failed to fetch sport distribution: ${fetchError.message}`);
+    }
+
+    // Count occurrences of each sport
+    const sportCounts: Record<string, number> = {};
+
+    (allPhotos || []).forEach((row: any) => {
+      const sport = row.sport_type || 'unknown';
+      sportCounts[sport] = (sportCounts[sport] || 0) + 1;
+    });
+
+    // Convert to array with percentages
+    const sports = Object.entries(sportCounts)
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: parseFloat(((count / total) * 100).toFixed(1))
+      }))
+      .filter(s => s.name !== 'unknown') // Remove unknown category
+      .sort((a, b) => b.count - a.count); // Sort by count descending
+
+    return sports;
+  }
+
+  // Process RPC results if available
+  return (data || []).map((row: any) => ({
+    name: row.sport_type,
+    count: parseInt(row.count),
+    percentage: parseFloat(((parseInt(row.count) / total) * 100).toFixed(1))
+  })).sort((a, b) => b.count - a.count);
 }
