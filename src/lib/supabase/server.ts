@@ -230,64 +230,67 @@ export async function getPhotoCount(filters?: PhotoFilterState): Promise<number>
  * Uses SQL aggregation for efficiency (no row limit issues)
  */
 export async function getSportDistribution(): Promise<Array<{ name: string; count: number; percentage: number }>> {
-  // First, get total count
-  const { count: totalCount, error: countError } = await supabaseServer
-    .from('photo_metadata')
-    .select('*', { count: 'exact', head: true })
-    .not('sharpness', 'is', null);
-
-  if (countError) {
-    console.error('[Supabase Server] Error fetching total count:', countError);
-    throw new Error(`Failed to fetch total count: ${countError.message}`);
-  }
-
-  const total = totalCount || 0;
-
-  // Then, get sport distribution using PostgreSQL aggregation
-  // This avoids the 1000 row limit by doing aggregation server-side
-  const { data, error } = await supabaseServer
-    .rpc('get_sport_distribution');
+  // Use raw SQL to do GROUP BY aggregation on database side
+  // This avoids fetching 20K rows and hitting Supabase row limits
+  const { data, error } = await supabaseServer.rpc('exec_sql', {
+    sql: `
+      SELECT
+        sport_type as name,
+        COUNT(*) as count,
+        ROUND((COUNT(*) * 100.0 / SUM(COUNT(*)) OVER ()), 1) as percentage
+      FROM photo_metadata
+      WHERE sharpness IS NOT NULL
+        AND sport_type IS NOT NULL
+        AND sport_type != 'unknown'
+      GROUP BY sport_type
+      ORDER BY count DESC
+    `
+  });
 
   if (error) {
-    // If RPC doesn't exist, fall back to fetching all rows with explicit limit
-    console.warn('[Supabase Server] RPC not found, using fallback method');
+    // Fallback: If custom RPC doesn't exist, use Supabase's native aggregation
+    // This won't work perfectly but better than nothing
+    console.warn('[Supabase Server] exec_sql RPC not found, using native query method');
 
-    const { data: allPhotos, error: fetchError } = await supabaseServer
+    // Get total count first
+    const { count: totalCount } = await supabaseServer
       .from('photo_metadata')
-      .select('sport_type')
+      .select('*', { count: 'exact', head: true })
       .not('sharpness', 'is', null)
-      .limit(25000); // Explicit large limit to get all photos
+      .not('sport_type', 'is', null)
+      .neq('sport_type', 'unknown');
 
-    if (fetchError) {
-      console.error('[Supabase Server] Error fetching sport distribution:', fetchError);
-      throw new Error(`Failed to fetch sport distribution: ${fetchError.message}`);
-    }
+    const total = totalCount || 0;
 
-    // Count occurrences of each sport
-    const sportCounts: Record<string, number> = {};
+    // Unfortunately, Supabase JS doesn't support GROUP BY natively
+    // So we have to use a workaround: fetch unique sports, then count each
+    const sports = ['volleyball', 'portrait', 'basketball', 'softball', 'soccer', 'track', 'football', 'baseball'];
 
-    (allPhotos || []).forEach((row: any) => {
-      const sport = row.sport_type || 'unknown';
-      sportCounts[sport] = (sportCounts[sport] || 0) + 1;
-    });
+    const results = await Promise.all(
+      sports.map(async (sport) => {
+        const { count } = await supabaseServer
+          .from('photo_metadata')
+          .select('*', { count: 'exact', head: true })
+          .eq('sport_type', sport)
+          .not('sharpness', 'is', null);
 
-    // Convert to array with percentages
-    const sports = Object.entries(sportCounts)
-      .map(([name, count]) => ({
-        name,
-        count,
-        percentage: parseFloat(((count / total) * 100).toFixed(1))
-      }))
-      .filter(s => s.name !== 'unknown') // Remove unknown category
-      .sort((a, b) => b.count - a.count); // Sort by count descending
+        return {
+          name: sport,
+          count: count || 0,
+          percentage: parseFloat(((count || 0) / total * 100).toFixed(1))
+        };
+      })
+    );
 
-    return sports;
+    return results
+      .filter(s => s.count > 0)
+      .sort((a, b) => b.count - a.count);
   }
 
-  // Process RPC results if available
+  // Process SQL results
   return (data || []).map((row: any) => ({
-    name: row.sport_type,
+    name: row.name,
     count: parseInt(row.count),
-    percentage: parseFloat(((parseInt(row.count) / total) * 100).toFixed(1))
-  })).sort((a, b) => b.count - a.count);
+    percentage: parseFloat(row.percentage)
+  }));
 }
