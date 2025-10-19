@@ -20,6 +20,7 @@
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
+	import SocialShareButtons from '$lib/components/social/SocialShareButtons.svelte';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
@@ -29,6 +30,11 @@
 	}
 
 	let { open = $bindable(false), photo, onclose }: Props = $props();
+
+	// Get current photo URL for sharing
+	const photoUrl = $derived(
+		photo ? `${typeof window !== 'undefined' ? window.location.origin : 'https://gallery.ninochavez.com'}/photo/${photo.image_key}` : ''
+	);
 
 	let qualityScore = $derived(photo ? getPhotoQualityScore(photo) : 0);
 	let metadata = $derived(photo?.metadata);
@@ -176,6 +182,11 @@
 												</Typography>
 											</div>
 										{/if}
+									</div>
+
+									<!-- Social Sharing (NEW - Week 3) -->
+									<div class="border-t border-charcoal-800 pt-6">
+										<SocialShareButtons photo={photo} url={photoUrl} />
 									</div>
 
 									<!-- AI Insights Toggle -->
