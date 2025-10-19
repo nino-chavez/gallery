@@ -16,22 +16,26 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { Motion } from 'svelte-motion';
-	import { Camera, Grid, Sparkles, Folder } from 'lucide-svelte';
+	import { Camera, Grid, Sparkles, Folder, Heart, Calendar } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import { cn } from '$lib/utils';
+	import { favorites } from '$lib/stores/favorites.svelte';
 
 	interface NavItem {
 		label: string;
 		path: string;
 		icon: typeof Camera;
+		badge?: () => number; // Optional badge count function
 	}
 
 	const navItems: NavItem[] = [
 		{ label: 'Home', path: '/', icon: Sparkles },
 		{ label: 'Explore', path: '/explore', icon: Camera },
+		{ label: 'Timeline', path: '/timeline', icon: Calendar },
 		{ label: 'Albums', path: '/albums', icon: Folder },
 		{ label: 'Collections', path: '/collections', icon: Grid },
+		{ label: 'Favorites', path: '/favorites', icon: Heart, badge: () => favorites.count },
 	];
 
 	// Derived from page store
@@ -98,13 +102,14 @@
 				<nav class="flex items-center gap-1" aria-label="Main navigation">
 					{#each navItems as item}
 						{@const active = isActive(item.path)}
-					{@const Icon = item.icon}
+						{@const Icon = item.icon}
+						{@const badgeCount = item.badge?.() || 0}
 						<Motion let:motion whileHover={{ scale: 1.05 }} transition={MOTION.spring.snappy}>
 							<button
 								use:motion
 								type="button"
 								class={cn(
-									'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+									'relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
 									active
 										? 'bg-gold-500/10 text-gold-500'
 										: 'text-charcoal-300 hover:text-white hover:bg-charcoal-800'
@@ -114,6 +119,16 @@
 							>
 								<Icon class="w-4 h-4" aria-hidden="true" />
 								<span class="hidden sm:inline">{item.label}</span>
+
+								<!-- Badge Count (NEW - Week 3 Bonus) -->
+								{#if badgeCount > 0}
+									<span
+										class="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 px-1 text-xs font-bold rounded-full bg-red-500 text-white"
+										aria-label="{badgeCount} favorites"
+									>
+										{badgeCount > 99 ? '99+' : badgeCount}
+									</span>
+								{/if}
 							</button>
 						</Motion>
 					{/each}
