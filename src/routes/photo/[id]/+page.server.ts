@@ -82,8 +82,12 @@ export const load: PageServerLoad = async ({ params }) => {
 	const baseUrl = 'https://gallery.ninochavez.com';
 	const canonicalUrl = `${baseUrl}/photo/${params.id}`;
 
+	// Fetch related photos (NEW - Week 2)
+	const relatedPhotos = await fetchRelatedPhotos(photo, photoData.album_key);
+
 	return {
 		photo,
+		relatedPhotos, // NEW
 		seo: {
 			title: `${photo.title} | Nino Chavez Photography`,
 			description: seoDescription,
@@ -129,4 +133,67 @@ function generatePhotoDescription(photo: Photo): string {
 	}
 
 	return description;
+}
+
+/**
+ * Fetch related photos based on sport, category, album, and similarity
+ * (NEW - Week 2: Related Photos Carousel)
+ */
+async function fetchRelatedPhotos(currentPhoto: Photo, albumKey: string): Promise<Photo[]> {
+	const sportType = currentPhoto.metadata.sport_type;
+	const photoCategory = currentPhoto.metadata.photo_category;
+
+	// Strategy: Fetch photos prioritizing:
+	// 1. Same album (most relevant context)
+	// 2. Same sport + category
+	// 3. Same sport only
+	// Then sort by quality score and limit to 12
+
+	const { data, error } = await supabaseServer
+		.from('photo_metadata')
+		.select('*')
+		.neq('image_key', currentPhoto.image_key) // Exclude current photo
+		.not('sharpness', 'is', null) // Only enriched photos
+		.or(`album_key.eq.${albumKey},and(sport_type.eq.${sportType},photo_category.eq.${photoCategory}),sport_type.eq.${sportType}`)
+		.order('quality_score', { ascending: false })
+		.limit(12);
+
+	if (error) {
+		console.error('[Photo Detail] Error fetching related photos:', error);
+		return [];
+	}
+
+	// Transform to Photo type (reuse same mapping as main photo)
+	return (data || []).map((row: any) => ({
+		id: row.image_key,
+		image_key: row.image_key,
+		image_url: row.ImageUrl,
+		thumbnail_url: row.ThumbnailUrl,
+		original_url: row.OriginalUrl,
+		title: row.album_name || 'Untitled Photo',
+		caption: row.composition || '',
+		keywords: row.use_cases || [],
+		created_at: row.photo_date || row.enriched_at || row.upload_date,
+		metadata: {
+			sharpness: row.sharpness || 0,
+			exposure_accuracy: row.exposure_accuracy || 0,
+			composition_score: row.composition_score || 0,
+			emotional_impact: row.emotional_impact || 0,
+			portfolio_worthy: row.portfolio_worthy || false,
+			print_ready: row.print_ready || false,
+			social_media_optimized: row.social_media_optimized || false,
+			emotion: row.emotion || 'focus',
+			composition: row.composition || '',
+			time_of_day: row.time_of_day || '',
+			sport_type: row.sport_type || 'volleyball',
+			photo_category: row.photo_category || 'action',
+			action_type: row.action_type || null,
+			play_type: row.play_type || null,
+			action_intensity: row.action_intensity || 'medium',
+			use_cases: row.use_cases || [],
+			ai_provider: row.ai_provider || 'unknown',
+			ai_cost: row.ai_cost || 0,
+			enriched_at: row.enriched_at || ''
+		}
+	}));
 }

@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
+	import RelatedPhotosCarousel from '$lib/components/gallery/RelatedPhotosCarousel.svelte'; // NEW: Related photos
 	import type { PageData } from './$types';
+	import type { Photo } from '$types/photo';
 
 	let { data }: { data: PageData } = $props();
 
@@ -14,6 +16,12 @@
 		} else {
 			goto('/explore');
 		}
+	}
+
+	// NEW: Handle related photo click
+	function handleRelatedPhotoClick(photo: Photo) {
+		// Navigate to the new photo's detail page
+		goto(`/photo/${photo.image_key}`);
 	}
 
 	// Generate Schema.org structured data for SEO
@@ -97,6 +105,17 @@
 				Close
 			</button>
 		</div>
+
+		<!-- Related Photos Carousel (NEW - Week 2) -->
+		{#if data.relatedPhotos && data.relatedPhotos.length > 0}
+			<div class="mt-8 px-6">
+				<RelatedPhotosCarousel
+					photos={data.relatedPhotos}
+					title="More from this Album & Sport"
+					onPhotoClick={handleRelatedPhotoClick}
+				/>
+			</div>
+		{/if}
 	</div>
 {:else}
 	<!-- Fallback if modal is closed but route still loaded -->
