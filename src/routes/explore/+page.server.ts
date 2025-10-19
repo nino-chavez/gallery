@@ -10,10 +10,13 @@
  * because this code runs SERVER-SIDE ONLY
  */
 
-import { fetchPhotos, getPhotoCount, getSportDistribution, getCategoryDistribution } from '$lib/supabase/server';
+import { fetchPhotos, getPhotoCount } from '$lib/supabase/server';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, parent }) => {
+  // Get cached sport/category distributions from layout
+  const { sports, categories } = await parent();
+
   // Get filter params from URL
   const portfolioOnly = url.searchParams.get('portfolio') === 'true';
   const minQuality = url.searchParams.get('minQuality');
@@ -42,22 +45,16 @@ export const load: PageServerLoad = async ({ url }) => {
   // Get total count for "Showing X of Y"
   const totalCount = await getPhotoCount(filterOptions);
 
-  // Get sport distribution for filter UI (NEW)
-  const sports = await getSportDistribution();
-
-  // Get category distribution for filter UI (NEW)
-  const categories = await getCategoryDistribution();
-
   return {
     photos,
     totalCount,
     currentPage: page,
     pageSize,
     sortBy,
-    sports, // NEW: Sport distribution data
-    selectedSport: sportFilter || null, // NEW: Currently selected sport
-    categories, // NEW: Category distribution data
-    selectedCategory: categoryFilter || null, // NEW: Currently selected category
+    sports, // From parent layout (cached)
+    selectedSport: sportFilter || null,
+    categories, // From parent layout (cached)
+    selectedCategory: categoryFilter || null,
     initialFilters: {
       portfolioOnly,
       minQuality: minQuality ? parseFloat(minQuality) : 0,

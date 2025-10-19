@@ -229,12 +229,37 @@
 				</Card>
 			</div>
 
-			<!-- Photo Grid -->
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-				{#each displayPhotos as photo, index}
-					<PhotoCard {photo} {index} onclick={handlePhotoClick} />
-				{/each}
-			</div>
+			<!-- Photo Grid with Skeleton Loader -->
+			{#if isFilterChanging || $navigating}
+				<!-- Skeleton Loader -->
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+					{#each Array(24) as _, index}
+						<Motion
+							let:motion
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: Math.min(index * 0.02, 0.3) }}
+						>
+							<div
+								use:motion
+								class="aspect-[4/3] bg-charcoal-800 rounded-lg animate-pulse"
+								aria-label="Loading photo {index + 1}"
+							>
+								<div class="flex items-center justify-center h-full">
+									<Camera class="w-12 h-12 text-charcoal-700" aria-hidden="true" />
+								</div>
+							</div>
+						</Motion>
+					{/each}
+				</div>
+			{:else}
+				<!-- Actual Photo Grid -->
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+					{#each displayPhotos as photo, index}
+						<PhotoCard {photo} {index} onclick={handlePhotoClick} />
+					{/each}
+				</div>
+			{/if}
 
 			<!-- Empty State -->
 			{#if displayPhotos.length === 0}

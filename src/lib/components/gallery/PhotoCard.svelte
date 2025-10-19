@@ -47,10 +47,10 @@
 
 <Motion
 	let:motion
-	initial={{ opacity: 0, scale: 0.9 }}
+	initial={{ opacity: 0, scale: 0.95 }}
 	animate={{ opacity: 1, scale: 1 }}
-	transition={{ ...MOTION.spring.snappy, delay: index * 0.05 }}
-	whileHover={{ scale: 1.05, y: -4 }}
+	transition={{ ...MOTION.spring.snappy, delay: Math.min(index * 0.02, 0.3) }}
+	whileHover={{ scale: 1.03, y: -2 }}
 >
 	<a
 		use:motion

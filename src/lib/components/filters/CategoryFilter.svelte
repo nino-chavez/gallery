@@ -17,6 +17,10 @@
 
 	let { categories, selectedCategory = null, onSelect }: Props = $props();
 
+	// Progressive disclosure: Show top 5 by default
+	let showAllCategories = $state(false);
+	let isCollapsed = $state(false); // For mobile collapsible
+
 	function handleCategoryClick(categoryName: string | null) {
 		onSelect?.(categoryName);
 	}
@@ -42,11 +46,23 @@
 	};
 
 	const totalPhotos = $derived(categories.reduce((sum, c) => sum + c.count, 0));
+	const displayedCategories = $derived(showAllCategories ? categories : categories.slice(0, 4));
+	const hasMoreCategories = $derived(categories.length > 4);
 </script>
 
 <div class="space-y-4">
 	<div class="flex items-center justify-between">
-		<Typography variant="h3" class="text-lg">Filter by Category</Typography>
+		<div class="flex items-center gap-3">
+			<Typography variant="h3" class="text-lg">Filter by Category</Typography>
+			<!-- Mobile collapse toggle -->
+			<button
+				onclick={() => isCollapsed = !isCollapsed}
+				class="lg:hidden text-sm text-charcoal-400 hover:text-gold-500 transition-colors"
+				aria-label={isCollapsed ? 'Expand category filters' : 'Collapse category filters'}
+			>
+				{isCollapsed ? '▼ Show' : '▲ Hide'}
+			</button>
+		</div>
 		{#if selectedCategory}
 			<button
 				onclick={() => handleCategoryClick(null)}
@@ -58,7 +74,7 @@
 		{/if}
 	</div>
 
-	<div class="flex flex-wrap gap-2">
+	<div class="flex flex-wrap gap-2 {isCollapsed ? 'hidden lg:flex' : 'flex'}">
 		<!-- All Categories Pill -->
 		<Motion let:motion whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 			<button
@@ -78,8 +94,8 @@
 			</button>
 		</Motion>
 
-		<!-- Individual Category Pills -->
-		{#each categories as category (category.name)}
+		<!-- Individual Category Pills (Progressive Disclosure) -->
+		{#each displayedCategories as category (category.name)}
 			<Motion let:motion whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 				<button
 					use:motion
@@ -101,6 +117,20 @@
 				</button>
 			</Motion>
 		{/each}
+
+		<!-- Show More/Less Button -->
+		{#if hasMoreCategories}
+			<Motion let:motion whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+				<button
+					use:motion
+					onclick={() => showAllCategories = !showAllCategories}
+					class="px-4 py-2 rounded-full text-sm font-medium transition-all border bg-charcoal-900 text-gold-500 border-charcoal-700 hover:border-gold-500/50"
+					aria-label={showAllCategories ? 'Show fewer categories' : 'Show all categories'}
+				>
+					{showAllCategories ? `− Show Less` : `+ ${categories.length - 4} More`}
+				</button>
+			</Motion>
+		{/if}
 	</div>
 
 	<!-- Category description when selected -->

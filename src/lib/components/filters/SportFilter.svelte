@@ -31,6 +31,10 @@
 
 	let { sports, selectedSport = null, onSelect }: Props = $props();
 
+	// Progressive disclosure: Show top 5 by default, expand to show all
+	let showAllSports = $state(false);
+	let isCollapsed = $state(false); // For mobile collapsible
+
 	function handleSportClick(sportName: string | null) {
 		onSelect?.(sportName);
 	}
@@ -48,12 +52,24 @@
 	};
 
 	const totalPhotos = $derived(sports.reduce((sum, s) => sum + s.count, 0));
+	const displayedSports = $derived(showAllSports ? sports : sports.slice(0, 5));
+	const hasMoreSports = $derived(sports.length > 5);
 </script>
 
 <div class="space-y-4">
 	<!-- Header -->
 	<div class="flex items-center justify-between">
-		<Typography variant="h3" class="text-lg">Filter by Sport</Typography>
+		<div class="flex items-center gap-3">
+			<Typography variant="h3" class="text-lg">Filter by Sport</Typography>
+			<!-- Mobile collapse toggle -->
+			<button
+				onclick={() => isCollapsed = !isCollapsed}
+				class="lg:hidden text-sm text-charcoal-400 hover:text-gold-500 transition-colors"
+				aria-label={isCollapsed ? 'Expand sport filters' : 'Collapse sport filters'}
+			>
+				{isCollapsed ? '▼ Show' : '▲ Hide'}
+			</button>
+		</div>
 		{#if selectedSport}
 			<button
 				onclick={() => handleSportClick(null)}
@@ -64,8 +80,8 @@
 		{/if}
 	</div>
 
-	<!-- Filter Pills -->
-	<div class="flex flex-wrap gap-2">
+	<!-- Filter Pills (collapsible on mobile) -->
+	<div class="flex flex-wrap gap-2 {isCollapsed ? 'hidden lg:flex' : 'flex'}">
 		<!-- All Sports Pill -->
 		<Motion
 			let:motion
@@ -88,8 +104,8 @@
 			</button>
 		</Motion>
 
-		<!-- Individual Sport Pills -->
-		{#each sports as sport (sport.name)}
+		<!-- Individual Sport Pills (Progressive Disclosure) -->
+		{#each displayedSports as sport (sport.name)}
 			<Motion
 				let:motion
 				whileHover={{ scale: 1.05 }}
@@ -113,6 +129,20 @@
 				</button>
 			</Motion>
 		{/each}
+
+		<!-- Show More/Less Button -->
+		{#if hasMoreSports}
+			<Motion let:motion whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+				<button
+					use:motion
+					onclick={() => showAllSports = !showAllSports}
+					class="px-4 py-2 rounded-full text-sm font-medium transition-all border bg-charcoal-900 text-gold-500 border-charcoal-700 hover:border-gold-500/50"
+					aria-label={showAllSports ? 'Show fewer sports' : 'Show all sports'}
+				>
+					{showAllSports ? `− Show Less` : `+ ${sports.length - 5} More`}
+				</button>
+			</Motion>
+		{/if}
 	</div>
 
 	<!-- Mobile: Selected Sport Indicator -->
