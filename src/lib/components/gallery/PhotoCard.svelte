@@ -12,6 +12,7 @@
 	import { getPhotoQualityScore } from '$lib/photo-utils';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import OptimizedImage from '$lib/components/ui/OptimizedImage.svelte';
+	import FavoriteButton from '$lib/components/photo/FavoriteButton.svelte';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
@@ -82,10 +83,15 @@
 			</div>
 		{/if}
 
-		<!-- Portfolio Worthy Badge (optional subtle indicator) -->
+		<!-- Favorite Button (NEW - Week 3) -->
+		<div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+			<FavoriteButton {photo} variant="icon-only" />
+		</div>
+
+		<!-- Portfolio Worthy Badge -->
 		{#if portfolioWorthy}
 			<div
-				class="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium bg-gold-500/90 text-black opacity-0 group-hover:opacity-100 transition-opacity"
+				class="absolute top-2 {portfolioWorthy ? 'left-2' : 'right-2'} px-2 py-1 rounded-full text-xs font-medium bg-gold-500/90 text-black opacity-0 group-hover:opacity-100 transition-opacity"
 				aria-hidden="true"
 			>
 				Portfolio
