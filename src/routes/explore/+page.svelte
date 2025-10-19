@@ -11,6 +11,7 @@
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
 	import SportFilter from '$lib/components/filters/SportFilter.svelte'; // NEW: Sport filter
+	import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte'; // NEW: Category filter
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
 
@@ -48,6 +49,19 @@
 			url.searchParams.set('sport', sport);
 		} else {
 			url.searchParams.delete('sport');
+		}
+		// Reset to page 1 when filtering
+		url.searchParams.delete('page');
+		goto(url.toString());
+	}
+
+	// NEW: Handle category filter selection
+	function handleCategorySelect(category: string | null) {
+		const url = new URL($page.url);
+		if (category) {
+			url.searchParams.set('category', category);
+		} else {
+			url.searchParams.delete('category');
 		}
 		// Reset to page 1 when filtering
 		url.searchParams.delete('page');
@@ -120,6 +134,17 @@
 						sports={data.sports}
 						selectedSport={data.selectedSport}
 						onSelect={handleSportSelect}
+					/>
+				</div>
+			{/if}
+
+			<!-- Category Filter (NEW - Week 2) -->
+			{#if data.categories && data.categories.length > 0}
+				<div class="mb-6">
+					<CategoryFilter
+						categories={data.categories}
+						selectedCategory={data.selectedCategory}
+						onSelect={handleCategorySelect}
 					/>
 				</div>
 			{/if}

@@ -124,6 +124,11 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
     query = query.eq('sport_type', filters.sportType);
   }
 
+  // Photo category filter (NEW - Week 2)
+  if (filters?.photoCategory) {
+    query = query.eq('photo_category', filters.photoCategory);
+  }
+
   // Apply pagination
   if (limit) {
     query = query.limit(limit);
@@ -214,6 +219,11 @@ export async function getPhotoCount(filters?: PhotoFilterState): Promise<number>
     query = query.eq('sport_type', filters.sportType);
   }
 
+  // Photo category filter (NEW - Week 2)
+  if (filters?.photoCategory) {
+    query = query.eq('photo_category', filters.photoCategory);
+  }
+
   const { count, error } = await query;
 
   if (error) {
@@ -284,6 +294,72 @@ export async function getSportDistribution(): Promise<Array<{ name: string; coun
 
     return results
       .filter(s => s.count > 0)
+      .sort((a, b) => b.count - a.count);
+  }
+
+  // Process SQL results
+  return (data || []).map((row: any) => ({
+    name: row.name,
+    count: parseInt(row.count),
+    percentage: parseFloat(row.percentage)
+  }));
+}
+
+/**
+ * Get photo category distribution statistics (SERVER-SIDE)
+ * Returns count and percentage for each category type
+ * Uses SQL aggregation for efficiency (no row limit issues)
+ */
+export async function getCategoryDistribution(): Promise<Array<{ name: string; count: number; percentage: number }>> {
+  // Use raw SQL to do GROUP BY aggregation on database side
+  const { data, error } = await supabaseServer.rpc('exec_sql', {
+    sql: `
+      SELECT
+        photo_category as name,
+        COUNT(*) as count,
+        ROUND((COUNT(*) * 100.0 / SUM(COUNT(*)) OVER ()), 1) as percentage
+      FROM photo_metadata
+      WHERE sharpness IS NOT NULL
+        AND photo_category IS NOT NULL
+      GROUP BY photo_category
+      ORDER BY count DESC
+    `
+  });
+
+  if (error) {
+    // Fallback: Use individual COUNT queries for each category
+    console.warn('[Supabase Server] exec_sql RPC not found, using native query method for categories');
+
+    // Get total count first
+    const { count: totalCount } = await supabaseServer
+      .from('photo_metadata')
+      .select('*', { count: 'exact', head: true })
+      .not('sharpness', 'is', null)
+      .not('photo_category', 'is', null);
+
+    const total = totalCount || 0;
+
+    // Known categories from migration SQL
+    const categories = ['action', 'celebration', 'candid', 'portrait', 'warmup', 'ceremony'];
+
+    const results = await Promise.all(
+      categories.map(async (category) => {
+        const { count } = await supabaseServer
+          .from('photo_metadata')
+          .select('*', { count: 'exact', head: true })
+          .eq('photo_category', category)
+          .not('sharpness', 'is', null);
+
+        return {
+          name: category,
+          count: count || 0,
+          percentage: parseFloat(((count || 0) / total * 100).toFixed(1))
+        };
+      })
+    );
+
+    return results
+      .filter(c => c.count > 0)
       .sort((a, b) => b.count - a.count);
   }
 

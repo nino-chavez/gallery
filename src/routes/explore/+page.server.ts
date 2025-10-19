@@ -10,7 +10,7 @@
  * because this code runs SERVER-SIDE ONLY
  */
 
-import { fetchPhotos, getPhotoCount, getSportDistribution } from '$lib/supabase/server';
+import { fetchPhotos, getPhotoCount, getSportDistribution, getCategoryDistribution } from '$lib/supabase/server';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -18,6 +18,7 @@ export const load: PageServerLoad = async ({ url }) => {
   const portfolioOnly = url.searchParams.get('portfolio') === 'true';
   const minQuality = url.searchParams.get('minQuality');
   const sportFilter = url.searchParams.get('sport') || undefined; // NEW: Sport filtering
+  const categoryFilter = url.searchParams.get('category') || undefined; // NEW: Category filtering
   const sortBy = (url.searchParams.get('sort') || 'newest') as 'newest' | 'oldest' | 'highest_quality' | 'lowest_quality';
   const page = parseInt(url.searchParams.get('page') || '1');
   const pageSize = 24;
@@ -27,6 +28,7 @@ export const load: PageServerLoad = async ({ url }) => {
     portfolioWorthy: portfolioOnly || undefined,
     minQualityScore: minQuality ? parseFloat(minQuality) : undefined,
     sportType: sportFilter, // NEW: Pass sport filter
+    photoCategory: categoryFilter, // NEW: Pass category filter
   };
 
   // Fetch photos with pagination
@@ -43,6 +45,9 @@ export const load: PageServerLoad = async ({ url }) => {
   // Get sport distribution for filter UI (NEW)
   const sports = await getSportDistribution();
 
+  // Get category distribution for filter UI (NEW)
+  const categories = await getCategoryDistribution();
+
   return {
     photos,
     totalCount,
@@ -51,6 +56,8 @@ export const load: PageServerLoad = async ({ url }) => {
     sortBy,
     sports, // NEW: Sport distribution data
     selectedSport: sportFilter || null, // NEW: Currently selected sport
+    categories, // NEW: Category distribution data
+    selectedCategory: categoryFilter || null, // NEW: Currently selected category
     initialFilters: {
       portfolioOnly,
       minQuality: minQuality ? parseFloat(minQuality) : 0,
