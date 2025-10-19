@@ -33,12 +33,11 @@ const config = {
 			runtime: 'nodejs20.x',
 		}),
 		paths: {
-			// Configure base path for ninochavez.co/gallery proxy
-			// Hardcoded to '/gallery' for production deployment
-			// Local dev will override this in vite.config.ts if needed
-			base: '/gallery',
+			// Assets path for ninochavez.co/gallery proxy
+			// This prefixes all assets with /gallery but keeps routes at root
+			// So app serves at / but assets load from /gallery/_app/...
+			assets: '/gallery',
 			// Use absolute paths (not relative) so proxy rewrites work correctly
-			// relative: false means assets use /gallery/_app/... instead of ./_app/...
 			relative: false
 		},
 		alias: {
