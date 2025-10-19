@@ -16,7 +16,7 @@
 	interface Props {
 		photo: Photo;
 		index?: number;
-		onclick?: (photo: Photo) => void;
+		onclick?: (photo: Photo) => void; // Deprecated: Use href navigation instead
 	}
 
 	let { photo, index = 0, onclick }: Props = $props();
@@ -32,15 +32,16 @@
 	// Use thumbnail for grid, fallback to image_url
 	let imageSrc = $derived(photo.thumbnail_url || photo.image_url);
 
-	function handleClick() {
-		onclick?.(photo);
-	}
+	// Generate individual photo URL for SEO
+	let photoUrl = $derived(`/photo/${photo.image_key}`);
 
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Enter' || event.key === ' ') {
+	function handleClick(event: MouseEvent) {
+		// Backward compatibility: If onclick provided, use it (but prefer href navigation)
+		if (onclick) {
 			event.preventDefault();
-			handleClick();
+			onclick(photo);
 		}
+		// Otherwise, let the anchor tag navigate naturally to /photo/[id]
 	}
 
 	function handleImageLoad() {
@@ -61,14 +62,12 @@
 	transition={{ ...MOTION.spring.snappy, delay: index * 0.05 }}
 	whileHover={{ scale: 1.05, y: -4 }}
 >
-	<div
+	<a
 		use:motion
-		class="group relative aspect-[4/3] bg-charcoal-900 rounded-lg overflow-hidden border border-charcoal-800 hover:border-gold-500/50 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/50 transition-colors cursor-pointer outline-none"
-		role="button"
-		tabindex="0"
+		href={photoUrl}
+		class="group relative aspect-[4/3] bg-charcoal-900 rounded-lg overflow-hidden border border-charcoal-800 hover:border-gold-500/50 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/50 transition-colors cursor-pointer outline-none block"
 		aria-label={photo.title || `Photo ${index + 1}`}
 		onclick={handleClick}
-		onkeydown={handleKeyDown}
 	>
 		<!-- Loading/Error State -->
 		{#if !imageLoaded || imageError}
@@ -117,5 +116,5 @@
 				Portfolio
 			</div>
 		{/if}
-	</div>
+	</a>
 </Motion>

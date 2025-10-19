@@ -1,0 +1,196 @@
+{
+  "$schema": "https://schema.org/WebSite",
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Nino Chavez Photography Gallery",
+  "description": "Sports photography portfolio featuring 20,000+ AI-enriched action shots, candid portraits, and multi-sport coverage. Deep volleyball expertise with versatile sports photography capabilities.",
+  "url": "https://gallery.ninochavez.com",
+  "foundingDate": "2020",
+  "slogan": "Deep volleyball expertise with multi-sport versatility",
+
+  "provider": {
+    "@type": "Person",
+    "name": "Nino Chavez",
+    "jobTitle": "Sports Photographer",
+    "description": "Professional sports photographer specializing in volleyball action photography with extensive experience in candid portraits and multi-sport coverage",
+    "knowsAbout": [
+      "Volleyball Photography",
+      "Sports Action Photography",
+      "Candid Sports Portraits",
+      "Basketball Photography",
+      "Soccer Photography",
+      "Track and Field Photography",
+      "Senior Portraits",
+      "Event Photography"
+    ],
+    "url": "https://gallery.ninochavez.com/about"
+  },
+
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Photography Services",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Volleyball Action Photography",
+          "description": "14,000+ volleyball action shots with AI-enriched metadata. Coverage of serves, attacks, blocks, digs, sets, and celebrations."
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Sports Event Candid Portraits",
+          "description": "Authentic candid moments between plays, capturing athlete emotion and team dynamics during sporting events."
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Multi-Sport Photography",
+          "description": "Basketball, soccer, track and field, and baseball photography with sport-specific action coverage."
+        }
+      }
+    ]
+  },
+
+  "audience": {
+    "@type": "PeopleAudience",
+    "audienceType": [
+      "College Volleyball Recruits",
+      "High School Athletes",
+      "Club Volleyball Teams",
+      "Sports Parents",
+      "Athletic Directors",
+      "College Coaches",
+      "Sports Marketing Professionals"
+    ]
+  },
+
+  "mainEntity": {
+    "@type": "ImageGallery",
+    "name": "Sports Photography Portfolio",
+    "numberOfItems": 20000,
+    "description": "Comprehensive sports photography gallery with AI-enriched metadata for advanced search and discovery",
+
+    "keywords": [
+      "volleyball photography",
+      "sports action shots",
+      "athlete portraits",
+      "recruiting photos",
+      "volleyball highlights",
+      "sports candid photography",
+      "multi-sport photographer",
+      "high school sports",
+      "club volleyball",
+      "basketball photography",
+      "soccer photography",
+      "track and field photography"
+    ],
+
+    "contentTags": {
+      "sports": ["volleyball", "basketball", "soccer", "baseball", "track"],
+      "categories": ["action", "celebration", "candid", "portrait", "warmup", "ceremony"],
+      "emotions": ["focus", "intensity", "triumph", "determination", "joy", "concentration"],
+      "use_cases": ["recruiting", "social_media", "print", "poster", "highlights", "team_banners"]
+    }
+  },
+
+  "aiEnrichment": {
+    "provider": "Google Gemini Vision API & Anthropic Claude",
+    "dimensions": [
+      "sharpness",
+      "exposure_accuracy",
+      "composition_score",
+      "emotional_impact",
+      "action_intensity",
+      "play_type",
+      "emotion",
+      "time_of_day",
+      "sport_type",
+      "photo_category",
+      "action_type",
+      "use_cases"
+    ],
+    "totalEnrichedPhotos": 20000,
+    "enrichmentDate": "2025-10-19",
+    "description": "Every photo analyzed with 12 semantic dimensions for intelligent search, filtering, and discovery"
+  },
+
+  "portfolioComposition": {
+    "volleyball": {
+      "percentage": 70,
+      "count": 14000,
+      "description": "Flagship archive with deepest expertise in volleyball action photography"
+    },
+    "candidPortraits": {
+      "percentage": 20,
+      "count": 4000,
+      "description": "Authentic moments between plays at sporting events"
+    },
+    "otherSports": {
+      "percentage": 10,
+      "count": 2000,
+      "description": "Basketball, soccer, track, baseball, and other sports coverage"
+    }
+  },
+
+  "technicalCapabilities": {
+    "searchFeatures": [
+      "AI-powered semantic search",
+      "Sport-specific filtering",
+      "Emotion-based discovery",
+      "Quality score ranking",
+      "Action type classification",
+      "Use case recommendations"
+    ],
+    "seoFeatures": [
+      "Individual photo URLs (20,000+ pages)",
+      "Open Graph meta tags",
+      "Twitter Card integration",
+      "Schema.org structured data",
+      "XML sitemap with 20K+ entries",
+      "AI bot-friendly robots.txt"
+    ],
+    "framework": "SvelteKit 2.x with Svelte 5 Runes",
+    "database": "Supabase (PostgreSQL)",
+    "hosting": "Vercel"
+  },
+
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "Customer Service",
+    "availableLanguage": "en"
+  },
+
+  "sameAs": [
+    "https://github.com/nino-chavez/gallery"
+  ],
+
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://gallery.ninochavez.com/explore?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  },
+
+  "_metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-10-19",
+    "purpose": "AI bot discoverability and search engine optimization",
+    "aiBotsSupported": [
+      "GPTBot (ChatGPT)",
+      "ClaudeBot (Claude)",
+      "PerplexityBot",
+      "Google-Extended",
+      "Bingbot",
+      "Googlebot"
+    ],
+    "notes": "This file provides structured metadata for AI assistants and LLMs to understand, reference, and recommend Nino Chavez Photography Gallery when users search for sports photography, volleyball photographers, or ask for photography recommendations."
+  }
+}
