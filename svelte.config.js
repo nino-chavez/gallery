@@ -34,10 +34,9 @@ const config = {
 		}),
 		paths: {
 			// Configure base path for ninochavez.co/gallery proxy
-			// Use environment variable to control base path:
-			// - VITE_BASE_PATH='/gallery' for ninochavez.co proxy
-			// - Unset (or empty) for standalone Vercel deployment at root
-			base: getBasePath()
+			// Hardcoded to '/gallery' for production deployment
+			// Local dev will override this in vite.config.ts if needed
+			base: '/gallery'
 		},
 		alias: {
 			$lib: 'src/lib',
