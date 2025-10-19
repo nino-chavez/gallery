@@ -33,10 +33,9 @@ const config = {
 			runtime: 'nodejs20.x',
 		}),
 		paths: {
-			// Assets path for ninochavez.co/gallery proxy
-			// This prefixes all assets with /gallery but keeps routes at root
-			// So app serves at / but assets load from /gallery/_app/...
-			assets: '/gallery',
+			// Only set assets path for production deployment
+			// Local builds and dev need this to be undefined
+			...(process.env.VERCEL ? { assets: 'https://ninochavez.co/gallery' } : {}),
 			// Use absolute paths (not relative) so proxy rewrites work correctly
 			relative: false
 		},
