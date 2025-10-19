@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/**
+ * Tailwind CSS v4 Theme Configuration
+ * Reference: src/lib/design-tokens.ts
+ */
+@theme {
+  /* Typography */
+  --font-family-sans: 'Inter Variable', system-ui, -apple-system, sans-serif;
+
+  /* Colors - Charcoal (neutral) */
+  --color-charcoal-50: #f8f8f9;
+  --color-charcoal-100: #efeff1;
+  --color-charcoal-200: #dcdde0;
+  --color-charcoal-300: #c0c2c8;
+  --color-charcoal-400: #9fa2ab;
+  --color-charcoal-500: #808593;
+  --color-charcoal-600: #67697a;
+  --color-charcoal-700: #525463;
+  --color-charcoal-800: #454654;
+  --color-charcoal-900: #3b3c48;
+  --color-charcoal-950: #18181b;
+
+  /* Colors - Gold (accent) */
+  --color-gold-50: #fefce8;
+  --color-gold-100: #fef9c3;
+  --color-gold-200: #fef08a;
+  --color-gold-300: #fde047;
+  --color-gold-400: #facc15;
+  --color-gold-500: #eab308;
+  --color-gold-600: #ca8a04;
+  --color-gold-700: #a16207;
+  --color-gold-800: #854d0e;
+  --color-gold-900: #713f12;
+  --color-gold-950: #422006;
+
+  /* Emotion Palette */
+  --color-emotion-triumph: #FFD700;
+  --color-emotion-intensity: #FF4500;
+  --color-emotion-focus: #4169E1;
+  --color-emotion-determination: #8B008B;
+  --color-emotion-excitement: #FF69B4;
+  --color-emotion-serenity: #20B2AA;
+
+  /* Semantic Colors */
+  --color-background: #18181b;
+  --color-foreground: #f8f8f9;
+  --color-border: #454654;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-charcoal-950);
+    color: var(--color-foreground);
+    font-family: var(--font-family-sans);
+  }
+
+  /* Ensure smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Emotion gradient utilities */
+  .bg-emotion-triumph {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  }
+
+  .bg-emotion-intensity {
+    background: linear-gradient(135deg, #FF4500 0%, #DC143C 100%);
+  }
+
+  .bg-emotion-focus {
+    background: linear-gradient(135deg, #4169E1 0%, #1E90FF 100%);
+  }
+
+  .bg-emotion-determination {
+    background: linear-gradient(135deg, #8B008B 0%, #9370DB 100%);
+  }
+
+  .bg-emotion-excitement {
+    background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+  }
+
+  .bg-emotion-serenity {
+    background: linear-gradient(135deg, #20B2AA 0%, #48D1CC 100%);
+  }
+
+  /* Text gradient utility */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+  }
+}
