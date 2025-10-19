@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { navigating } from '$app/stores';
 	import { Motion } from 'svelte-motion';
 	import { Camera, ChevronDown } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
@@ -18,6 +19,9 @@
 
 	// Svelte 5 Runes: $props to receive server data
 	let { data }: { data: PageData } = $props();
+
+	// Loading state for filter transitions
+	let isFilterChanging = $state(false);
 
 	// Lightbox state (NEW - Week 3)
 	let lightboxOpen = $state(false);
@@ -52,8 +56,9 @@
 		selectedPhotoIndex = newIndex;
 	}
 
-	// NEW: Handle sport filter selection
+	// NEW: Handle sport filter selection with optimistic loading state
 	function handleSportSelect(sport: string | null) {
+		isFilterChanging = true;
 		const url = new URL($page.url);
 		if (sport) {
 			url.searchParams.set('sport', sport);
@@ -65,8 +70,9 @@
 		goto(url.toString());
 	}
 
-	// NEW: Handle category filter selection
+	// NEW: Handle category filter selection with optimistic loading state
 	function handleCategorySelect(category: string | null) {
+		isFilterChanging = true;
 		const url = new URL($page.url);
 		if (category) {
 			url.searchParams.set('category', category);
@@ -91,6 +97,7 @@
 	}
 
 	function handleSortChange(event: Event) {
+		isFilterChanging = true;
 		const select = event.target as HTMLSelectElement;
 		const sortBy = select.value as typeof preferences.sortBy;
 
@@ -104,11 +111,19 @@
 	}
 
 	function loadMore() {
+		isFilterChanging = true;
 		const url = new URL($page.url);
 		const currentPage = parseInt(url.searchParams.get('page') || '1');
 		url.searchParams.set('page', String(currentPage + 1));
 		goto(url.toString());
 	}
+
+	// Reset loading state when navigation completes
+	$effect(() => {
+		if (!$navigating) {
+			isFilterChanging = false;
+		}
+	});
 
 	// Calculate showing range
 	const showingStart = $derived((data.currentPage - 1) * data.pageSize + 1);
