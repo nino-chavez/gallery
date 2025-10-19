@@ -1,0 +1,12 @@
+task_assignments:
+  - task_group: "Task Group 1: Route Setup & Foundation (Days 1-3)"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 2: Filter Integration & Photo Display (Days 4-7)"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 3: Story Generation Integration (Days 8-10)"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 4: Test Review & Gap Analysis (Days 11-15)"
+    assigned_subagent: "testing-engineer"

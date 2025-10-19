@@ -1,0 +1,76 @@
+[
+  {
+    "name": "audit-homepage-initial",
+    "path": "/Users/nino/Workspace/02-local-dev/sites/nino-chavez-gallery/screenshots/audit/audit-homepage-initial.png",
+    "url": "http://localhost:3000",
+    "description": "Homepage initial load state",
+    "observations": [
+      "⚠️ No <main> landmark found"
+    ]
+  },
+  {
+    "name": "audit-portfolio-default",
+    "path": "/Users/nino/Workspace/02-local-dev/sites/nino-chavez-gallery/screenshots/audit/audit-portfolio-default.png",
+    "url": "http://localhost:3000/portfolio",
+    "description": "Portfolio grid default view",
+    "observations": []
+  },
+  {
+    "name": "audit-portfolio-filters-expanded",
+    "path": "/Users/nino/Workspace/02-local-dev/sites/nino-chavez-gallery/screenshots/audit/audit-portfolio-filters-expanded.png",
+    "url": "http://localhost:3000/portfolio",
+    "description": "Portfolio grid with filters panel expanded",
+    "observations": []
+  },
+  {
+    "name": "audit-portfolio-hover-state",
+    "path": "/Users/nino/Workspace/02-local-dev/sites/nino-chavez-gallery/screenshots/audit/audit-portfolio-hover-state.png",
+    "url": "http://localhost:3000/portfolio",
+    "description": "Portfolio grid item hover state",
+    "observations": []
+  },
+  {
+    "name": "audit-browse-grid",
+    "path": "/Users/nino/Workspace/02-local-dev/sites/nino-chavez-gallery/screenshots/audit/audit-browse-grid.png",
+    "url": "http://localhost:3000/browse",
+    "description": "Browse page grid layout",
+    "observations": [
+      "⚠️ No <main> landmark found",
+      "⚠️ No H1 heading found"
+    ]
+  },
+  {
+    "name": "audit-browse-filters-active",
+    "path": "/Users/nino/Workspace/02-local-dev/sites/nino-chavez-gallery/screenshots/audit/audit-browse-filters-active.png",
+    "url": "http://localhost:3000/browse",
+    "description": "Browse page with filter interactions",
+    "observations": [
+      "⚠️ No <main> landmark found",
+      "⚠️ No H1 heading found"
+    ]
+  },
+  {
+    "name": "audit-story-viewer-interface",
+    "path": "/Users/nino/Workspace/02-local-dev/sites/nino-chavez-gallery/screenshots/audit/audit-story-viewer-interface.png",
+    "url": "http://localhost:3000/stories/1",
+    "description": "Story viewer interface (fallback ID)",
+    "observations": [
+      "⚠️ No <main> landmark found",
+      "⚠️ No H1 heading found"
+    ]
+  },
+  {
+    "name": "audit-search-interface",
+    "path": "/Users/nino/Workspace/02-local-dev/sites/nino-chavez-gallery/screenshots/audit/audit-search-interface.png",
+    "url": "http://localhost:3000/search",
+    "description": "Search interface default state",
+    "observations": []
+  },
+  {
+    "name": "audit-search-results",
+    "path": "/Users/nino/Workspace/02-local-dev/sites/nino-chavez-gallery/screenshots/audit/audit-search-results.png",
+    "url": "http://localhost:3000/search",
+    "description": "Search results view",
+    "observations": []
+  }
+]

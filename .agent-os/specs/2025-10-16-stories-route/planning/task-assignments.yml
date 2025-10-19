@@ -1,0 +1,15 @@
+task_assignments:
+  - task_group: "Task Group 1: Route Foundation & Data Fetching (Days 1-2)"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 2: Story Viewer Integration (Days 3-4)"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 3: Share & Export Features (Days 5-7)"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 4: SEO & Metadata (Days 8-9)"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 5: Test Review & Gap Analysis (Days 10-12)"
+    assigned_subagent: "testing-engineer"

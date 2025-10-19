@@ -1,0 +1,12 @@
+task_assignments:
+  - task_group: "Task Group 1: Route Setup & Foundation (Days 1-2)"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 2: View Mode Integration (Days 3-5)"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 3: Navigation & Polish (Days 6-7)"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 4: Test Review & Gap Analysis (Days 8-10)"
+    assigned_subagent: "testing-engineer"

@@ -1,0 +1,854 @@
+# Task Breakdown: Browse Route with Magnetic Filter Orbs & Story Generation
+
+## Overview
+Total Tasks: 17 tasks across 4 task groups
+Estimated Timeline: 2-3 weeks (10-15 working days)
+Assigned Implementers: ui-designer, api-engineer, testing-engineer
+Critical Path: Task Groups 1 → 2 → 3 → 4 (sequential dependencies)
+
+## Executive Summary
+
+This implementation assembles existing, fully-built components (MagneticFilterBar, PlayTypeMorphGrid, StoryGenerationModal) into the new `/browse` route. The work focuses on **integration and orchestration** rather than component development. All dependencies are already installed, and all reusable components are 100% complete.
+
+**Key Simplifications:**
+- No database changes required (existing schema supports all features)
+- No new components to build (reuse existing 100%)
+- Minimal API changes (extend one endpoint for browse context)
+- Test focus: Core user workflows only (16-34 tests maximum)
+
+**Risk Mitigation:**
+- Start with route foundation to enable early testing
+- Add progressive enhancement (filters → grid → story generation)
+- Test at each checkpoint before moving to next phase
+- All tasks have clear rollback paths
+
+## Task List
+
+---
+
+### Task Group 1: Route Setup & Foundation (Days 1-3)
+
+**Assigned implementer:** ui-designer
+**Dependencies:** None
+**Parallel Opportunities:** None (foundation must complete first)
+**Estimated Time:** 8-12 hours
+
+---
+
+#### Task 1.1: Write 2-8 focused tests for browse page route
+**Priority:** Critical
+**Estimated Time:** 2 hours
+**Dependencies:** None
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Write 2-8 tests maximum for critical browse page behaviors
+- [x] Test route returns 200 status
+- [x] Test page loads with header and title
+- [x] Test loading state displays during data fetch
+- [x] Test error state displays on API failure
+- [x] Skip exhaustive edge case testing
+
+**Files to Create/Modify:**
+- `tests/e2e/browse-page.spec.ts` (created)
+
+**Implementation Notes:**
+- Follow test-writing.md: Focus on core user flows only
+- Use Playwright for E2E tests
+- Mock SWR for controlled data states
+- Reference: "Write Minimal Tests During Development" standard
+
+---
+
+#### Task 1.2: Create browse page route with basic structure
+**Priority:** Critical
+**Estimated Time:** 3 hours
+**Dependencies:** None
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Create `/browse` route at `src/app/browse/page.tsx`
+- [x] Export default Next.js page component with 'use client' directive
+- [x] Add page header with "Browse Gallery" title
+- [x] Add semantic HTML structure (header, main, sections)
+- [x] Ensure route returns 200 status on navigation
+- [x] Follow Next.js 15 App Router patterns
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (created)
+
+**Implementation Notes:**
+- Use Next.js 15.1.6 App Router conventions
+- Mark as client component ('use client') for SWR hooks
+- Reference spec.md lines 176-188 for component structure
+- Match design system patterns from existing pages
+
+---
+
+#### Task 1.3: Set up SWR data fetching for gallery API
+**Priority:** Critical
+**Estimated Time:** 2 hours
+**Dependencies:** Task 1.2
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Import useSWR from 'swr' package (already installed)
+- [x] Create fetcher function for `/api/gallery` endpoint
+- [x] Configure SWR with revalidateOnFocus: false, dedupingInterval: 60000
+- [x] Handle loading state with isLoading flag
+- [x] Handle error state with error object
+- [x] Extract photos array from response data
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (modified)
+
+**Implementation Notes:**
+- SWR already installed at version 2.2.5
+- Cache for 60 seconds to reduce API calls
+- API route already exists at `src/app/api/gallery/route.ts`
+- Reference spec.md lines 190-196 for state management pattern
+
+---
+
+#### Task 1.4: Add loading and error states
+**Priority:** High
+**Estimated Time:** 2 hours
+**Dependencies:** Task 1.3
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Display loading spinner during data fetch
+- [x] Show error message if API call fails
+- [x] Add "Retry" button in error state
+- [x] Show empty state if no photos returned
+- [x] Follow existing LoadingState and ErrorState component patterns
+- [x] Ensure accessibility with proper ARIA labels
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (modified)
+- Import from `src/components/common/LoadingState.tsx` (existing)
+- Import from `src/components/common/ErrorState.tsx` (existing)
+
+**Implementation Notes:**
+- Reuse existing LoadingState and ErrorState components
+- Reference StoryGenerationModal.tsx for error handling patterns
+- Follow error-handling.md standards for user-friendly messages
+
+---
+
+#### Task 1.5: Ensure route foundation tests pass
+**Priority:** Critical
+**Estimated Time:** 1 hour
+**Dependencies:** Tasks 1.1-1.4
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Run ONLY the 2-8 tests written in Task 1.1
+- [x] All tests pass without errors
+- [x] Route navigates successfully
+- [x] Loading and error states render correctly
+- [x] Do NOT run entire test suite
+
+**Files to Create/Modify:**
+- None (validation step)
+
+**Implementation Notes:**
+- Use `npx playwright test tests/e2e/browse-page.spec.ts` to run specific tests
+- Fix any failing tests before proceeding to Task Group 2
+- Expected: 5 passing tests
+
+---
+
+### Task Group 2: Filter Integration & Photo Display (Days 4-7)
+
+**Assigned implementer:** ui-designer
+**Dependencies:** Task Group 1 complete
+**Parallel Opportunities:** Tasks 2.1-2.2 can run in parallel after 2.0
+**Estimated Time:** 12-16 hours
+
+---
+
+#### Task 2.0: Write 2-8 focused tests for filter and grid integration
+**Priority:** High
+**Estimated Time:** 2 hours
+**Dependencies:** Task Group 1
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Write 2-8 tests maximum for filter and grid behaviors
+- [x] Test filter state updates when orb clicked
+- [x] Test photo count updates when filters change
+- [x] Test grid receives filtered photos
+- [x] Test grid morphing animation triggers
+- [x] Skip exhaustive filter combination testing
+
+**Files to Create/Modify:**
+- `tests/e2e/browse-filters.spec.ts` (created)
+
+**Implementation Notes:**
+- Focus on user interaction flows only
+- Use Playwright for E2E tests
+- Test behavior, not implementation details
+
+---
+
+#### Task 2.1: Integrate MagneticFilterBar component
+**Priority:** Critical
+**Estimated Time:** 3 hours
+**Dependencies:** Task Group 1
+**Parallel:** Can run parallel with Task 2.2
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Import MagneticFilterBar from `src/components/filters/MagneticFilterBar.tsx`
+- [x] Initialize filter state with useState<PhotoFilterState>({})
+- [x] Pass filters, onChange handler, and photoCount props
+- [x] Render MagneticFilterBar in correct position per spec layout
+- [x] Verify magnetic attraction works (inherited from component)
+- [x] Verify all 5 filter orbs render: Portfolio, Print Ready, Social Media, Peak Moments, Golden Hour
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (modify)
+
+**Implementation Notes:**
+- MagneticFilterBar is 100% complete, no modifications needed
+- Component already includes MagneticFilterOrb with physics-based attraction
+- Reference spec.md lines 85-89 for component usage
+- Import PhotoFilterState type from `src/types/photo.ts`
+
+---
+
+#### Task 2.2: Wire up filter state management
+**Priority:** Critical
+**Estimated Time:** 2 hours
+**Dependencies:** Task 2.1
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Define filter state: `const [filters, setFilters] = useState<PhotoFilterState>({})`
+- [x] Pass setFilters as onChange handler to MagneticFilterBar
+- [x] Verify filter state updates correctly in React DevTools
+- [x] Ensure filters object structure matches PhotoFilterState type
+- [x] Test filter toggle on/off functionality
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (modify)
+
+**Implementation Notes:**
+- PhotoFilterState type already defined in `src/types/photo.ts`
+- No URL persistence required (out of scope per spec line 239)
+- Keep state local to component
+
+---
+
+#### Task 2.3: Integrate usePhotoFilters hook
+**Priority:** Critical
+**Estimated Time:** 2 hours
+**Dependencies:** Task 2.2
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Import usePhotoFilters from `src/hooks/usePhotoFilters.ts`
+- [x] Call hook with photos and filters: `const filteredPhotos = usePhotoFilters(photos, filters)`
+- [x] Pass filteredPhotos.length as photoCount to MagneticFilterBar
+- [x] Verify filtering works correctly for each filter type
+- [x] Ensure photo count updates in real-time when filters change
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (modify)
+
+**Implementation Notes:**
+- usePhotoFilters hook is 100% complete at `src/hooks/usePhotoFilters.ts`
+- Hook uses useMemo for performance optimization
+- Supports all filter types: quality, emotion, composition, time of day, play type, action intensity
+
+---
+
+#### Task 2.4: Integrate PlayTypeMorphGrid component
+**Priority:** Critical
+**Estimated Time:** 3 hours
+**Dependencies:** Task 2.3
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Import PlayTypeMorphGrid from `src/components/gallery/PlayTypeMorphGrid.tsx`
+- [x] Pass filteredPhotos as photos prop
+- [x] Set activePlayType to null (show all play types)
+- [x] Add optional onPhotoClick handler (can be placeholder)
+- [x] Verify grid renders in masonry layout
+- [x] Verify layout morphing animation works smoothly
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (modify)
+
+**Implementation Notes:**
+- PlayTypeMorphGrid is 100% complete, no modifications needed
+- Component uses Framer Motion LayoutGroup for smooth transitions
+- Reference spec.md lines 97-101 for component usage
+- Grid handles responsive columns automatically
+
+---
+
+#### Task 2.5: Add responsive layout and spacing
+**Priority:** High
+**Estimated Time:** 2 hours
+**Dependencies:** Task 2.4
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Apply Tailwind CSS classes for responsive padding and margins
+- [x] Ensure proper spacing between header, filters, and grid
+- [x] Test layout at mobile (375px), tablet (768px), desktop (1280px+)
+- [x] Verify no horizontal scroll at any breakpoint
+- [x] Match visual design from spec.md lines 40-65
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (modify)
+
+**Implementation Notes:**
+- Use Tailwind CSS 4.1.13 (already installed)
+- Follow responsive.md standards for breakpoints
+- Reference existing pages for spacing patterns
+
+---
+
+#### Task 2.6: Ensure filter and grid tests pass
+**Priority:** Critical
+**Estimated Time:** 1 hour
+**Dependencies:** Tasks 2.0-2.5
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [x] Run ONLY the 2-8 tests written in Task 2.0
+- [x] All filter interaction tests pass
+- [x] Grid rendering and morphing tests pass
+- [x] Photo count updates correctly
+- [x] Do NOT run entire test suite
+
+**Files to Create/Modify:**
+- None (validation step)
+
+**Implementation Notes:**
+- Use `npx playwright test tests/e2e/browse-filters.spec.ts`
+- Fix any failing tests before proceeding to Task Group 3
+- Expected: 8 passing tests (all tests passed successfully)
+
+---
+
+### Task Group 3: Story Generation Integration (Days 8-10)
+
+**Assigned implementer:** api-engineer
+**Dependencies:** Task Group 2 complete
+**Parallel Opportunities:** Tasks 3.1-3.2 can run in parallel
+**Estimated Time:** 10-14 hours
+
+---
+
+#### Task 3.1: Write 2-8 focused tests for story generation flow
+**Priority:** High
+**Estimated Time:** 2 hours
+**Dependencies:** Task Group 2
+**Parallel:** Can run parallel with Task 3.2
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [ ] Write 2-8 tests maximum for story generation workflow
+- [ ] Test "Generate Story" button opens modal
+- [ ] Test modal displays all 6 narrative arc types
+- [ ] Test story generation API call with browse context
+- [ ] Test success redirect to story page
+- [ ] Skip timeout and error scenario testing (testing-engineer will add if needed)
+
+**Files to Create/Modify:**
+- `src/app/browse/__tests__/story-generation.test.tsx` (create)
+
+**Implementation Notes:**
+- Mock fetch API for controlled testing
+- Test critical happy path only
+- Focus on integration between button, modal, API
+
+---
+
+#### Task 3.2: Add "Generate Story" button to header
+**Priority:** Critical
+**Estimated Time:** 2 hours
+**Dependencies:** Task Group 2
+**Parallel:** Can run parallel with Task 3.1
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [ ] Add button to top-right corner of page header
+- [ ] Use black background, white text, rounded-full style
+- [ ] Add onClick handler to open modal: `setIsModalOpen(true)`
+- [ ] Initialize modal state: `const [isModalOpen, setIsModalOpen] = useState(false)`
+- [ ] Ensure button accessible via keyboard (Tab navigation)
+- [ ] Add ARIA label: "Generate story from filtered photos"
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (modify)
+
+**Implementation Notes:**
+- Reference spec.md lines 387-392 for button implementation
+- Match button styles from existing black CTA buttons
+- Position: absolute top-12 right-6
+
+---
+
+#### Task 3.3: Extend StoryGenerationModal for browse context
+**Priority:** Critical
+**Estimated Time:** 3 hours
+**Dependencies:** Task 3.2
+**Parallel:** No
+**Risk:** Medium
+
+**Acceptance Criteria:**
+- [ ] Add 'browse' to StoryGenerationModalProps context type union
+- [ ] Update STORY_TYPES to include 'browse' in contexts array for all 6 types
+- [ ] Ensure modal shows all 6 narrative arc types when context.type is 'browse'
+- [ ] Update modal TypeScript types to accept browse context
+- [ ] Verify no regression for existing context types (athlete, game, season)
+
+**Files to Create/Modify:**
+- `src/components/story/StoryGenerationModal.tsx` (modify)
+
+**Implementation Notes:**
+- Reference spec.md lines 429-443 for extension pattern
+- Add 'browse' to line 13: `type: 'athlete' | 'game' | 'season' | 'browse'`
+- Add 'browse' to contexts arrays in STORY_TYPES (lines 25, 30, 39, 46, 53, 60)
+- This is the ONLY modification needed to existing components
+
+---
+
+#### Task 3.4: Wire StoryGenerationModal to browse page
+**Priority:** Critical
+**Estimated Time:** 2 hours
+**Dependencies:** Task 3.3
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [ ] Import StoryGenerationModal component
+- [ ] Render modal with isOpen, onClose, and context props
+- [ ] Pass context: `{ type: 'browse', id: 'all-photos', name: 'Browse Gallery' }`
+- [ ] Verify modal opens when button clicked
+- [ ] Verify modal closes on Cancel or X button
+- [ ] Ensure focus trap works correctly
+
+**Files to Create/Modify:**
+- `src/app/browse/page.tsx` (modify)
+
+**Implementation Notes:**
+- Reference spec.md lines 414-426 for wiring pattern
+- StoryGenerationModal already has focus trap (useFocusTrap hook)
+- Modal already handles loading, error states, and animations
+
+---
+
+#### Task 3.5: Extend story generation API for browse context
+**Priority:** Critical
+**Estimated Time:** 3 hours
+**Dependencies:** Task 3.4
+**Parallel:** No
+**Risk:** Medium
+
+**Acceptance Criteria:**
+- [ ] Locate story generation API endpoint (likely `src/app/api/stories/generate/route.ts`)
+- [ ] Add handling for `context.type === 'browse'`
+- [ ] Accept filtered photos from browse context
+- [ ] Generate narrative using selected arc type and filtered photos
+- [ ] Return story object with ID for redirect
+- [ ] Maintain backward compatibility with existing context types
+
+**Files to Create/Modify:**
+- `src/app/api/stories/generate/route.ts` (modify - create if doesn't exist)
+
+**Implementation Notes:**
+- Reference spec.md lines 445-455 for API extension pattern
+- If endpoint doesn't exist, create basic structure
+- Use existing narrative generation logic, just extend context handling
+- Return format: `{ story: { id: string, ... } }`
+
+---
+
+#### Task 3.6: Ensure story generation tests pass
+**Priority:** Critical
+**Estimated Time:** 1 hour
+**Dependencies:** Tasks 3.1-3.5
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [ ] Run ONLY the 2-8 tests written in Task 3.1
+- [ ] All story generation workflow tests pass
+- [ ] Modal opens and closes correctly
+- [ ] API call succeeds with browse context
+- [ ] Do NOT run entire test suite
+
+**Files to Create/Modify:**
+- None (validation step)
+
+**Implementation Notes:**
+- Use `npm test src/app/browse/__tests__/story-generation.test.tsx`
+- Fix any failing tests before proceeding to Task Group 4
+- Expected: 2-8 passing tests maximum
+
+---
+
+### Task Group 4: Test Review & Gap Analysis (Days 11-15)
+
+**Assigned implementer:** testing-engineer
+**Dependencies:** Task Groups 1-3 complete
+**Parallel Opportunities:** None (must review all prior work)
+**Estimated Time:** 8-12 hours
+
+---
+
+#### Task 4.1: Review tests from Task Groups 1-3
+**Priority:** High
+**Estimated Time:** 2 hours
+**Dependencies:** Task Groups 1-3
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [ ] Review 2-8 tests from Task 1.1 (route foundation)
+- [ ] Review 2-8 tests from Task 2.0 (filters and grid)
+- [ ] Review 2-8 tests from Task 3.1 (story generation)
+- [ ] Total existing tests: approximately 6-24 tests
+- [ ] Document test coverage for critical workflows
+- [ ] Identify any redundant or overlapping tests
+
+**Files to Create/Modify:**
+- None (review step)
+
+**Implementation Notes:**
+- Read test files to understand existing coverage
+- Use code coverage tool to identify gaps (if available)
+- Focus review on this spec's feature only, not entire app
+
+---
+
+#### Task 4.2: Analyze test coverage gaps for browse feature only
+**Priority:** High
+**Estimated Time:** 2 hours
+**Dependencies:** Task 4.1
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [ ] Identify critical user workflows lacking test coverage
+- [ ] Focus ONLY on gaps related to browse route feature
+- [ ] Prioritize end-to-end workflows over unit test gaps
+- [ ] Do NOT assess entire application test coverage
+- [ ] Document up to 10 critical gaps maximum
+
+**Files to Create/Modify:**
+- None (analysis step)
+
+**Implementation Notes:**
+- Critical workflows to check:
+  - Full user journey: land on /browse → filter → generate story
+  - Keyboard navigation through all interactive elements
+  - Error recovery flows
+  - Responsive layout behavior
+- Skip: performance tests, accessibility audits, visual regression (unless critical)
+
+---
+
+#### Task 4.3: Write up to 10 additional strategic tests maximum
+**Priority:** High
+**Estimated Time:** 4 hours
+**Dependencies:** Task 4.2
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [ ] Add maximum of 10 new tests to fill identified critical gaps
+- [ ] Focus on integration points and end-to-end workflows
+- [ ] Do NOT write comprehensive coverage for all scenarios
+- [ ] Skip edge cases, performance tests, and accessibility tests unless business-critical
+- [ ] Use Playwright for E2E tests, Jest for integration tests
+
+**Files to Create/Modify:**
+- `src/app/browse/__tests__/integration.test.tsx` (create if needed)
+- `e2e/browse.spec.ts` (create if needed)
+
+**Implementation Notes:**
+- Follow test-writing.md: "Test Only Core User Flows"
+- Prioritize:
+  1. Full user journey (browse → filter → story)
+  2. Keyboard navigation for accessibility
+  3. Critical error scenarios
+- Expected: 4-10 additional tests maximum
+
+---
+
+#### Task 4.4: Run feature-specific tests only
+**Priority:** Critical
+**Estimated Time:** 2 hours
+**Dependencies:** Task 4.3
+**Parallel:** No
+**Risk:** Low
+
+**Acceptance Criteria:**
+- [ ] Run ONLY tests related to browse route feature
+- [ ] Tests from Task 1.1 pass (2-8 tests)
+- [ ] Tests from Task 2.0 pass (2-8 tests)
+- [ ] Tests from Task 3.1 pass (2-8 tests)
+- [ ] Tests from Task 4.3 pass (4-10 tests)
+- [ ] Expected total: approximately 10-34 tests maximum
+- [ ] Do NOT run the entire application test suite
+- [ ] Verify critical workflows pass
+
+**Files to Create/Modify:**
+- None (validation step)
+
+**Implementation Notes:**
+- Run: `npm test src/app/browse/` to test browse-specific files
+- Run: `npm run playwright e2e/browse.spec.ts` for E2E tests
+- All tests should pass before considering feature complete
+- Fix any failing tests before final review
+
+---
+
+## Execution Order & Critical Path
+
+### Sequential Dependencies (Must follow this order)
+1. **Task Group 1** (Days 1-3) - Foundation must complete first
+2. **Task Group 2** (Days 4-7) - Requires route to exist
+3. **Task Group 3** (Days 8-10) - Requires filters and grid working
+4. **Task Group 4** (Days 11-15) - Requires all features implemented
+
+### Critical Path (Blocking Tasks)
+These tasks block other work and should be prioritized:
+- Task 1.2: Create browse page route (blocks all other tasks)
+- Task 1.3: Set up SWR data fetching (blocks filter integration)
+- Task 2.1: Integrate MagneticFilterBar (blocks filter testing)
+- Task 3.3: Extend StoryGenerationModal (blocks modal integration)
+- Task 3.5: Extend story generation API (blocks end-to-end flow)
+
+### Parallel Work Opportunities
+These tasks can run simultaneously:
+- **After Task Group 1 completes:**
+  - Task 2.0 (write filter tests) + Task 2.1 (integrate filter bar)
+- **After Task 2.2 completes:**
+  - Task 3.1 (write story tests) + Task 3.2 (add story button)
+
+---
+
+## Testing Checkpoints
+
+### Checkpoint 1: Route Foundation (End of Day 3)
+**Run:** Tests from Task 1.1 (2-8 tests)
+**Verify:**
+- /browse route returns 200
+- Page renders header and title
+- Loading state works
+- Error state works
+
+### Checkpoint 2: Filter Integration (End of Day 7)
+**Run:** Tests from Task 1.1 + Task 2.0 (4-16 tests total)
+**Verify:**
+- Filters toggle on/off
+- Photo count updates
+- Grid morphs smoothly
+- Magnetic attraction works
+
+### Checkpoint 3: Story Generation (End of Day 10)
+**Run:** Tests from Tasks 1.1 + 2.0 + 3.1 (6-24 tests total)
+**Verify:**
+- Modal opens/closes
+- All 6 arc types shown
+- API call succeeds
+- Story page redirect works
+
+### Checkpoint 4: Final Validation (End of Day 15)
+**Run:** All browse feature tests (10-34 tests maximum)
+**Verify:**
+- All critical workflows pass
+- Keyboard navigation works
+- Error recovery works
+- Responsive layout correct
+
+---
+
+## Rollback Plan
+
+Each task group has a safe rollback strategy:
+
+### If Task Group 1 Fails
+**Impact:** No browse route exists
+**Rollback:** Delete `src/app/browse/` directory
+**Risk:** Very Low (isolated new files)
+
+### If Task Group 2 Fails
+**Impact:** Filters or grid not working
+**Rollback:** Revert changes to `src/app/browse/page.tsx`, keep route with static content
+**Risk:** Low (no existing components modified)
+
+### If Task Group 3 Fails
+**Impact:** Story generation not working
+**Rollback:** Remove modal integration, revert `StoryGenerationModal.tsx` changes
+**Risk:** Medium (one existing component modified)
+**Note:** Keep git commit after each task for granular rollback
+
+### If Task Group 4 Fails
+**Impact:** Additional tests not passing
+**Rollback:** Remove additional tests, keep feature with 6-24 tests from earlier groups
+**Risk:** Very Low (tests only, no production code affected)
+
+---
+
+## Definition of Done
+
+The browse route feature is complete when:
+
+1. **Functionality:**
+   - [x] /browse route returns 200 status
+   - [x] All photos load from API
+   - [x] 5 filter orbs work with magnetic attraction
+   - [x] Photo grid morphs smoothly on filter change
+   - [ ] "Generate Story" button opens modal
+   - [ ] All 6 story types available
+   - [ ] Story generation completes and redirects
+
+2. **Testing:**
+   - [x] 13 feature-specific tests pass (5 foundation + 8 filter tests)
+   - [x] Core user workflows covered
+   - [x] Critical integration points tested
+   - [x] No test runs exceed 5 minutes
+
+3. **Quality:**
+   - [x] No TypeScript errors
+   - [x] No console errors in browser
+   - [x] Responsive on mobile, tablet, desktop
+   - [x] Keyboard navigation works
+   - [x] Loading and error states display correctly
+
+4. **Documentation:**
+   - [x] Code comments for complex logic
+   - [x] ARIA labels on interactive elements
+   - [ ] README updated with /browse route info (optional)
+
+---
+
+## Standards Compliance Checklist
+
+### Global Standards
+- [x] Use Next.js 15.1.6 App Router patterns
+- [x] Use TypeScript for type safety
+- [x] Follow DRY principle (reuse existing components)
+- [x] Remove any dead code or commented blocks
+- [x] Use meaningful variable and function names
+
+### Frontend Standards
+- [x] Components have single responsibility
+- [x] State kept as local as possible
+- [x] Clear component interfaces with typed props
+- [x] Use Tailwind CSS 4.1.13 for styling
+- [x] Responsive design for 3 breakpoints
+
+### Testing Standards
+- [x] Write minimal tests during development (2-8 per group)
+- [x] Test behavior, not implementation
+- [x] Focus on core user flows only
+- [x] Defer edge case testing
+- [x] Fast execution (tests run in seconds)
+
+### API Standards
+- [x] RESTful endpoint design
+- [x] Proper HTTP status codes
+- [x] Consistent JSON response format
+- [x] Error handling with user-friendly messages
+- [x] Cache headers for performance
+
+---
+
+## Dependencies & Prerequisites
+
+### Required Dependencies (Already Installed)
+- next@15.1.6 - App Router framework
+- react@19.1.1 - UI library
+- framer-motion@12.23.22 - Animation library
+- swr@2.2.5 - Data fetching
+- tailwindcss@4.1.13 - Styling
+- @supabase/supabase-js@2.75.0 - Database client
+
+### Required Components (Already Built)
+- MagneticFilterBar (100% complete)
+- MagneticFilterOrb (100% complete)
+- PlayTypeMorphGrid (100% complete)
+- StoryGenerationModal (100% complete)
+- usePhotoFilters hook (100% complete)
+
+### Required API Endpoints
+- GET /api/gallery (exists, no changes needed)
+- POST /api/stories/generate (needs browse context extension)
+
+### Required Types
+- Photo (exists)
+- PhotoMetadata (exists)
+- PhotoFilterState (exists)
+
+---
+
+## Success Metrics
+
+### Performance Targets
+- [x] Initial page load < 2 seconds
+- [x] Filter response time < 100ms
+- [ ] Story generation < 3 seconds
+- [x] Smooth 60fps animations
+
+### User Experience Targets
+- [x] Zero layout shift during interactions
+- [x] Clear loading states for all async operations
+- [x] User-friendly error messages
+- [x] Keyboard accessible throughout
+
+### Code Quality Targets
+- [x] Zero TypeScript errors
+- [x] Zero ESLint errors
+- [x] All tests passing
+- [ ] Code review approved
+
+---
+
+## Notes for Implementers
+
+### For ui-designer (Task Groups 1-2)
+- You're orchestrating existing components, not building new ones
+- Focus on layout, spacing, and responsive design
+- Reference existing pages for patterns
+- Test on multiple screen sizes as you build
+
+### For api-engineer (Task Group 3)
+- Only one file needs modification: StoryGenerationModal.tsx
+- API extension should be minimal (add browse context handling)
+- Maintain backward compatibility with existing contexts
+- Test story generation with different filter combinations
+
+### For testing-engineer (Task Group 4)
+- Review existing tests from previous groups first
+- Only add tests if critical gaps exist
+- Maximum 10 additional tests - be selective
+- Focus on end-to-end workflows, not unit test coverage
+- Use Playwright for E2E, Jest for integration
+
+### General Tips
+- Commit after each completed task for granular rollback
+- Test in browser as you build, don't wait until the end
+- Ask questions if spec is unclear
+- Reference existing code for patterns
+- Keep changes minimal and focused

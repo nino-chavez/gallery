@@ -1,0 +1,38 @@
+task_assignments:
+  # PHASE 1: Design System Enforcement
+  - task_group: "Task Group 1.1: Core Design System Components"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 1.2: Button Component Migration"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 1.3: Typography Component Migration"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 1.4: Color Token Enforcement"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 1.5: Phase 1 Testing & Verification"
+    assigned_subagent: "testing-engineer"
+
+  # PHASE 2: Component Refinement
+  - task_group: "Task Group 2.1: PortfolioGrid Layout Optimization"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 2.2: EmotionTimeline GSAP Repair"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 2.3: StoryViewer Accessibility Enhancement"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 2.4: Skeleton Loading States Implementation"
+    assigned_subagent: "ui-designer"
+
+  - task_group: "Task Group 2.5: Phase 2 Testing & Verification"
+    assigned_subagent: "testing-engineer"
+
+  # PHASE 3: Polish & Micro-Interactions + Experiential Enhancements
+  - task_group: "Task Group 3.2: Micro-Interactions Enhancement"
+    assigned_subagent: "ui-designer"
+
+  # Note: All tasks in this spec have been completed. Task assignments created for documentation purposes.

@@ -1,0 +1,187 @@
+# Workflow Configuration for Innovation Implementation Spec
+# Per-phase workflow mode overrides
+
+spec_id: 2025-10-16-innovation-implementation
+version: 1.0.0
+
+# Phase-specific workflow modes
+phases:
+  phase_1:
+    mode: thorough
+    status: completed
+    reason: "Critical accessibility fixes and foundation work required comprehensive verification"
+    notes: "Completed with full multi-agent workflow - WCAG AA compliance achieved"
+
+  phase_2:
+    mode: thorough
+    status: completed
+    reason: "Surfacing existing innovations required careful integration across multiple systems"
+    notes: "Completed with full multi-agent workflow - 21/21 tasks completed successfully"
+
+  phase_3:
+    mode: direct
+    status: completed
+    reason: "Microinteractions and polish are straightforward UI work with low risk"
+    rationale: |
+      Phase 3 focuses on:
+      - Shared element transitions (Framer Motion animations)
+      - Photo card physics (hover effects, spring animations)
+      - Scroll-linked animations (Intersection Observer)
+      - Enhanced empty states (visual design)
+      - UI polish and refinement
+
+      All tasks are:
+      - Frontend-only (no backend changes)
+      - Relatively isolated (single components)
+      - Low risk (polish work, not core functionality)
+      - Well-documented patterns already exist in codebase
+
+      Direct implementation advantages:
+      - 3-4x faster completion
+      - 70-80% token savings
+      - Same quality outcome (follows existing patterns)
+      - Immediate testing and iteration
+
+  phase_4:
+    mode: selective
+    status: pending
+    reason: "3D work has mixed complexity - delegate complex tasks, handle simple ones directly"
+    rationale: |
+      Phase 4 includes:
+      - HIGH COMPLEXITY: 3D infrastructure (Three.js, WebGL setup) - DELEGATE
+      - HIGH COMPLEXITY: Emotion orbs with shaders - DELEGATE
+      - MEDIUM COMPLEXITY: Photo particle system - DELEGATE
+      - MEDIUM COMPLEXITY: Camera flight animations - EVALUATE
+      - LOW COMPLEXITY: View toggle system - DIRECT
+      - MEDIUM COMPLEXITY: Accessibility adaptations - DIRECT
+
+      Selective delegation:
+      - Delegate Three.js/WebGL setup to ui-designer (specialized 3D knowledge)
+      - Delegate shader programming and particle systems
+      - Handle UI toggles and accessibility directly
+      - Use single final verification instead of multi-phase
+
+      Expected savings vs thorough mode:
+      - 40-50% token reduction
+      - 2x faster than thorough mode
+      - Maintains quality for complex 3D work
+
+# Task Group Analysis
+# Helps determine which task groups need delegation
+
+task_groups:
+  # Phase 3 Task Groups - All direct implementation
+  "Task Group 3.1: Shared Element Transitions":
+    complexity: low
+    implementation_mode: direct
+    reason: "Framer Motion layout animations - well-documented pattern"
+
+  "Task Group 3.2: Photo Card Physics":
+    complexity: low
+    implementation_mode: direct
+    reason: "Spring physics with existing MOTION tokens - straightforward"
+
+  "Task Group 3.3: Scroll-Linked Animations":
+    complexity: low
+    implementation_mode: direct
+    reason: "Intersection Observer + GSAP - standard pattern"
+
+  "Task Group 3.4: Enhanced Empty States":
+    complexity: low
+    implementation_mode: direct
+    reason: "Visual design with existing EmptyState component"
+
+  "Task Group 3.5: Phase 3 Testing":
+    complexity: medium
+    implementation_mode: direct
+    reason: "Playwright tests following existing patterns from Phase 1 & 2"
+
+  # Phase 4 Task Groups - Selective delegation
+  "Task Group 4.1: 3D Infrastructure Setup":
+    complexity: high
+    implementation_mode: delegate
+    assigned_to: ui-designer
+    reason: "Three.js scene setup, WebGL context, performance optimization"
+
+  "Task Group 4.2: Emotion Orbs":
+    complexity: high
+    implementation_mode: delegate
+    assigned_to: ui-designer
+    reason: "Custom shaders, particle effects, complex Three.js work"
+
+  "Task Group 4.3: Photo Particle System":
+    complexity: high
+    implementation_mode: delegate
+    assigned_to: ui-designer
+    reason: "Instanced mesh rendering, photo-to-particle transformation"
+
+  "Task Group 4.4: Camera Flight Animations":
+    complexity: medium
+    implementation_mode: evaluate_at_runtime
+    reason: "May be straightforward GSAP timeline work or complex orbital mechanics"
+
+  "Task Group 4.5: Story Constellations":
+    complexity: medium
+    implementation_mode: delegate
+    assigned_to: ui-designer
+    reason: "3D line rendering and procedural generation"
+
+  "Task Group 4.6: View Toggle System":
+    complexity: low
+    implementation_mode: direct
+    reason: "React state management and UI controls"
+
+  "Task Group 4.7: Accessibility & Performance":
+    complexity: medium
+    implementation_mode: direct
+    reason: "ARIA attributes, reduced motion, FPS monitoring - standard patterns"
+
+  "Task Group 4.8: Phase 4 Testing":
+    complexity: medium
+    implementation_mode: delegate
+    assigned_to: testing-engineer
+    reason: "3D testing requires specialized knowledge of WebGL testing strategies"
+
+# Quality Assurance Strategy
+
+quality_assurance:
+  phase_3:
+    strategy: self_verify
+    checks:
+      - ESLint and TypeScript passes
+      - Playwright tests for critical interactions
+      - Visual inspection of animations
+      - Performance check (60fps maintained)
+      - Accessibility check (keyboard navigation)
+    documentation: minimal
+    deliverables:
+      - Implementation summary
+      - Test results
+      - No intermediate verification docs
+
+  phase_4:
+    strategy: targeted_verification
+    checks:
+      - Delegated tasks verified by ui-designer
+      - Direct implementations self-verified
+      - Single comprehensive verification at end
+      - 3D performance profiling (Chrome DevTools)
+      - WebGL compatibility testing
+    documentation: focused
+    deliverables:
+      - Implementation summary for complex tasks
+      - Final verification report (single document)
+      - Performance benchmarks
+
+# Success Metrics
+
+success_metrics:
+  phase_3:
+    time_savings: "Complete in 1-2 days vs 5-7 days with thorough mode"
+    token_savings: "70-80% reduction vs thorough mode"
+    quality_maintained: "Same standards compliance, WCAG AA, 60fps animations"
+
+  phase_4:
+    time_savings: "Complete in 7-10 days vs 14-20 days with thorough mode"
+    token_savings: "40-50% reduction vs thorough mode"
+    quality_maintained: "Specialized 3D expertise where needed, efficient for simple tasks"

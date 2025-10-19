@@ -1,0 +1,23 @@
+version: 2.1.0
+last_compiled: 2025-10-16 12:00:00
+profile: default
+
+# Multi-Agent Configuration
+multi_agent_mode: true
+multi_agent_tool: claude-code
+single_agent_mode: false
+
+# Workflow Mode Configuration
+# Options: direct, selective, thorough
+# See agent-os/workflows/implementation-modes.yml for details
+workflow:
+  default_mode: direct  # Changed from thorough to direct (per user request)
+  auto_select: true     # Enable intelligent mode selection based on task complexity
+
+  # Project profile for auto-selection
+  project_profile: medium  # Options: small, medium, large
+
+  # Mode overrides per phase (optional)
+  # phase_overrides:
+  #   phase_3: direct      # Microinteractions - use direct mode
+  #   phase_4: selective   # 3D work - use selective delegation
