@@ -9,7 +9,7 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
-	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
+	import Lightbox from '$lib/components/gallery/Lightbox.svelte'; // NEW: Full-screen lightbox viewer
 	import SportFilter from '$lib/components/filters/SportFilter.svelte'; // NEW: Sport filter
 	import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte'; // NEW: Category filter
 	import SearchAutocomplete from '$lib/components/search/SearchAutocomplete.svelte'; // NEW: Search autocomplete
@@ -19,9 +19,9 @@
 	// Svelte 5 Runes: $props to receive server data
 	let { data }: { data: PageData } = $props();
 
-	// Modal state
-	let modalOpen = $state(false);
-	let selectedPhoto = $state<Photo | null>(null);
+	// Lightbox state (NEW - Week 3)
+	let lightboxOpen = $state(false);
+	let selectedPhotoIndex = $state(0);
 
 	// Search with autocomplete
 	let searchQuery = $state('');
@@ -38,9 +38,18 @@
 		);
 	});
 
+	// NEW: Open lightbox when photo is clicked
 	function handlePhotoClick(photo: Photo) {
-		selectedPhoto = photo;
-		modalOpen = true;
+		const index = displayPhotos.findIndex((p) => p.id === photo.id);
+		if (index !== -1) {
+			selectedPhotoIndex = index;
+			lightboxOpen = true;
+		}
+	}
+
+	// NEW: Handle lightbox navigation
+	function handleLightboxNavigate(newIndex: number) {
+		selectedPhotoIndex = newIndex;
 	}
 
 	// NEW: Handle sport filter selection
@@ -245,5 +254,11 @@
 	</div>
 </Motion>
 
-<!-- Photo Detail Modal -->
-<PhotoDetailModal bind:open={modalOpen} photo={selectedPhoto} />
+<!-- Lightbox Full-Screen Viewer (NEW - Week 3) -->
+<Lightbox
+	bind:open={lightboxOpen}
+	photo={displayPhotos[selectedPhotoIndex] || null}
+	photos={displayPhotos}
+	currentIndex={selectedPhotoIndex}
+	onNavigate={handleLightboxNavigate}
+/>
