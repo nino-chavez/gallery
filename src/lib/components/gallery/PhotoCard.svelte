@@ -11,26 +11,25 @@
 	import { MOTION } from '$lib/motion-tokens';
 	import { getPhotoQualityScore } from '$lib/photo-utils';
 	import Typography from '$lib/components/ui/Typography.svelte';
+	import OptimizedImage from '$lib/components/ui/OptimizedImage.svelte';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
 		photo: Photo;
 		index?: number;
 		onclick?: (photo: Photo) => void; // Deprecated: Use href navigation instead
+		priority?: boolean; // For above-fold images
 	}
 
-	let { photo, index = 0, onclick }: Props = $props();
+	let { photo, index = 0, onclick, priority = false }: Props = $props();
 
 	// Keep computed values for aria-label accessibility
 	let qualityScore = $derived(getPhotoQualityScore(photo));
 	let portfolioWorthy = $derived(photo.metadata.portfolio_worthy);
 
-	// Image loading state
-	let imageLoaded = $state(false);
-	let imageError = $state(false);
-
-	// Use thumbnail for grid, fallback to image_url
-	let imageSrc = $derived(photo.thumbnail_url || photo.image_url);
+	// Use image_url for display, thumbnail as blur placeholder
+	let imageSrc = $derived(photo.image_url);
+	let thumbnailSrc = $derived(photo.thumbnail_url);
 
 	// Generate individual photo URL for SEO
 	let photoUrl = $derived(`/photo/${photo.image_key}`);
@@ -42,16 +41,6 @@
 			onclick(photo);
 		}
 		// Otherwise, let the anchor tag navigate naturally to /photo/[id]
-	}
-
-	function handleImageLoad() {
-		imageLoaded = true;
-		imageError = false;
-	}
-
-	function handleImageError() {
-		imageError = true;
-		imageLoaded = false;
 	}
 </script>
 
@@ -69,29 +58,15 @@
 		aria-label={photo.title || `Photo ${index + 1}`}
 		onclick={handleClick}
 	>
-		<!-- Loading/Error State -->
-		{#if !imageLoaded || imageError}
-			<div
-				class="absolute inset-0 bg-gradient-to-br from-charcoal-800 to-charcoal-900 flex items-center justify-center"
-				aria-hidden="true"
-			>
-				<Camera class="w-12 h-12 text-charcoal-600" />
-			</div>
-		{/if}
-
-		<!-- Actual Image -->
-		{#if imageSrc && !imageError}
-			<img
-				src={imageSrc}
-				alt={photo.title || `Photo ${index + 1}`}
-				loading="lazy"
-				class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 {imageLoaded
-					? 'opacity-100'
-					: 'opacity-0'}"
-				onload={handleImageLoad}
-				onerror={handleImageError}
-			/>
-		{/if}
+		<!-- Optimized Image with Lazy Loading & Blur Placeholder (NEW - Week 3) -->
+		<OptimizedImage
+			src={imageSrc}
+			alt={photo.title || `Photo ${index + 1}`}
+			thumbnailSrc={thumbnailSrc}
+			aspectRatio="4/3"
+			{priority}
+			class="absolute inset-0"
+		/>
 
 		<!-- Simple Title Overlay (if title exists) -->
 		{#if photo.title}
