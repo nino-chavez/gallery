@@ -35,7 +35,7 @@ const config = {
 		paths: {
 			// Set base to '/gallery' for SvelteKit routing and asset paths
 			// Main site strips /gallery prefix: ninochavez.co/gallery/_app/* → nino-chavez-gallery.vercel.app/_app/*
-			base: '/gallery',
+			base: '/galleries',
 			// Use absolute paths (not relative) so proxy rewrites work correctly
 			relative: false
 		},
