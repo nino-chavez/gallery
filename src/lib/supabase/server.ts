@@ -255,7 +255,7 @@ export async function getSportDistribution(): Promise<Array<{ name: string; coun
     const { data: allPhotos, error: fetchError } = await supabaseServer
       .from('photo_metadata')
       .select('sport_type')
-      .not('sharpness', 'is', null')
+      .not('sharpness', 'is', null)
       .limit(25000); // Explicit large limit to get all photos
 
     if (fetchError) {

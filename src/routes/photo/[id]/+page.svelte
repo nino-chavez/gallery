@@ -7,11 +7,6 @@
 
 	let showModal = $state(true);
 
-	// Debug logging
-	console.log('Photo page data:', data);
-	console.log('Photo object:', data.photo);
-	console.log('Show modal:', showModal);
-
 	function handleClose() {
 		// Navigate back to referring page, or home if no referrer
 		if (document.referrer && document.referrer.includes(window.location.hostname)) {
