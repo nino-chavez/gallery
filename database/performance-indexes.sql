@@ -144,13 +144,11 @@ SELECT
     schemaname,
     tablename,
     indexname,
-    pg_size_pretty(pg_relation_size(indexrelid)) as index_size,
-    idx_scan as times_used,
-    idx_tup_read as tuples_read,
-    idx_tup_fetch as tuples_fetched
-FROM pg_stat_user_indexes
+    indexdef
+FROM pg_indexes
 WHERE tablename = 'photo_metadata'
-ORDER BY pg_relation_size(indexrelid) DESC;
+  AND schemaname = 'public'
+ORDER BY indexname;
 
 -- ============================================
 -- ANALYZE TABLE FOR QUERY PLANNER
@@ -214,15 +212,14 @@ ONGOING MAINTENANCE:
    Run this query monthly to identify unused indexes:
 
    SELECT
-       schemaname,
-       tablename,
-       indexname,
-       idx_scan,
-       pg_size_pretty(pg_relation_size(indexrelid)) as size
-   FROM pg_stat_user_indexes
-   WHERE tablename = 'photo_metadata'
-     AND idx_scan = 0
-   ORDER BY pg_relation_size(indexrelid) DESC;
+       i.schemaname,
+       i.tablename,
+       i.indexname,
+       pg_size_pretty(pg_relation_size(i.indexrelid::regclass)) as size
+   FROM pg_indexes i
+   WHERE i.tablename = 'photo_metadata'
+     AND i.schemaname = 'public'
+   ORDER BY indexname;
 
 2. Reindex if needed (after bulk updates):
    REINDEX TABLE photo_metadata;
