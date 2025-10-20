@@ -8,6 +8,9 @@
 import { getSportDistribution, getCategoryDistribution } from '$lib/supabase/server';
 import type { LayoutServerLoad } from './$types';
 
+// Trailing slash behavior: never add trailing slashes (matches main site)
+export const trailingSlash = 'never';
+
 // Cache duration: 5 minutes
 const CACHE_DURATION_MS = 5 * 60 * 1000;
 
