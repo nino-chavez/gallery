@@ -4,7 +4,7 @@
   "@type": "ProfessionalService",
   "name": "Nino Chavez Photography Gallery",
   "description": "Sports photography portfolio featuring 20,000+ AI-enriched action shots, candid portraits, and multi-sport coverage. Deep volleyball expertise with versatile sports photography capabilities.",
-  "url": "https://gallery.ninochavez.com",
+  "url": "https://photography.ninochavez.co",
   "foundingDate": "2020",
   "slogan": "Deep volleyball expertise with multi-sport versatility",
 
@@ -23,7 +23,7 @@
       "Senior Portraits",
       "Event Photography"
     ],
-    "url": "https://gallery.ninochavez.com/about"
+    "url": "https://photography.ninochavez.co/about"
   },
 
   "hasOfferCatalog": {
@@ -174,7 +174,7 @@
     "@type": "SearchAction",
     "target": {
       "@type": "EntryPoint",
-      "urlTemplate": "https://gallery.ninochavez.com/explore?q={search_term_string}"
+      "urlTemplate": "https://photography.ninochavez.co/explore?q={search_term_string}"
     },
     "query-input": "required name=search_term_string"
   },

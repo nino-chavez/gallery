@@ -34,7 +34,7 @@
 			'@type': 'Person',
 			name: 'Nino Chavez',
 			jobTitle: 'Sports Photographer',
-			url: 'https://gallery.ninochavez.com/about'
+			url: 'https://photography.ninochavez.co/about'
 		},
 		datePublished: data.photo.created_at,
 		keywords: data.photo.keywords.join(', '),

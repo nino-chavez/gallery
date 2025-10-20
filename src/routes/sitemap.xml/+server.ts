@@ -14,7 +14,7 @@ import { supabaseServer } from '$lib/supabase/server';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
-	const baseUrl = 'https://gallery.ninochavez.com';
+	const baseUrl = 'https://photography.ninochavez.co';
 
 	try {
 		// Fetch all photos with relevant metadata

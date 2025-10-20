@@ -35,7 +35,7 @@
 
 	// Get current photo URL for sharing
 	const photoUrl = $derived(
-		photo ? `${typeof window !== 'undefined' ? window.location.origin : 'https://gallery.ninochavez.com'}/photo/${photo.image_key}` : ''
+		photo ? `${typeof window !== 'undefined' ? window.location.origin : 'https://photography.ninochavez.co'}/photo/${photo.image_key}` : ''
 	);
 
 	let qualityScore = $derived(photo ? getPhotoQualityScore(photo) : 0);

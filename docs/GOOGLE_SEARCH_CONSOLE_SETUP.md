@@ -8,9 +8,9 @@
 Before starting, verify these are complete:
 
 - ✅ Gallery deployed to production
-- ✅ Sitemap.xml accessible at: `https://gallery.ninochavez.com/sitemap.xml`
-- ✅ Robots.txt accessible at: `https://gallery.ninochavez.com/robots.txt`
-- ✅ Individual photo pages working: `https://gallery.ninochavez.com/photo/[id]`
+- ✅ Sitemap.xml accessible at: `https://photography.ninochavez.co/sitemap.xml`
+- ✅ Robots.txt accessible at: `https://photography.ninochavez.co/robots.txt`
+- ✅ Individual photo pages working: `https://photography.ninochavez.co/photo/[id]`
 - ✅ Open Graph meta tags on all pages
 - ✅ Schema.org structured data on photo pages
 
@@ -32,7 +32,7 @@ Before starting, verify these are complete:
 
 **Choose Property Type:**
 - ✅ Select **"URL prefix"** (recommended)
-- Enter: `https://gallery.ninochavez.com`
+- Enter: `https://photography.ninochavez.co`
 - Click **Continue**
 
 **Why URL prefix?**
@@ -196,13 +196,13 @@ Average Position: Varies by keyword
 **Fix:**
 ```bash
 # 1. Test sitemap in browser
-curl https://gallery.ninochavez.com/sitemap.xml
+curl https://photography.ninochavez.co/sitemap.xml
 
 # 2. Validate XML
 # Paste sitemap content into: https://www.xml-sitemaps.com/validate-xml-sitemap.html
 
 # 3. Check robots.txt allows crawling
-curl https://gallery.ninochavez.com/robots.txt
+curl https://photography.ninochavez.co/robots.txt
 # Should see: User-agent: * / Allow: /
 ```
 
@@ -273,7 +273,7 @@ Don't forget to also submit to Bing!
 **How:**
 1. Go to: https://www.bing.com/webmasters
 2. Click **Add a site**
-3. Enter: `https://gallery.ninochavez.com`
+3. Enter: `https://photography.ninochavez.co`
 4. Verify (can import from Google Search Console!)
 5. Submit sitemap: `sitemap.xml`
 

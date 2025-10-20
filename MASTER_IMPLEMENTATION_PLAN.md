@@ -358,7 +358,7 @@ export const load: PageServerLoad = async ({ params }) => {
       description: seoDescription,
       ogImage: ogImage,
       ogType: 'article',
-      canonical: `https://gallery.ninochavez.com/photo/${params.id}`,
+      canonical: `https://photography.ninochavez.co/photo/${params.id}`,
     },
   };
 };
@@ -478,7 +478,7 @@ import { supabaseServer } from '$lib/supabase/server';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
-  const baseUrl = 'https://gallery.ninochavez.com';
+  const baseUrl = 'https://photography.ninochavez.co';
 
   // Fetch all photo IDs
   const { data: photos } = await supabaseServer
@@ -544,7 +544,7 @@ Allow: /photo/*
 Allow: /explore
 Allow: /collections
 Allow: /albums
-Sitemap: https://gallery.ninochavez.com/sitemap.xml
+Sitemap: https://photography.ninochavez.co/sitemap.xml
 
 # AI Bot Specific Rules
 User-agent: GPTBot
@@ -599,7 +599,7 @@ Allow: /
     "Multi-sport families tracking seasons"
   ],
   "api_capabilities": "Natural language search across 20K+ photos by sport, event, player, emotion, action type, and quality",
-  "contact": "https://gallery.ninochavez.com/about"
+  "contact": "https://photography.ninochavez.co/about"
 }
 ```
 
@@ -618,9 +618,9 @@ Allow: /
 
 1. **Google Search Console:**
    - Go to https://search.google.com/search-console
-   - Add property: gallery.ninochavez.com
+   - Add property: photography.ninochavez.co
    - Verify via DNS TXT record or HTML tag
-   - Submit sitemap: https://gallery.ninochavez.com/sitemap.xml
+   - Submit sitemap: https://photography.ninochavez.co/sitemap.xml
 
 2. **Bing Webmaster Tools:**
    - Go to https://www.bing.com/webmasters
@@ -636,7 +636,7 @@ Allow: /
 # - Twitter (should show card)
 # - Facebook (use Debug tool)
 
-https://gallery.ninochavez.com/photo/[sample-photo-id]
+https://photography.ninochavez.co/photo/[sample-photo-id]
 ```
 
 **Test URLs:**

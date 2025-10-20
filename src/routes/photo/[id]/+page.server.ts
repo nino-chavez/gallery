@@ -79,7 +79,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	const ogImage = photo.thumbnail_url || photo.image_url;
 
 	// Build canonical URL
-	const baseUrl = 'https://gallery.ninochavez.com';
+	const baseUrl = 'https://photography.ninochavez.co';
 	const canonicalUrl = `${baseUrl}/photo/${params.id}`;
 
 	// Fetch related photos (NEW - Week 2)

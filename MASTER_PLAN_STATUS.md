@@ -121,7 +121,7 @@ We've not only completed the entire 4-week master plan, but we've also **exceede
 | Analytics integration | Google Analytics | 🔄 NEXT | Ready for implementation |
 | **Deployment** |  |  |  |
 | Production deployment | Vercel | ✅ DONE | Live and tested |
-| Custom domain | gallery.ninochavez.com | 🔄 PENDING | DNS configuration |
+| Custom domain | photography.ninochavez.co | 🔄 PENDING | DNS configuration |
 
 **Week 4 Grade:** ✅ **A+++** (All planned + 10+ bonus optimizations!)
 
@@ -206,12 +206,12 @@ These features were **NOT** in the original 4-week plan but were implemented any
 
 ### **Critical (Do Now)**
 1. **Google Search Console Submission** ⏰ HIGH PRIORITY
-   - Sitemap is ready: `https://gallery.ninochavez.com/sitemap.xml`
+   - Sitemap is ready: `https://photography.ninochavez.co/sitemap.xml`
    - Just needs manual submission
    - Action: Go to Google Search Console → Add property → Submit sitemap
 
 2. **Custom Domain Configuration** 🔧 MEDIUM PRIORITY
-   - `gallery.ninochavez.com` needs DNS setup
+   - `photography.ninochavez.co` needs DNS setup
    - Vercel deployment is ready
    - Action: Configure DNS records
 
@@ -254,9 +254,9 @@ These features were **NOT** in the original 4-week plan but were implemented any
 ```bash
 # Steps:
 1. Go to: https://search.google.com/search-console
-2. Add property: gallery.ninochavez.com
+2. Add property: photography.ninochavez.co
 3. Verify ownership (DNS TXT record or HTML tag)
-4. Submit sitemap: https://gallery.ninochavez.com/sitemap.xml
+4. Submit sitemap: https://photography.ninochavez.co/sitemap.xml
 5. Monitor indexing progress
 ```
 
@@ -268,7 +268,7 @@ These features were **NOT** in the original 4-week plan but were implemented any
 ```bash
 # Vercel Configuration:
 1. Go to Vercel dashboard
-2. Add custom domain: gallery.ninochavez.com
+2. Add custom domain: photography.ninochavez.co
 3. Copy DNS records
 4. Update DNS provider with records
 5. Wait for SSL certificate (automatic)

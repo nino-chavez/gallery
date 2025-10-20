@@ -18,7 +18,7 @@ Allow: /explore
 Allow: /collections
 Allow: /albums/*
 Allow: /about
-Sitemap: https://gallery.ninochavez.com/sitemap.xml
+Sitemap: https://photography.ninochavez.co/sitemap.xml
 
 # AI Bot Specific Rules (Allow All)
 User-agent: GPTBot

@@ -154,7 +154,7 @@ Or manually trigger a redeploy:
 ## 🌐 Custom Domain Setup
 
 1. Vercel Dashboard → Your Project → Settings → Domains
-2. Add your domain: `gallery.ninochavez.com`
+2. Add your domain: `photography.ninochavez.co`
 3. Follow DNS configuration instructions
 4. Wait for DNS propagation (~24 hours)
 

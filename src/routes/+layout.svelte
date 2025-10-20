@@ -21,7 +21,7 @@
 	const siteTitle = 'Nino Chavez Photography';
 	const siteDescription =
 		'MOTION. EMOTION. Frame by Frame. Professional action sports photography capturing the intensity, emotion, and dynamic energy of volleyball, basketball, softball, and more.';
-	const siteUrl = 'https://nino-chavez-gallery.vercel.app';
+	const siteUrl = 'https://photography.ninochavez.co';
 	const ogImage = `${siteUrl}/images/og-image.jpg`;
 	const twitterHandle = '@flickday.media';
 

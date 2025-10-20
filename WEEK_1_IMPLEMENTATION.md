@@ -169,7 +169,7 @@ COPY (
 ### Features Implemented
 
 1. **Individual Photo URLs**
-   - Format: `https://gallery.ninochavez.com/photo/{image_key}`
+   - Format: `https://photography.ninochavez.co/photo/{image_key}`
    - Each photo has its own shareable URL
    - Direct navigation (not just modal)
 
@@ -202,7 +202,7 @@ COPY (
 
 3. **Test Share Preview (After Deployment)**
    - Deploy to Vercel: `npm run build && vercel deploy`
-   - Copy a photo URL (e.g., `https://gallery.ninochavez.com/photo/ABC123`)
+   - Copy a photo URL (e.g., `https://photography.ninochavez.co/photo/ABC123`)
    - Paste into Twitter, Facebook, or Slack
    - Verify rich preview card appears with photo thumbnail
 
@@ -291,10 +291,10 @@ COPY (
 
 2. **Submit Sitemap to Google Search Console**
    - Go to https://search.google.com/search-console
-   - Add property: `https://gallery.ninochavez.com`
+   - Add property: `https://photography.ninochavez.co`
    - Verify ownership (DNS or HTML meta tag)
    - Navigate to "Sitemaps" in left sidebar
-   - Enter: `https://gallery.ninochavez.com/sitemap.xml`
+   - Enter: `https://photography.ninochavez.co/sitemap.xml`
    - Click "Submit"
    - Wait 1-2 days for Google to crawl
 
@@ -302,7 +302,7 @@ COPY (
 
    **Facebook/LinkedIn:**
    - Go to https://developers.facebook.com/tools/debug/
-   - Enter a photo URL: `https://gallery.ninochavez.com/photo/{image_key}`
+   - Enter a photo URL: `https://photography.ninochavez.co/photo/{image_key}`
    - Click "Debug"
    - Verify rich preview appears
 
