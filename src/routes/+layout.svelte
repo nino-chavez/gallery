@@ -88,6 +88,9 @@
 	<meta name="author" content="Nino Chavez" />
 	<meta name="robots" content="index, follow" />
 	<meta name="theme-color" content="#D4AF37" />
+
+	<!-- Google Search Console Verification -->
+	<meta name="google-site-verification" content="m_DGu93JLdDvx0_KNbZhjwVB75OdnQEURDhinyriJKQ" />
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>
