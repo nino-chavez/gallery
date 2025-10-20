@@ -33,8 +33,8 @@ const config = {
 			runtime: 'nodejs20.x',
 		}),
 		paths: {
-			// Set base to '/photography' for SvelteKit routing and asset paths
-			base: '/photography',
+			// No base path - serving from subdomain root (photography.ninochavez.co)
+			base: '',
 			// Use absolute paths (not relative) so proxy rewrites work correctly
 			relative: false
 		},
