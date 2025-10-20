@@ -87,6 +87,7 @@ WHERE portfolio_worthy = true AND sharpness IS NOT NULL;
 -- ============================================
 
 -- Covering index for explore page queries (includes commonly selected columns)
+-- Note: PostgreSQL quoted identifiers are case-sensitive
 CREATE INDEX IF NOT EXISTS idx_photo_metadata_explore_covering
 ON photo_metadata(
     upload_date DESC,
@@ -97,9 +98,9 @@ ON photo_metadata(
 INCLUDE (
     photo_id,
     image_key,
-    ImageUrl,
-    ThumbnailUrl,
-    OriginalUrl,
+    "ImageUrl",
+    "ThumbnailUrl",
+    "OriginalUrl",
     portfolio_worthy,
     emotion,
     action_intensity
