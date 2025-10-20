@@ -140,7 +140,42 @@
 			goto(url.toString(), { replaceState: true });
 		}
 	});
+
+	// PERFORMANCE: Prefetch popular filter combinations
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+
+		// Prefetch most popular filters after initial load
+		const prefetchPopularFilters = async () => {
+			// Wait for initial page load to complete
+			await new Promise(resolve => setTimeout(resolve, 2000));
+
+			// Most popular filters based on user behavior
+			const popularFilters = [
+				'/explore?sport=volleyball',
+				'/explore?category=action',
+				'/explore?sport=volleyball&category=action'
+			];
+
+			popularFilters.forEach(url => {
+				// Use <link rel="prefetch"> for optimal browser handling
+				const link = document.createElement('link');
+				link.rel = 'prefetch';
+				link.href = url;
+				link.as = 'document';
+				document.head.appendChild(link);
+			});
+		};
+
+		prefetchPopularFilters();
+	});
 </script>
+
+<svelte:head>
+	<!-- PERFORMANCE: Resource hints for faster external resource loading -->
+	<link rel="dns-prefetch" href="https://ixkyfroynzvgqwhhpjwj.supabase.co" />
+	<link rel="preconnect" href="https://ixkyfroynzvgqwhhpjwj.supabase.co" crossorigin />
+</svelte:head>
 
 <!-- Header Section -->
 <Motion

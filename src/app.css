@@ -80,6 +80,47 @@
       scroll-behavior: auto !important;
     }
   }
+
+  /* PERFORMANCE: Custom scrollbar for dark theme */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-charcoal-950);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-charcoal-700);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gold-500);
+  }
+
+  /* PERFORMANCE: View Transitions API - Smooth page transitions */
+  @supports (view-transition-name: none) {
+    /* Enable view transitions for navigation */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.3s;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Faster transitions for main content */
+    ::view-transition-old(main),
+    ::view-transition-new(main) {
+      animation-duration: 0.2s;
+    }
+
+    /* Smooth transitions for images */
+    ::view-transition-old(image),
+    ::view-transition-new(image) {
+      animation-duration: 0.4s;
+      mix-blend-mode: normal;
+    }
+  }
 }
 
 @layer utilities {

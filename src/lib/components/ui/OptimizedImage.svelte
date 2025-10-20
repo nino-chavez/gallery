@@ -30,6 +30,37 @@
 	let imageLoaded = $state(false);
 	let imageError = $state(false);
 	let imageElement: HTMLImageElement | undefined = $state();
+	let isIntersecting = $state(false);
+	let container: HTMLDivElement | undefined = $state();
+
+	// PERFORMANCE: Intersection Observer for true lazy loading
+	$effect(() => {
+		if (!container || priority) {
+			isIntersecting = true; // Load immediately if priority
+			return;
+		}
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						isIntersecting = true;
+						observer.disconnect(); // Stop observing once visible
+					}
+				});
+			},
+			{
+				rootMargin: '50px', // Start loading 50px before visible
+				threshold: 0.01
+			}
+		);
+
+		observer.observe(container);
+
+		return () => {
+			observer.disconnect();
+		};
+	});
 
 	// Handle image load
 	function handleLoad() {
@@ -52,6 +83,7 @@
 </script>
 
 <div
+	bind:this={container}
 	class="relative overflow-hidden bg-charcoal-900 {className}"
 	style="aspect-ratio: {aspectRatio}"
 >
@@ -91,8 +123,8 @@
 		</div>
 	{/if}
 
-	<!-- Main Image -->
-	{#if !imageError}
+	<!-- Main Image - Only load when intersecting or priority -->
+	{#if !imageError && isIntersecting}
 		<Motion
 			let:motion
 			initial={{ opacity: 0 }}

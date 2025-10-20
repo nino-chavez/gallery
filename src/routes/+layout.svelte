@@ -61,6 +61,9 @@
 	<meta name="description" content={pageDescription} />
 	<link rel="canonical" href={canonicalUrl} />
 
+	<!-- PERFORMANCE: View Transitions API for smooth page transitions -->
+	<meta name="view-transition" content="same-origin" />
+
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content={canonicalUrl} />
