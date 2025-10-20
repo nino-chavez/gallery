@@ -2,41 +2,52 @@
 
 ## Performance Indexes
 
-### File: `performance-indexes.sql`
+### 📋 Two Versions Available:
 
-This script creates optimized indexes for the photo_metadata table to dramatically improve query performance.
+1. **`performance-indexes-simple.sql`** ⭐ **RECOMMENDED FOR SUPABASE**
+   - Clean, focused index creation only
+   - No verification queries that might fail
+   - Just creates indexes + runs ANALYZE
+   - **Use this version for Supabase!**
 
-### ⚠️ Important: PostgreSQL Column Case Sensitivity
+2. **`performance-indexes.sql`** (Advanced)
+   - Includes verification queries
+   - Includes test queries with EXPLAIN ANALYZE
+   - More comprehensive but may have compatibility issues
+   - Use for local PostgreSQL or advanced debugging
 
-The `photo_metadata` table has **mixed-case column names** (e.g., `ImageUrl`, `ThumbnailUrl`, `OriginalUrl`).
+### ⚠️ Important Notes
 
-In PostgreSQL:
-- Unquoted identifiers are folded to lowercase
-- Mixed-case columns **must be quoted** in SQL queries
-- Example: `"ImageUrl"` not `ImageUrl` or `imageurl`
+**PostgreSQL Column Case Sensitivity:**
+- Table has mixed-case columns: `ImageUrl`, `ThumbnailUrl`, `OriginalUrl`
+- Must use quoted identifiers: `"ImageUrl"` not `imageurl`
 
-### How to Apply
+**Supabase Compatibility:**
+- Some `pg_stat_*` views may have restricted access
+- Use `performance-indexes-simple.sql` to avoid issues
+
+### How to Apply (Recommended)
 
 1. **Open Supabase SQL Editor**
    - Go to your Supabase dashboard
    - Navigate to SQL Editor
    - Click "New Query"
 
-2. **Copy and Paste**
+2. **Copy Simple Version**
    ```bash
-   # Copy the entire performance-indexes.sql file
-   cat database/performance-indexes.sql
+   # Use the simplified version for Supabase
+   cat database/performance-indexes-simple.sql
    ```
 
 3. **Run the Script**
-   - Paste into SQL Editor
+   - Paste entire contents into SQL Editor
    - Click "Run" or press Cmd/Ctrl + Enter
-   - Wait for confirmation (takes ~10-30 seconds)
+   - Wait 10-30 seconds for completion
 
-4. **Verify Indexes Created**
-   - Scroll to bottom of script output
-   - Should see list of all created indexes
-   - Check "times_used" will be 0 initially (normal)
+4. **Verify Success**
+   - Should see: `total_indexes_created: 14`
+   - Should see: `✓ All indexes created successfully!`
+   - No errors should appear
 
 ### Expected Results
 
