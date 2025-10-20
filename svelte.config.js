@@ -33,9 +33,8 @@ const config = {
 			runtime: 'nodejs20.x',
 		}),
 		paths: {
-			// Set base to '/gallery' for SvelteKit routing and asset paths
-			// Main site strips /gallery prefix: ninochavez.co/gallery/_app/* → nino-chavez-gallery.vercel.app/_app/*
-			base: '/gallery',
+			// Set base to '/photography' for SvelteKit routing and asset paths
+			base: '/photography',
 			// Use absolute paths (not relative) so proxy rewrites work correctly
 			relative: false
 		},
