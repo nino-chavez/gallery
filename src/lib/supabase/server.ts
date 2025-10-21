@@ -244,69 +244,87 @@ export async function getPhotoCount(filters?: PhotoFilterState): Promise<number>
  * Uses SQL aggregation for efficiency (no row limit issues)
  */
 export async function getSportDistribution(): Promise<Array<{ name: string; count: number; percentage: number }>> {
-  // Use raw SQL to do GROUP BY aggregation on database side
-  // This avoids fetching 20K rows and hitting Supabase row limits
-  const { data, error } = await supabaseServer.rpc('exec_sql', {
-    sql: `
-      SELECT
-        sport_type as name,
-        COUNT(*) as count,
-        ROUND((COUNT(*) * 100.0 / SUM(COUNT(*)) OVER ()), 1) as percentage
-      FROM photo_metadata
-      WHERE sharpness IS NOT NULL
-        AND sport_type IS NOT NULL
-        AND sport_type != 'unknown'
-      GROUP BY sport_type
-      ORDER BY count DESC
-    `
-  });
+  try {
+    // Use raw SQL to do GROUP BY aggregation on database side
+    // This avoids fetching 20K rows and hitting Supabase row limits
+    const { data, error } = await supabaseServer.rpc('exec_sql', {
+      sql: `
+        SELECT
+          sport_type as name,
+          COUNT(*) as count,
+          ROUND((COUNT(*) * 100.0 / SUM(COUNT(*)) OVER ()), 1) as percentage
+        FROM photo_metadata
+        WHERE sharpness IS NOT NULL
+          AND sport_type IS NOT NULL
+          AND sport_type != 'unknown'
+        GROUP BY sport_type
+        ORDER BY count DESC
+      `
+    });
 
-  if (error) {
+    if (error) {
+      throw error; // Trigger fallback
+    }
+
+    // Process SQL results
+    return (data || []).map((row: any) => ({
+      name: row.name,
+      count: parseInt(row.count),
+      percentage: parseFloat(row.percentage)
+    }));
+  } catch (error) {
     // Fallback: If custom RPC doesn't exist, use Supabase's native aggregation
-    // This won't work perfectly but better than nothing
-    console.warn('[Supabase Server] exec_sql RPC not found, using native query method');
+    console.warn('[Supabase Server] exec_sql RPC not found, using native query method:', error);
 
-    // Get total count first
-    const { count: totalCount } = await supabaseServer
-      .from('photo_metadata')
-      .select('*', { count: 'exact', head: true })
-      .not('sharpness', 'is', null)
-      .not('sport_type', 'is', null)
-      .neq('sport_type', 'unknown');
+    try {
+      // Get total count first
+      const { count: totalCount, error: countError } = await supabaseServer
+        .from('photo_metadata')
+        .select('*', { count: 'exact', head: true })
+        .not('sharpness', 'is', null)
+        .not('sport_type', 'is', null)
+        .neq('sport_type', 'unknown');
 
-    const total = totalCount || 0;
+      if (countError) {
+        console.error('[Supabase Server] Error fetching total count for sports:', countError);
+        return []; // Return empty array instead of throwing
+      }
 
-    // Unfortunately, Supabase JS doesn't support GROUP BY natively
-    // So we have to use a workaround: fetch unique sports, then count each
-    const sports = ['volleyball', 'portrait', 'basketball', 'softball', 'soccer', 'track', 'football', 'baseball'];
+      const total = totalCount || 0;
 
-    const results = await Promise.all(
-      sports.map(async (sport) => {
-        const { count } = await supabaseServer
-          .from('photo_metadata')
-          .select('*', { count: 'exact', head: true })
-          .eq('sport_type', sport)
-          .not('sharpness', 'is', null);
+      // Unfortunately, Supabase JS doesn't support GROUP BY natively
+      // So we have to use a workaround: fetch unique sports, then count each
+      const sports = ['volleyball', 'portrait', 'basketball', 'softball', 'soccer', 'track', 'football', 'baseball'];
 
-        return {
-          name: sport,
-          count: count || 0,
-          percentage: parseFloat(((count || 0) / total * 100).toFixed(1))
-        };
-      })
-    );
+      const results = await Promise.all(
+        sports.map(async (sport) => {
+          const { count, error: sportError } = await supabaseServer
+            .from('photo_metadata')
+            .select('*', { count: 'exact', head: true })
+            .eq('sport_type', sport)
+            .not('sharpness', 'is', null);
 
-    return results
-      .filter(s => s.count > 0)
-      .sort((a, b) => b.count - a.count);
+          if (sportError) {
+            console.error(`[Supabase Server] Error fetching count for sport ${sport}:`, sportError);
+            return { name: sport, count: 0, percentage: 0 };
+          }
+
+          return {
+            name: sport,
+            count: count || 0,
+            percentage: parseFloat(((count || 0) / total * 100).toFixed(1))
+          };
+        })
+      );
+
+      return results
+        .filter(s => s.count > 0)
+        .sort((a, b) => b.count - a.count);
+    } catch (fallbackError) {
+      console.error('[Supabase Server] Critical error in getSportDistribution fallback:', fallbackError);
+      return []; // Return empty array as last resort
+    }
   }
-
-  // Process SQL results
-  return (data || []).map((row: any) => ({
-    name: row.name,
-    count: parseInt(row.count),
-    percentage: parseFloat(row.percentage)
-  }));
 }
 
 /**
@@ -315,62 +333,81 @@ export async function getSportDistribution(): Promise<Array<{ name: string; coun
  * Uses SQL aggregation for efficiency (no row limit issues)
  */
 export async function getCategoryDistribution(): Promise<Array<{ name: string; count: number; percentage: number }>> {
-  // Use raw SQL to do GROUP BY aggregation on database side
-  const { data, error } = await supabaseServer.rpc('exec_sql', {
-    sql: `
-      SELECT
-        photo_category as name,
-        COUNT(*) as count,
-        ROUND((COUNT(*) * 100.0 / SUM(COUNT(*)) OVER ()), 1) as percentage
-      FROM photo_metadata
-      WHERE sharpness IS NOT NULL
-        AND photo_category IS NOT NULL
-      GROUP BY photo_category
-      ORDER BY count DESC
-    `
-  });
+  try {
+    // Use raw SQL to do GROUP BY aggregation on database side
+    const { data, error } = await supabaseServer.rpc('exec_sql', {
+      sql: `
+        SELECT
+          photo_category as name,
+          COUNT(*) as count,
+          ROUND((COUNT(*) * 100.0 / SUM(COUNT(*)) OVER ()), 1) as percentage
+        FROM photo_metadata
+        WHERE sharpness IS NOT NULL
+          AND photo_category IS NOT NULL
+        GROUP BY photo_category
+        ORDER BY count DESC
+      `
+    });
 
-  if (error) {
+    if (error) {
+      throw error; // Trigger fallback
+    }
+
+    // Process SQL results
+    return (data || []).map((row: any) => ({
+      name: row.name,
+      count: parseInt(row.count),
+      percentage: parseFloat(row.percentage)
+    }));
+  } catch (error) {
     // Fallback: Use individual COUNT queries for each category
-    console.warn('[Supabase Server] exec_sql RPC not found, using native query method for categories');
+    console.warn('[Supabase Server] exec_sql RPC not found, using native query method for categories:', error);
 
-    // Get total count first
-    const { count: totalCount } = await supabaseServer
-      .from('photo_metadata')
-      .select('*', { count: 'exact', head: true })
-      .not('sharpness', 'is', null)
-      .not('photo_category', 'is', null);
+    try {
+      // Get total count first
+      const { count: totalCount, error: countError } = await supabaseServer
+        .from('photo_metadata')
+        .select('*', { count: 'exact', head: true })
+        .not('sharpness', 'is', null)
+        .not('photo_category', 'is', null);
 
-    const total = totalCount || 0;
+      if (countError) {
+        console.error('[Supabase Server] Error fetching total count for categories:', countError);
+        return []; // Return empty array instead of throwing
+      }
 
-    // Known categories from migration SQL
-    const categories = ['action', 'celebration', 'candid', 'portrait', 'warmup', 'ceremony'];
+      const total = totalCount || 0;
 
-    const results = await Promise.all(
-      categories.map(async (category) => {
-        const { count } = await supabaseServer
-          .from('photo_metadata')
-          .select('*', { count: 'exact', head: true })
-          .eq('photo_category', category)
-          .not('sharpness', 'is', null);
+      // Known categories from migration SQL
+      const categories = ['action', 'celebration', 'candid', 'portrait', 'warmup', 'ceremony'];
 
-        return {
-          name: category,
-          count: count || 0,
-          percentage: parseFloat(((count || 0) / total * 100).toFixed(1))
-        };
-      })
-    );
+      const results = await Promise.all(
+        categories.map(async (category) => {
+          const { count, error: categoryError } = await supabaseServer
+            .from('photo_metadata')
+            .select('*', { count: 'exact', head: true })
+            .eq('photo_category', category)
+            .not('sharpness', 'is', null);
 
-    return results
-      .filter(c => c.count > 0)
-      .sort((a, b) => b.count - a.count);
+          if (categoryError) {
+            console.error(`[Supabase Server] Error fetching count for category ${category}:`, categoryError);
+            return { name: category, count: 0, percentage: 0 };
+          }
+
+          return {
+            name: category,
+            count: count || 0,
+            percentage: parseFloat(((count || 0) / total * 100).toFixed(1))
+          };
+        })
+      );
+
+      return results
+        .filter(c => c.count > 0)
+        .sort((a, b) => b.count - a.count);
+    } catch (fallbackError) {
+      console.error('[Supabase Server] Critical error in getCategoryDistribution fallback:', fallbackError);
+      return []; // Return empty array as last resort
+    }
   }
-
-  // Process SQL results
-  return (data || []).map((row: any) => ({
-    name: row.name,
-    count: parseInt(row.count),
-    percentage: parseFloat(row.percentage)
-  }));
 }
