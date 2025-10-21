@@ -1,13 +1,8 @@
--- Migration: Create exec_sql RPC function for dynamic SQL execution
--- Purpose: Enable efficient GROUP BY aggregation queries for sport/category distributions
--- Security: Read-only (SELECT queries only), validates SQL before execution
+-- Fix for exec_sql function to handle multiline SQL with leading whitespace
+-- Run this in Supabase SQL Editor to update the function
 
--- Drop existing function if it exists
 DROP FUNCTION IF EXISTS public.exec_sql(text);
 
--- Create secure exec_sql function
--- This function allows executing dynamic SQL queries safely
--- SECURITY: Only SELECT queries are allowed, other operations are blocked
 CREATE OR REPLACE FUNCTION public.exec_sql(sql text)
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -48,10 +43,9 @@ END;
 $$;
 
 -- Grant execute permission to authenticated and anon users
--- This allows the Supabase client to call this function
 GRANT EXECUTE ON FUNCTION public.exec_sql(text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.exec_sql(text) TO anon;
 
 -- Add comment for documentation
 COMMENT ON FUNCTION public.exec_sql(text) IS
-'Execute a read-only SQL query and return results as JSONB. Only SELECT queries are allowed. Used for efficient aggregation queries like sport/category distributions.';
+'Execute a read-only SQL query and return results as JSONB. Only SELECT queries are allowed. Used for efficient aggregation queries like sport/category distributions. Updated to handle multiline SQL with leading whitespace.';
