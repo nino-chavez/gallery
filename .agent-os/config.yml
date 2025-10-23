@@ -1,23 +1,281 @@
-version: 2.1.0
-last_compiled: 2025-10-16 12:00:00
-profile: default
+# Nino Chavez Gallery - Agent-OS Configuration
+# Version: 3.0.0
+# Last Updated: 2025-10-22
 
-# Multi-Agent Configuration
-multi_agent_mode: true
-multi_agent_tool: claude-code
-single_agent_mode: false
+# Project Profile
+version: "3.0.0"
+project:
+  name: "Nino Chavez Gallery"
+  type: "web-portfolio"
+  profile: "small-medium"  # Portfolio site with some complexity
+  description: "Photography gallery built with SvelteKit + Svelte 5"
+
+# Technology Stack
+tech_stack:
+  framework: "SvelteKit 2.x"
+  ui_library: "Svelte 5 (Runes mode)"
+  language: "TypeScript"
+  styling: "Tailwind CSS 4"
+  animation: "svelte-motion"
+  database: "Supabase (PostgreSQL)"
+  auth: "Supabase Auth"
+  testing: "Playwright"
+  deployment: "Vercel"
 
 # Workflow Mode Configuration
-# Options: direct, selective, thorough
-# See agent-os/workflows/implementation-modes.yml for details
 workflow:
-  default_mode: direct  # Changed from thorough to direct (per user request)
-  auto_select: true     # Enable intelligent mode selection based on task complexity
+  # Default workflow mode
+  # Options: direct | selective | thorough
+  default_mode: "direct"  # Portfolio sites are mostly UI work
 
-  # Project profile for auto-selection
-  project_profile: medium  # Options: small, medium, large
+  # Auto-select mode based on task complexity
+  auto_select: true
 
-  # Mode overrides per phase (optional)
-  # phase_overrides:
-  #   phase_3: direct      # Microinteractions - use direct mode
-  #   phase_4: selective   # 3D work - use selective delegation
+  # Mode definitions
+  modes:
+    # Direct Mode: 3-4x faster, 70-80% token savings
+    # Use for: UI components, styling, animations, content updates
+    direct:
+      description: "Fast self-verification for UI/UX work"
+      token_budget: 1000
+      time_estimate: "5-15 minutes"
+      verification: "self-check"
+      delegation: false
+      documentation: "minimal"
+      use_cases:
+        - "Svelte component creation and updates"
+        - "Tailwind CSS styling and responsive design"
+        - "Animations with svelte-motion"
+        - "Content updates and copy changes"
+        - "Layout adjustments"
+        - "Image gallery components"
+      validations:
+        - "lint"
+        - "type-check"
+        - "build"
+
+    # Selective Mode: 2x faster, 40-50% token savings
+    # Use for: Full features with backend + frontend
+    selective:
+      description: "Hybrid approach - delegate complex, direct simple"
+      token_budget: 3000
+      time_estimate: "30-90 minutes"
+      verification: "targeted"
+      delegation: "complexity-aware"
+      documentation: "targeted"
+      use_cases:
+        - "Supabase integration (database + auth)"
+        - "Full feature implementation (backend + frontend)"
+        - "Gallery photo management with upload"
+        - "User authentication flows"
+        - "Admin functionality"
+      validations:
+        - "lint"
+        - "type-check"
+        - "build"
+      delegation_criteria:
+        high_complexity:
+          - "Supabase Row Level Security (RLS)"
+          - "Authentication flows"
+          - "Photo upload and storage"
+        low_complexity:
+          - "UI components"
+          - "Styling"
+          - "Animations"
+
+    # Thorough Mode: Comprehensive, baseline speed
+    # Use for: Mission-critical features, security, data integrity
+    thorough:
+      description: "Full multi-agent delegation with comprehensive verification"
+      token_budget: 5000
+      time_estimate: "2-6 hours"
+      verification: "comprehensive"
+      delegation: true
+      documentation: "comprehensive"
+      use_cases:
+        - "Authentication and authorization"
+        - "Photo storage and CDN integration"
+        - "Gallery data architecture"
+        - "Security-sensitive features"
+        - "Performance-critical paths"
+      validations:
+        - "lint"
+        - "type-check"
+        - "build"
+        - "playwright-tests"
+      required_reviews:
+        - "security-auth-expert"
+        - "performance-optimizer-expert"
+
+# Context Management (Token Optimization)
+context:
+  total_budget: 70000  # 35% of 200k window (smaller portfolio site)
+
+  tiers:
+    # Tier 1: Core Architecture (load once)
+    core:
+      budget: 25000
+      load_frequency: "once"
+      includes:
+        - "README.md"
+        - "package.json"
+        - "svelte.config.js"
+        - "tsconfig.json"
+        - "tailwind.config.js"
+        - "src/lib/supabase.ts"
+        - ".agent-os/config.yml"
+
+    # Tier 2: Domain Context (load per feature area)
+    domain:
+      budget: 30000
+      load_frequency: "per_feature"
+      examples:
+        gallery_components:
+          - "src/lib/components/gallery/*.svelte"
+          - "src/routes/gallery/*.svelte"
+        photo_management:
+          - "src/lib/components/admin/*.svelte"
+          - "database/migrations/photos.sql"
+        authentication:
+          - "src/lib/auth/*.ts"
+          - "src/routes/login/*.svelte"
+
+    # Tier 3: Task-Specific (load per operation)
+    task:
+      budget: 15000
+      load_frequency: "per_operation"
+      includes:
+        - "Files being modified"
+        - "Direct dependencies"
+        - "Related test files"
+        - "Similar component examples"
+
+# Quality Gates
+quality:
+  # Pre-flight checks
+  pre_flight:
+    - "git status clean or approved"
+    - "npm run check passing"
+
+  # Post-flight checks
+  post_flight:
+    required:
+      - "npm run check"  # Svelte type checking
+      - "npm run build"
+    conditional:
+      selective_mode:
+        - "npm test (if tests exist)"
+      thorough_mode:
+        - "npm test"
+
+  # Auto-rollback triggers
+  rollback_on:
+    - "TypeScript compilation errors"
+    - "Svelte check failures"
+    - "Build failures"
+    - "Security concerns detected"
+
+# Traceability
+traceability:
+  # Audit logging
+  audit_logs:
+    enabled: true
+    directory: ".agent-os/audit-logs"
+    format: "YYYY-MM-DD-feature-name.md"
+    required_sections:
+      - "Primary Request and Intent"
+      - "Workflow Mode Selected"
+      - "Files Created/Modified"
+      - "Validation Results"
+      - "Token Usage"
+
+  # Evidence-based status tracking
+  status_tracking:
+    enabled: true
+    format: "evidence-based"
+    include:
+      - "File paths with line references"
+      - "Build success status"
+      - "Git commit hashes"
+      - "Deployment URLs"
+
+  # Decision records (optional for portfolio site)
+  decision_records:
+    enabled: false  # Usually not needed for portfolio
+
+# Stack-Specific Configuration
+stack:
+  # SvelteKit patterns
+  sveltekit:
+    version: "2.x"
+    prefer_server_load: true  # Use +page.server.ts for data loading
+    prefer_actions: true  # Use form actions for mutations
+    runes_mode: true  # Use Svelte 5 runes ($state, $derived, $effect)
+
+  # Supabase patterns
+  supabase:
+    prefer_rls: true
+    prefer_postgres_functions: true
+    use_auth: true
+
+  # TypeScript strictness
+  typescript:
+    strict_mode: true
+    no_any_type: true
+
+  # Testing requirements
+  testing:
+    playwright_for_critical_flows: true
+    visual_regression: false  # Not required for portfolio
+
+# Project-Specific Considerations
+project_specific:
+  current_phase: "SvelteKit Migration"
+
+  critical_files:
+    - "src/routes/+layout.svelte"
+    - "src/routes/gallery/+page.svelte"
+    - "src/lib/supabase.ts"
+    - "src/lib/components/gallery/*"
+
+  ui_priorities:
+    - "Clean, minimalist design"
+    - "Fast image loading and optimization"
+    - "Smooth animations and transitions"
+    - "Mobile-first responsive design"
+    - "Accessibility (WCAG AA)"
+
+  performance_targets:
+    - "Lighthouse score: >90"
+    - "First Contentful Paint: <1.5s"
+    - "Largest Contentful Paint: <2.5s"
+    - "Image optimization: WebP/AVIF"
+
+# Emergency Controls
+emergency:
+  halt_commands:
+    - "/stop"
+    - "/status"
+    - "/continue"
+    - "/rollback"
+
+  auto_stop:
+    - "TypeScript compilation errors"
+    - "Svelte check failures"
+    - "Build failures"
+    - "Time exceeded (>12 hours)"
+
+# Performance Metrics
+metrics:
+  track:
+    - "Token usage per feature"
+    - "Time per feature"
+    - "Mode selection accuracy"
+    - "Build success rate"
+
+  targets:
+    direct_mode_speed: "3-4x faster than thorough"
+    selective_mode_speed: "2x faster than thorough"
+    token_savings_direct: "70-80%"
+    token_savings_selective: "40-50%"
+    build_success: ">95%"
