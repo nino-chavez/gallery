@@ -136,17 +136,17 @@
 	{/if}
 </div>
 
-<!-- Desktop: Always expanded -->
-<div class="hidden lg:block p-4 bg-charcoal-900/50 border border-charcoal-800/50 rounded-xl space-y-4">
+<!-- Desktop: Always expanded, compact layout -->
+<div class="hidden lg:block p-3 bg-charcoal-900/50 border border-charcoal-800/50 rounded-lg space-y-2">
 	<div class="flex items-center justify-between">
-		<div class="flex items-center gap-3">
-			<div class="w-1 h-6 bg-purple-500 rounded-full" aria-hidden="true"></div>
-			<Typography variant="h3" class="text-base font-semibold">Category</Typography>
+		<div class="flex items-center gap-2">
+			<div class="w-1 h-4 bg-purple-500 rounded-full" aria-hidden="true"></div>
+			<Typography variant="h3" class="text-sm font-semibold">Category</Typography>
 		</div>
 		{#if selectedCategory}
 			<button
 				onclick={() => handleCategoryClick(null)}
-				class="text-sm text-gold-400 hover:text-gold-300 transition-colors underline min-h-[44px] px-3"
+				class="text-xs text-gold-400 hover:text-gold-300 transition-colors underline min-h-[32px] px-2"
 				aria-label="Clear category filter"
 			>
 				Clear
@@ -154,20 +154,20 @@
 		{/if}
 	</div>
 
-	<div class="flex flex-wrap gap-3">
+	<div class="flex flex-wrap gap-2">
 		<!-- All Categories Pill -->
 		<Motion let:motion whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
 			<button
 				use:motion
 				onclick={() => handleCategoryClick(null)}
-				class="min-h-[48px] px-6 py-3 rounded-full text-sm font-medium transition-all {selectedCategory === null
+				class="min-h-[36px] px-4 py-2 rounded-full text-xs font-medium transition-all {selectedCategory === null
 					? 'bg-gold-500 text-charcoal-950 shadow-lg shadow-gold-500/20'
 					: 'bg-charcoal-800/50 text-charcoal-100 border border-charcoal-700 hover:border-gold-500/30 hover:bg-charcoal-800'}"
 				aria-label="Show all categories"
 				aria-pressed={selectedCategory === null}
 			>
-				<span class="flex items-center gap-2 whitespace-nowrap">
-					<Sparkles class="w-4 h-4" />
+				<span class="flex items-center gap-1.5 whitespace-nowrap">
+					<Sparkles class="w-3 h-3" />
 					<span>All</span>
 				</span>
 			</button>
@@ -180,17 +180,17 @@
 				<button
 					use:motion
 					onclick={() => handleCategoryClick(category.name)}
-					class="min-h-[48px] px-6 py-3 rounded-full text-sm font-medium transition-all {selectedCategory === category.name
+					class="min-h-[36px] px-4 py-2 rounded-full text-xs font-medium transition-all {selectedCategory === category.name
 						? 'bg-gold-500 text-charcoal-950 shadow-lg shadow-gold-500/20'
 						: 'bg-charcoal-800/50 text-charcoal-100 border border-charcoal-700 hover:border-gold-500/30 hover:bg-charcoal-800'}"
 					aria-label="Filter by {category.name}"
 					aria-pressed={selectedCategory === category.name}
 					title={categoryDescriptions[category.name.toLowerCase()] || category.name}
 				>
-					<span class="flex items-center gap-2.5 whitespace-nowrap">
-						<IconComponent class="w-4 h-4" />
+					<span class="flex items-center gap-1.5 whitespace-nowrap">
+						<IconComponent class="w-3 h-3" />
 						<span class="capitalize">{category.name}</span>
-						<span class="text-xs {selectedCategory === category.name ? 'opacity-80' : 'opacity-60'} font-normal ml-0.5">
+						<span class="text-[10px] {selectedCategory === category.name ? 'opacity-80' : 'opacity-60'} font-normal ml-0.5">
 							{category.count.toLocaleString()}
 						</span>
 					</span>
@@ -202,11 +202,11 @@
 		{#if hasMoreCategories}
 			<button
 				onclick={() => showAllCategories = !showAllCategories}
-				class="min-h-[48px] px-5 py-3 rounded-full text-sm font-medium transition-all border-2 border-dashed border-charcoal-700 text-charcoal-400 hover:border-gold-500/50 hover:text-gold-400 bg-transparent"
+				class="min-h-[36px] px-4 py-2 rounded-full text-xs font-medium transition-all border border-dashed border-charcoal-700 text-charcoal-400 hover:border-gold-500/50 hover:text-gold-400 bg-transparent"
 				aria-label={showAllCategories ? 'Show fewer categories' : 'Show all categories'}
 				aria-expanded={showAllCategories}
 			>
-				<span class="flex items-center gap-2">
+				<span class="flex items-center gap-1.5">
 					<span>{showAllCategories ? '−' : '+'}</span>
 					<span>{showAllCategories ? 'Less' : `${categories.length - 4} More`}</span>
 				</span>

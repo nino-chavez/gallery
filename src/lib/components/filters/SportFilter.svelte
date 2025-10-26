@@ -152,18 +152,18 @@
 	{/if}
 </div>
 
-<!-- Desktop: Always expanded -->
-<div class="hidden lg:block p-4 bg-charcoal-900/50 border border-charcoal-800/50 rounded-xl space-y-4">
+<!-- Desktop: Always expanded, compact layout -->
+<div class="hidden lg:block p-3 bg-charcoal-900/50 border border-charcoal-800/50 rounded-lg space-y-2">
 	<!-- Header -->
 	<div class="flex items-center justify-between">
-		<div class="flex items-center gap-3">
-			<div class="w-1 h-6 bg-blue-500 rounded-full" aria-hidden="true"></div>
-			<Typography variant="h3" class="text-base font-semibold">Sport</Typography>
+		<div class="flex items-center gap-2">
+			<div class="w-1 h-4 bg-blue-500 rounded-full" aria-hidden="true"></div>
+			<Typography variant="h3" class="text-sm font-semibold">Sport</Typography>
 		</div>
 		{#if selectedSport}
 			<button
 				onclick={() => handleSportClick(null)}
-				class="text-sm text-gold-400 hover:text-gold-300 transition-colors underline min-h-[44px] px-3"
+				class="text-xs text-gold-400 hover:text-gold-300 transition-colors underline min-h-[32px] px-2"
 				aria-label="Clear sport filter"
 			>
 				Clear
@@ -172,7 +172,7 @@
 	</div>
 
 	<!-- Filter Pills -->
-	<div class="flex flex-wrap gap-3">
+	<div class="flex flex-wrap gap-2">
 		<!-- All Sports Pill -->
 		<Motion
 			let:motion
@@ -182,14 +182,14 @@
 			<button
 				use:motion
 				onclick={() => handleSportClick(null)}
-				class="min-h-[48px] px-6 py-3 rounded-full text-sm font-medium transition-all {!selectedSport
+				class="min-h-[36px] px-4 py-2 rounded-full text-xs font-medium transition-all {!selectedSport
 					? 'bg-gold-500 text-charcoal-950 shadow-lg shadow-gold-500/20'
 					: 'bg-charcoal-800/50 text-charcoal-100 border border-charcoal-700 hover:border-gold-500/30 hover:bg-charcoal-800'}"
 				aria-label="Show all sports"
 				aria-pressed={!selectedSport}
 			>
-				<span class="flex items-center gap-2 whitespace-nowrap">
-					<Sparkles class="w-4 h-4" />
+				<span class="flex items-center gap-1.5 whitespace-nowrap">
+					<Sparkles class="w-3 h-3" />
 					<span>All</span>
 				</span>
 			</button>
@@ -206,16 +206,16 @@
 				<button
 					use:motion
 					onclick={() => handleSportClick(sport.name)}
-					class="min-h-[48px] px-6 py-3 rounded-full text-sm font-medium transition-all {selectedSport === sport.name
+					class="min-h-[36px] px-4 py-2 rounded-full text-xs font-medium transition-all {selectedSport === sport.name
 						? 'bg-gold-500 text-charcoal-950 shadow-lg shadow-gold-500/20'
 						: 'bg-charcoal-800/50 text-charcoal-100 border border-charcoal-700 hover:border-gold-500/30 hover:bg-charcoal-800'}"
 					aria-label="Filter by {sport.name}"
 					aria-pressed={selectedSport === sport.name}
 				>
-					<span class="flex items-center gap-2.5 whitespace-nowrap">
-						<IconComponent class="w-4 h-4" />
+					<span class="flex items-center gap-1.5 whitespace-nowrap">
+						<IconComponent class="w-3 h-3" />
 						<span class="capitalize">{sport.name}</span>
-						<span class="text-xs {selectedSport === sport.name ? 'opacity-80' : 'opacity-60'} font-normal ml-0.5">
+						<span class="text-[10px] {selectedSport === sport.name ? 'opacity-80' : 'opacity-60'} font-normal ml-0.5">
 							{sport.count.toLocaleString()}
 						</span>
 					</span>
@@ -227,11 +227,11 @@
 		{#if hasMoreSports}
 			<button
 				onclick={() => showAllSports = !showAllSports}
-				class="min-h-[48px] px-5 py-3 rounded-full text-sm font-medium transition-all border-2 border-dashed border-charcoal-700 text-charcoal-400 hover:border-gold-500/50 hover:text-gold-400 bg-transparent"
+				class="min-h-[36px] px-4 py-2 rounded-full text-xs font-medium transition-all border border-dashed border-charcoal-700 text-charcoal-400 hover:border-gold-500/50 hover:text-gold-400 bg-transparent"
 				aria-label={showAllSports ? 'Show fewer sports' : 'Show all sports'}
 				aria-expanded={showAllSports}
 			>
-				<span class="flex items-center gap-2">
+				<span class="flex items-center gap-1.5">
 					<span>{showAllSports ? '−' : '+'}</span>
 					<span>{showAllSports ? 'Less' : `${sports.length - 5} More`}</span>
 				</span>
