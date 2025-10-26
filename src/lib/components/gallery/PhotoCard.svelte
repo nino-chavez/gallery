@@ -60,35 +60,9 @@
 	let showComposition = $state(false);
 	let compositionDismissed = $state(false);
 
-	// P2-2: 3D tilt physics
-	let cardRef: HTMLElement | null = null;
-	let mouseX = $state(0);
-	let mouseY = $state(0);
+	// P2-2: 3D tilt physics - DISABLED for performance
+	// The global window listener was causing severe performance issues
 	let isHovering = $state(false);
-
-	// Calculate tilt values based on mouse position
-	let rotateX = $derived(() => {
-		if (!isHovering || !cardRef) return 0;
-		const rect = cardRef.getBoundingClientRect();
-		const centerY = rect.top + rect.height / 2;
-		const offsetY = mouseY - centerY;
-		// Max 5° rotation
-		return (offsetY / rect.height) * -5;
-	});
-
-	let rotateY = $derived(() => {
-		if (!isHovering || !cardRef) return 0;
-		const rect = cardRef.getBoundingClientRect();
-		const centerX = rect.left + rect.width / 2;
-		const offsetX = mouseX - centerX;
-		// Max 5° rotation
-		return (offsetX / rect.width) * 5;
-	});
-
-	function handleMouseMove(event: MouseEvent) {
-		mouseX = event.clientX;
-		mouseY = event.clientY;
-	}
 
 	function handleMouseEnter() {
 		isHovering = true;
@@ -164,24 +138,17 @@
 	);
 </script>
 
-<svelte:window onmousemove={handleMouseMove} />
-
 <Motion
 	let:motion
 	initial={{ opacity: 0, scale: 0.95 }}
 	animate={{ opacity: 1, scale: 1 }}
 	transition={{ ...MOTION.spring.snappy, delay: Math.min(index * 0.02, 0.3) }}
+	whileHover={{ scale: 1.02, y: -4 }}
 >
 	<a
 		use:motion
-		bind:this={cardRef}
 		href={photoUrl}
-		class="group relative aspect-[4/3] bg-charcoal-900 rounded-lg overflow-hidden border border-charcoal-800 hover:border-gold-500/50 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/50 transition-colors cursor-pointer outline-none block {emotionHaloClass()} {qualityClass()}"
-		style="
-			transform: perspective(1000px) rotateX({rotateX()}deg) rotateY({rotateY()}deg) translateZ({isHovering ? '20px' : '0px'});
-			transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
-			box-shadow: {isHovering ? '0 20px 40px rgba(0, 0, 0, 0.3)' : '0 4px 8px rgba(0, 0, 0, 0.1)'};
-		"
+		class="group relative aspect-[4/3] bg-charcoal-900 rounded-lg overflow-hidden border border-charcoal-800 hover:border-gold-500/50 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/50 transition-all cursor-pointer outline-none block {emotionHaloClass()} {qualityClass()}"
 		aria-label={photo.title || `Photo ${index + 1}`}
 		onclick={handleClick}
 		onmouseenter={handleMouseEnter}
@@ -278,11 +245,5 @@
 
 	.composition-overlay {
 		transition: opacity 0.3s ease;
-	}
-
-	/* P2-2: 3D transform optimization */
-	a {
-		transform-style: preserve-3d;
-		will-change: transform;
 	}
 </style>

@@ -270,8 +270,8 @@
 	<link rel="preconnect" href="https://ixkyfroynzvgqwhhpjwj.supabase.co" crossorigin="anonymous" />
 </svelte:head>
 
-<!-- P2-3: Contextual Cursor -->
-<ContextualCursor currentPhoto={hoveredPhoto} />
+<!-- P2-3: Contextual Cursor - DISABLED for performance -->
+<!-- <ContextualCursor currentPhoto={hoveredPhoto} /> -->
 
 <!-- Header Section -->
 <Motion
