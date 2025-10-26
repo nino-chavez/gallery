@@ -150,7 +150,7 @@
 					type="search"
 					placeholder="Search albums..."
 					bind:value={searchQuery}
-					class="w-full px-4 py-3 rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-500"
+					class="w-full px-4 py-3 rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-400"
 				/>
 			</div>
 

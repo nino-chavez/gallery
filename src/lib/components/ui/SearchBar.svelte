@@ -85,7 +85,7 @@
 	<Search
 		class={cn(
 			'w-5 h-5 flex-shrink-0 transition-colors',
-			hasFocus ? 'text-gold-500' : 'text-charcoal-500',
+			hasFocus ? 'text-gold-500' : 'text-charcoal-400',
 		)}
 		aria-hidden="true"
 	/>
@@ -97,7 +97,7 @@
 		{value}
 		{placeholder}
 		{disabled}
-		class="flex-1 bg-transparent text-white placeholder:text-charcoal-500 outline-none disabled:cursor-not-allowed"
+		class="flex-1 bg-transparent text-white placeholder:text-charcoal-400 outline-none disabled:cursor-not-allowed"
 		aria-label={placeholder}
 		oninput={handleInput}
 		onkeydown={handleKeyDown}

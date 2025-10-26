@@ -128,10 +128,10 @@
 			<div
 				class="mt-8 pt-8 border-t border-charcoal-800 flex flex-col sm:flex-row justify-between items-center gap-4"
 			>
-				<Typography variant="caption" class="text-charcoal-500">
+				<Typography variant="caption" class="text-charcoal-400">
 					© {currentYear} Nino Chavez. All rights reserved.
 				</Typography>
-				<Typography variant="caption" class="text-charcoal-500">
+				<Typography variant="caption" class="text-charcoal-400">
 					Built with <span class="text-gold-500">SvelteKit</span> and
 					<span class="text-gold-500">AI</span>
 				</Typography>

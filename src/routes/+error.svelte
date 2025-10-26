@@ -56,7 +56,7 @@
 					</Typography>
 
 					{#if $page.status}
-						<Typography variant="caption" class="text-charcoal-500">
+						<Typography variant="caption" class="text-charcoal-400">
 							Error {$page.status}
 						</Typography>
 					{/if}

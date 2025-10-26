@@ -43,7 +43,7 @@
 		secondary:
 			'bg-charcoal-800 hover:bg-charcoal-700 text-white border border-charcoal-700 disabled:bg-charcoal-800/50 disabled:cursor-not-allowed',
 		ghost:
-			'bg-transparent hover:bg-charcoal-800 text-charcoal-300 hover:text-white disabled:text-charcoal-500 disabled:cursor-not-allowed',
+			'bg-transparent hover:bg-charcoal-800 text-charcoal-300 hover:text-white disabled:text-charcoal-400 disabled:cursor-not-allowed',
 	};
 
 	// Size styles

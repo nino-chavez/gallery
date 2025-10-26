@@ -189,7 +189,7 @@
 <div class="relative">
 	<!-- Search Input -->
 	<div class="relative">
-		<div class="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal-500">
+		<div class="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal-400">
 			<Search class="w-5 h-5" />
 		</div>
 		<input
@@ -201,13 +201,13 @@
 			onkeydown={handleKeyDown}
 			onblur={handleBlur}
 			onfocus={() => (showSuggestions = value.length >= 2)}
-			class="w-full pl-12 pr-12 py-3 rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-500"
+			class="w-full pl-12 pr-12 py-3 rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-400"
 			autocomplete="off"
 		/>
 		{#if value}
 			<button
 				onclick={handleClear}
-				class="absolute right-4 top-1/2 -translate-y-1/2 text-charcoal-500 hover:text-white transition-colors"
+				class="absolute right-4 top-1/2 -translate-y-1/2 text-charcoal-400 hover:text-white transition-colors"
 				aria-label="Clear search"
 			>
 				<X class="w-5 h-5" />
@@ -249,14 +249,14 @@
 								>
 									<span class="text-xl">{suggestion.icon}</span>
 									<span class="flex-1 text-left text-sm">{suggestion.text}</span>
-									<span class="text-xs text-charcoal-500 capitalize">{suggestion.type}</span>
+									<span class="text-xs text-charcoal-400 capitalize">{suggestion.type}</span>
 								</button>
 							</li>
 						{/each}
 					</ul>
 
 					<div class="px-4 py-2 bg-charcoal-800 border-t border-charcoal-700">
-						<span class="text-xs text-charcoal-500">
+						<span class="text-xs text-charcoal-400">
 							Press <kbd class="px-1 bg-charcoal-700 rounded">Enter</kbd> to search
 						</span>
 					</div>

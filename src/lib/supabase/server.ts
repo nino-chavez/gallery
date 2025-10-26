@@ -46,7 +46,7 @@ export const supabaseServer = createClient(supabaseUrl, supabaseServiceRoleKey, 
 export interface FetchPhotosOptions extends PhotoFilterState {
   limit?: number;
   offset?: number;
-  sortBy?: 'newest' | 'oldest' | 'highest_quality' | 'lowest_quality';
+  sortBy?: 'quality' | 'newest' | 'oldest' | 'highest_quality' | 'lowest_quality';
 }
 
 /**
@@ -60,15 +60,21 @@ export interface FetchPhotosOptions extends PhotoFilterState {
  * Never call from browser components!
  */
 export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]> {
-  const { limit, offset, sortBy = 'newest', ...filters } = options || {};
+  const { limit, offset, sortBy = 'quality', ...filters } = options || {};
 
   let query = supabaseServer
     .from('photo_metadata')
     .select('*')
     .not('sharpness', 'is', null); // Only show enriched photos
 
-  // Apply sorting
+  // P1-1: Apply quality stratification sorting
   switch (sortBy) {
+    case 'quality':
+      // Portfolio-worthy photos first, then by quality score
+      query = query
+        .order('portfolio_worthy', { ascending: false, nullsFirst: false })
+        .order('quality_score', { ascending: false, nullsFirst: false });
+      break;
     case 'newest':
       // Use upload_date (SmugMug upload) or date_added (album add) as fallback
       // photo_date is currently backfilled with enriched_at which is incorrect for sorting

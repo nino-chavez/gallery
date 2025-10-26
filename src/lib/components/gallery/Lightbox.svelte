@@ -164,7 +164,7 @@
 				role="dialog"
 				aria-modal="true"
 				aria-label="Photo lightbox"
-				tabindex="-1"
+				tabindex="0"
 			>
 				<!-- Top Controls -->
 				<div class="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/50 to-transparent">
@@ -186,7 +186,7 @@
 							<button
 								onclick={handleZoomOut}
 								disabled={zoomLevel <= 1}
-								class="p-2 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+								class="p-3 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500"
 								aria-label="Zoom out"
 								title="Zoom out (-)"
 							>
@@ -198,7 +198,7 @@
 							<button
 								onclick={handleZoomIn}
 								disabled={zoomLevel >= 3}
-								class="p-2 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+								class="p-3 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500"
 								aria-label="Zoom in"
 								title="Zoom in (+)"
 							>
@@ -214,7 +214,7 @@
 						<!-- Close Button -->
 						<button
 							onclick={handleClose}
-							class="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+							class="p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors min-h-[48px] min-w-[48px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500"
 							aria-label="Close lightbox"
 							title="Close (ESC)"
 						>
@@ -257,7 +257,7 @@
 					{#if canGoPrev}
 						<button
 							onclick={handlePrev}
-							class="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors z-10"
+							class="absolute left-4 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors z-10 min-h-[56px] min-w-[56px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500"
 							aria-label="Previous photo"
 							title="Previous (←)"
 						>
@@ -269,7 +269,7 @@
 					{#if canGoNext}
 						<button
 							onclick={handleNext}
-							class="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors z-10"
+							class="absolute right-4 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors z-10 min-h-[56px] min-w-[56px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500"
 							aria-label="Next photo"
 							title="Next (→)"
 						>

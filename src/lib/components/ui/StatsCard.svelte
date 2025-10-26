@@ -104,7 +104,7 @@
 
 				<!-- Optional description -->
 				{#if description}
-					<Typography variant="caption" class="block mt-1 text-charcoal-500 text-xs">
+					<Typography variant="caption" class="block mt-1 text-charcoal-400 text-xs">
 						{description}
 					</Typography>
 				{/if}

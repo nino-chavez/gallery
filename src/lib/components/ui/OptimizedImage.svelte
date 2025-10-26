@@ -119,7 +119,7 @@
 	{#if imageError}
 		<div class="absolute inset-0 flex flex-col items-center justify-center bg-charcoal-900">
 			<Camera class="w-16 h-16 text-charcoal-600 mb-2" aria-hidden="true" />
-			<p class="text-sm text-charcoal-500">Failed to load image</p>
+			<p class="text-sm text-charcoal-400">Failed to load image</p>
 		</div>
 	{/if}
 

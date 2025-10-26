@@ -22,7 +22,8 @@ export const load: PageServerLoad = async ({ url, parent }) => {
   const minQuality = url.searchParams.get('minQuality');
   const sportFilter = url.searchParams.get('sport') || undefined; // NEW: Sport filtering
   const categoryFilter = url.searchParams.get('category') || undefined; // NEW: Category filtering
-  const sortBy = (url.searchParams.get('sort') || 'newest') as 'newest' | 'oldest' | 'highest_quality' | 'lowest_quality';
+  // P1-1: Default to quality sort (portfolio-worthy first)
+  const sortBy = (url.searchParams.get('sort') || 'quality') as 'quality' | 'newest' | 'oldest' | 'highest_quality' | 'lowest_quality';
   const page = parseInt(url.searchParams.get('page') || '1');
   const pageSize = 24;
   const offset = (page - 1) * pageSize;

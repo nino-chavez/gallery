@@ -166,7 +166,7 @@
 										{option.description}
 									</Typography>
 								</div>
-								<Typography variant="caption" class="text-charcoal-500 text-xs whitespace-nowrap">
+								<Typography variant="caption" class="text-charcoal-400 text-xs whitespace-nowrap">
 									{option.size}
 								</Typography>
 							</div>
@@ -176,7 +176,7 @@
 
 				<!-- Footer Note -->
 				<div class="px-4 py-3 bg-charcoal-950/50 border-t border-charcoal-800">
-					<Typography variant="caption" class="text-charcoal-500 text-xs">
+					<Typography variant="caption" class="text-charcoal-400 text-xs">
 						Photos are for personal use and recruiting purposes only.
 					</Typography>
 				</div>

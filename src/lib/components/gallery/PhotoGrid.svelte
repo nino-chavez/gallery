@@ -65,13 +65,13 @@
 			aria-label="No photos available"
 		>
 			<div class="p-6 rounded-full bg-charcoal-800/50 border border-charcoal-700">
-				<ImageOff class="w-16 h-16 text-charcoal-500" aria-hidden="true" />
+				<ImageOff class="w-16 h-16 text-charcoal-400" aria-hidden="true" />
 			</div>
 			<div class="text-center max-w-md">
 				<Typography variant="h3" class="text-charcoal-300 mb-2">
 					{emptyMessage}
 				</Typography>
-				<Typography variant="body" class="text-charcoal-500">
+				<Typography variant="body" class="text-charcoal-400">
 					Try adjusting your filters or check back later for new photos.
 				</Typography>
 			</div>
