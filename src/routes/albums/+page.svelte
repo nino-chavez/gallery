@@ -2,10 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Motion } from 'svelte-motion';
-	import { FolderOpen } from 'lucide-svelte';
+	import { FolderOpen, X, Filter } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
 	import AlbumCard from '$lib/components/gallery/AlbumCard.svelte';
 	import SportFilter from '$lib/components/filters/SportFilter.svelte'; // NEW: Sport filter
 	import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte'; // NEW: Category filter
@@ -16,6 +17,15 @@
 
 	// Simple search (client-side)
 	let searchQuery = $state('');
+
+	// Active filters count
+	let activeFilterCount = $derived.by(() => {
+		let count = 0;
+		if (data.selectedSport) count++;
+		if (data.selectedCategory) count++;
+		if (searchQuery.trim()) count++; // Count search as a filter
+		return count;
+	});
 
 	// Filter albums by search
 	let displayAlbums = $derived.by(() => {
@@ -51,6 +61,15 @@
 		} else {
 			url.searchParams.delete('category');
 		}
+		goto(url.toString());
+	}
+
+	// Clear all filters
+	function clearAllFilters() {
+		const url = new URL($page.url);
+		url.searchParams.delete('sport');
+		url.searchParams.delete('category');
+		searchQuery = ''; // Clear client-side search
 		goto(url.toString());
 	}
 
@@ -125,6 +144,30 @@
 				</div>
 			</div>
 
+			<!-- Filters Header with Clear All Button -->
+			<div class="flex items-center justify-between gap-2 mb-2">
+				<div class="flex items-center gap-2">
+					<Typography variant="label" class="text-charcoal-300 text-xs">
+						Filters
+						{#if activeFilterCount > 0}
+							<span class="ml-1 px-2 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs">
+								{activeFilterCount}
+							</span>
+						{/if}
+					</Typography>
+				</div>
+
+				{#if activeFilterCount > 0}
+					<button
+						onclick={clearAllFilters}
+						class="inline-flex items-center gap-1 px-2 py-1 text-xs text-charcoal-400 hover:text-gold-400 transition-colors"
+					>
+						<X class="w-3 h-3" />
+						<span>Clear All</span>
+					</button>
+				{/if}
+			</div>
+
 			<!-- Inline Filters + Mobile Search -->
 			<div class="flex flex-wrap items-center gap-2">
 				{#if sports && sports.length > 0}
@@ -176,7 +219,7 @@
 				{/each}
 			</div>
 		{:else}
-			<!-- Empty State -->
+			<!-- Enhanced Empty State with Filter Context -->
 			<Motion
 				let:motion
 				initial={{ opacity: 0 }}
@@ -185,11 +228,25 @@
 			>
 				<div use:motion>
 					<Card padding="lg" class="text-center">
-						<FolderOpen class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
-						<Typography variant="h3" class="mb-2">No albums found</Typography>
-						<Typography variant="body" class="text-charcoal-400 text-sm">
-							{searchQuery ? 'Try adjusting your search' : 'No albums available'}
-						</Typography>
+						{#if activeFilterCount > 0}
+							<Filter class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
+							<Typography variant="h3" class="mb-2">No albums match your filters</Typography>
+							<Typography variant="body" class="text-charcoal-400 text-sm mb-4">
+								No albums found with {activeFilterCount}
+								{activeFilterCount === 1 ? 'active filter' : 'active filters'}. Try removing some filters to see
+								more results.
+							</Typography>
+							<Button onclick={clearAllFilters} size="md" variant="outline">
+								<X class="w-4 h-4 mr-2" />
+								Clear All Filters
+							</Button>
+						{:else}
+							<FolderOpen class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
+							<Typography variant="h3" class="mb-2">No albums found</Typography>
+							<Typography variant="body" class="text-charcoal-400 text-sm">
+								{searchQuery ? 'Try adjusting your search' : 'No albums available'}
+							</Typography>
+						{/if}
 					</Card>
 				</div>
 			</Motion>

@@ -2,10 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Motion } from 'svelte-motion';
-	import { Calendar, ChevronDown } from 'lucide-svelte';
+	import { Calendar, ChevronDown, X, Filter } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
 	import SportFilter from '$lib/components/filters/SportFilter.svelte';
@@ -20,6 +21,15 @@
 	// Modal state
 	let modalOpen = $state(false);
 	let selectedPhoto = $state<Photo | null>(null);
+
+	// Active filters count
+	let activeFilterCount = $derived.by(() => {
+		let count = 0;
+		if (data.selectedYear) count++;
+		if (data.selectedSport) count++;
+		if (data.selectedCategory) count++;
+		return count;
+	});
 
 	// Transform raw photos to Photo type
 	function transformPhoto(raw: any): Photo {
@@ -101,6 +111,15 @@
 		goto(url.toString());
 	}
 
+	// Clear all filters
+	function clearAllFilters() {
+		const url = new URL($page.url);
+		url.searchParams.delete('year');
+		url.searchParams.delete('sport');
+		url.searchParams.delete('category');
+		goto(url.toString());
+	}
+
 	// Derive sport/category distributions for filters (simplified - from timeline groups)
 	const sports = $derived.by(() => {
 		const sportCounts = new Map<string, number>();
@@ -160,6 +179,30 @@
 				<Typography variant="caption" class="text-charcoal-400 text-xs">
 					{data.totalPhotos.toLocaleString()}
 				</Typography>
+			</div>
+
+			<!-- Filters Header with Clear All Button -->
+			<div class="flex items-center justify-between gap-2 mb-2">
+				<div class="flex items-center gap-2">
+					<Typography variant="label" class="text-charcoal-300 text-xs">
+						Filters
+						{#if activeFilterCount > 0}
+							<span class="ml-1 px-2 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs">
+								{activeFilterCount}
+							</span>
+						{/if}
+					</Typography>
+				</div>
+
+				{#if activeFilterCount > 0}
+					<button
+						onclick={clearAllFilters}
+						class="inline-flex items-center gap-1 px-2 py-1 text-xs text-charcoal-400 hover:text-gold-400 transition-colors"
+					>
+						<X class="w-3 h-3" />
+						<span>Clear All</span>
+					</button>
+				{/if}
 			</div>
 
 			<!-- Inline Filters -->
@@ -235,14 +278,28 @@
 			</Motion>
 		{/each}
 
-		<!-- Empty State -->
+		<!-- Enhanced Empty State with Filter Context -->
 		{#if data.timelineGroups.length === 0}
 			<Card padding="lg" class="text-center">
-				<Calendar class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
-				<Typography variant="h3" class="mb-2">No photos found</Typography>
-				<Typography variant="body" class="text-charcoal-400 text-sm">
-					Adjust filters to see photos
-				</Typography>
+				{#if activeFilterCount > 0}
+					<Filter class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
+					<Typography variant="h3" class="mb-2">No photos match your filters</Typography>
+					<Typography variant="body" class="text-charcoal-400 text-sm mb-4">
+						No photos found with {activeFilterCount}
+						{activeFilterCount === 1 ? 'active filter' : 'active filters'}. Try removing some filters to see
+						more results.
+					</Typography>
+					<Button onclick={clearAllFilters} size="md" variant="outline">
+						<X class="w-4 h-4 mr-2" />
+						Clear All Filters
+					</Button>
+				{:else}
+					<Calendar class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
+					<Typography variant="h3" class="mb-2">No photos found</Typography>
+					<Typography variant="body" class="text-charcoal-400 text-sm">
+						No photos available in the timeline
+					</Typography>
+				{/if}
 			</Card>
 		{/if}
 	</div>
