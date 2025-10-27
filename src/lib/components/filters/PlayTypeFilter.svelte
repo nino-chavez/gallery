@@ -94,7 +94,7 @@
 							? 'bg-gold-500 text-charcoal-950 shadow-md'
 							: 'bg-charcoal-800/50 text-charcoal-300 hover:bg-charcoal-800 hover:text-charcoal-100'}"
 					>
-						<Typography variant="body-sm" class="font-medium">All Types</Typography>
+						<Typography variant="caption" class="font-medium">All Types</Typography>
 					</button>
 
 					<!-- Play Type Pills -->
@@ -113,7 +113,7 @@
 									? 'text-charcoal-950'
 									: 'text-charcoal-400 group-hover:text-charcoal-200'}"
 							/>
-							<Typography variant="body-sm" class="font-medium">{playType.label}</Typography>
+							<Typography variant="caption" class="font-medium">{playType.label}</Typography>
 						</button>
 					{/each}
 				</div>

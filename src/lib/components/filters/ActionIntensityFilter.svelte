@@ -119,7 +119,7 @@
 							? 'bg-gold-500 text-charcoal-950 shadow-md'
 							: 'bg-charcoal-800/50 text-charcoal-300 hover:bg-charcoal-800 hover:text-charcoal-100'}"
 					>
-						<Typography variant="body-sm" class="font-medium">All Intensities</Typography>
+						<Typography variant="caption" class="font-medium">All Intensities</Typography>
 					</button>
 
 					<!-- Intensity Pills -->
@@ -137,7 +137,7 @@
 									? 'text-white'
 									: intensity.textClass}"
 							/>
-							<Typography variant="body-sm" class="font-medium">{intensity.label}</Typography>
+							<Typography variant="caption" class="font-medium">{intensity.label}</Typography>
 						</button>
 					{/each}
 				</div>

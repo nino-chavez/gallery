@@ -124,7 +124,7 @@
 							onclick={clearAll}
 							class="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-red-500/20 text-red-400 hover:bg-red-500/30"
 						>
-							<Typography variant="body-sm" class="font-medium">Clear All</Typography>
+							<Typography variant="caption" class="font-medium">Clear All</Typography>
 						</button>
 					{/if}
 
@@ -144,7 +144,7 @@
 									? 'text-charcoal-950'
 									: 'text-charcoal-400 group-hover:text-charcoal-200'}"
 							/>
-							<Typography variant="body-sm" class="font-medium">{lighting.label}</Typography>
+							<Typography variant="caption" class="font-medium">{lighting.label}</Typography>
 						</button>
 					{/each}
 				</div>

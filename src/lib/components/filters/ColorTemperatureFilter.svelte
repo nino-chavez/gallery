@@ -98,7 +98,7 @@
 							? 'bg-gold-500 text-charcoal-950 shadow-md'
 							: 'bg-charcoal-800/50 text-charcoal-300 hover:bg-charcoal-800 hover:text-charcoal-100'}"
 					>
-						<Typography variant="body-sm" class="font-medium">All Temperatures</Typography>
+						<Typography variant="caption" class="font-medium">All Temperatures</Typography>
 					</button>
 
 					{#each temperatures as temp}
@@ -123,7 +123,7 @@
 									: 'text-charcoal-300'}"
 							/>
 							<Typography
-								variant="body-sm"
+								variant="caption"
 								class="font-medium relative z-10 {selectedTemp === temp.value
 									? 'text-white'
 									: 'text-charcoal-300'}">{temp.label}</Typography

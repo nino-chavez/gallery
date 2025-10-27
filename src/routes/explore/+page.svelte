@@ -9,6 +9,11 @@
 	import Lightbox from '$lib/components/gallery/Lightbox.svelte';
 	import SportFilter from '$lib/components/filters/SportFilter.svelte';
 	import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte';
+	import PlayTypeFilter from '$lib/components/filters/PlayTypeFilter.svelte';
+	import ActionIntensityFilter from '$lib/components/filters/ActionIntensityFilter.svelte';
+	import LightingFilter from '$lib/components/filters/LightingFilter.svelte';
+	import ColorTemperatureFilter from '$lib/components/filters/ColorTemperatureFilter.svelte';
+	import TimeOfDayFilter from '$lib/components/filters/TimeOfDayFilter.svelte';
 	import SearchAutocomplete from '$lib/components/search/SearchAutocomplete.svelte';
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
@@ -76,6 +81,60 @@
 
 	function handleClearSearch() {
 		searchQuery = '';
+	}
+
+	function handlePlayTypeSelect(playType: string | null) {
+		const url = new URL($page.url);
+		if (playType) {
+			url.searchParams.set('play_type', playType);
+		} else {
+			url.searchParams.delete('play_type');
+		}
+		url.searchParams.delete('page');
+		goto(url.toString());
+	}
+
+	function handleIntensitySelect(intensity: string | null) {
+		const url = new URL($page.url);
+		if (intensity) {
+			url.searchParams.set('intensity', intensity);
+		} else {
+			url.searchParams.delete('intensity');
+		}
+		url.searchParams.delete('page');
+		goto(url.toString());
+	}
+
+	function handleLightingSelect(lighting: string[] | null) {
+		const url = new URL($page.url);
+		url.searchParams.delete('lighting'); // Clear existing
+		if (lighting && lighting.length > 0) {
+			lighting.forEach((l) => url.searchParams.append('lighting', l));
+		}
+		url.searchParams.delete('page');
+		goto(url.toString());
+	}
+
+	function handleColorTempSelect(temp: string | null) {
+		const url = new URL($page.url);
+		if (temp) {
+			url.searchParams.set('color_temp', temp);
+		} else {
+			url.searchParams.delete('color_temp');
+		}
+		url.searchParams.delete('page');
+		goto(url.toString());
+	}
+
+	function handleTimeOfDaySelect(time: string | null) {
+		const url = new URL($page.url);
+		if (time) {
+			url.searchParams.set('time_of_day', time);
+		} else {
+			url.searchParams.delete('time_of_day');
+		}
+		url.searchParams.delete('page');
+		goto(url.toString());
 	}
 
 	function handleSortChange(event: Event) {
@@ -163,6 +222,31 @@
 					onSelect={handleCategorySelect}
 				/>
 			{/if}
+		</div>
+
+		<!-- Bucket 1 Filters (Collapsible) -->
+		<div class="mt-4 space-y-2">
+			<PlayTypeFilter selectedPlayType={data.selectedPlayType} onSelect={handlePlayTypeSelect} />
+
+			<ActionIntensityFilter
+				selectedIntensity={data.selectedIntensity}
+				onSelect={handleIntensitySelect}
+			/>
+
+			<LightingFilter
+				selectedLighting={data.selectedLighting}
+				onSelect={handleLightingSelect}
+			/>
+
+			<ColorTemperatureFilter
+				selectedTemp={data.selectedColorTemp}
+				onSelect={handleColorTempSelect}
+			/>
+
+			<TimeOfDayFilter
+				selectedTime={data.selectedTimeOfDay}
+				onSelect={handleTimeOfDaySelect}
+			/>
 		</div>
 	</div>
 </div>
