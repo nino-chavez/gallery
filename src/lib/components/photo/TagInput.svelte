@@ -80,7 +80,7 @@
 							showForm = false;
 						}, 2000);
 					} else if (result.type === 'failure') {
-						errorMessage = result.data?.error || 'Failed to submit tag';
+						errorMessage = (result.data?.error as string) || 'Failed to submit tag';
 						successMessage = '';
 					}
 					await update();
