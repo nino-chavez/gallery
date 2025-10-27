@@ -3,18 +3,17 @@ import type { PageServerLoad } from './$types';
 import type { Photo } from '$types/photo';
 
 export const load: PageServerLoad = async () => {
-	// Fetch portfolio-worthy photos (top 50 by quality)
-	// Use fetchPhotos() helper which properly transforms data into Photo objects
+	// Fetch recent photos (top 50)
+	// NOTE: This is a placeholder - Collections should be AI-curated per two-bucket model
 	const portfolioPhotos = await fetchPhotos({
-		portfolioWorthy: true,
 		limit: 50,
-		sortBy: 'highest_quality',
+		sortBy: 'newest',
 	});
 
-	// Fetch all emotion-grouped photos
-	// fetchPhotos already filters for enriched photos (sharpness not null)
+	// Fetch all photos for emotion grouping
+	// NOTE: Emotion is Bucket 2 (internal) - this grouping is for internal curation, not user-facing
 	const allEmotionPhotos = await fetchPhotos({
-		sortBy: 'highest_quality',
+		sortBy: 'newest',
 	});
 
 	// Group photos by emotion

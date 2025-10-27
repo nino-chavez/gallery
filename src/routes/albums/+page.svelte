@@ -100,97 +100,99 @@
 	});
 </script>
 
-<!-- Header Section -->
-<Motion
-	let:motion
-	initial={{ opacity: 0, y: 20 }}
-	animate={{ opacity: 1, y: 0 }}
-	transition={MOTION.spring.gentle}
->
-	<div use:motion class="p-8">
-		<div class="max-w-7xl mx-auto">
-			<!-- Title & Description -->
-			<div class="flex items-center gap-4 mb-6">
-				<div class="p-3 rounded-full bg-gold-500/10" aria-hidden="true">
-					<FolderOpen class="w-8 h-8 text-gold-500" />
-				</div>
-				<div>
-					<Typography variant="h1" class="text-4xl">Albums</Typography>
-					<Typography variant="body" class="text-charcoal-300 mt-1">
-						{data.totalAlbums.toLocaleString()} albums with {data.totalPhotos.toLocaleString()} photos
+<!-- Minimal Header - Content First Design -->
+<Motion let:motion initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+	<div use:motion class="sticky top-0 z-20 bg-charcoal-950/95 backdrop-blur-sm border-b border-charcoal-800/50">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+
+			<!-- Compact Header: Title + Count + Search -->
+			<div class="flex items-center justify-between gap-4 mb-3">
+				<div class="flex items-center gap-2">
+					<Typography variant="h1" class="text-xl lg:text-2xl">Albums</Typography>
+					<Typography variant="caption" class="text-charcoal-400 text-xs">
+						{data.totalAlbums.toLocaleString()}
 					</Typography>
+				</div>
+
+				<!-- Desktop search -->
+				<div class="hidden md:block flex-1 max-w-md">
+					<input
+						type="search"
+						placeholder="Search albums..."
+						bind:value={searchQuery}
+						class="w-full px-4 py-2 text-sm rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-400"
+					/>
 				</div>
 			</div>
 
-			<!-- Sport Filter (NEW - Week 2) -->
-			{#if sports && sports.length > 0}
-				<div class="mb-6">
+			<!-- Inline Filters + Mobile Search -->
+			<div class="flex flex-wrap items-center gap-2">
+				{#if sports && sports.length > 0}
 					<SportFilter
 						sports={sports}
 						selectedSport={data.selectedSport}
 						onSelect={handleSportSelect}
 					/>
-				</div>
-			{/if}
+				{/if}
 
-			<!-- Category Filter (NEW - Week 2) -->
-			{#if categories && categories.length > 0}
-				<div class="mb-6">
+				{#if categories && categories.length > 0}
 					<CategoryFilter
 						categories={categories}
 						selectedCategory={data.selectedCategory}
 						onSelect={handleCategorySelect}
 					/>
-				</div>
-			{/if}
+				{/if}
 
-			<!-- Search Bar -->
-			<div class="mb-6">
-				<input
-					type="search"
-					placeholder="Search albums..."
-					bind:value={searchQuery}
-					class="w-full px-4 py-3 rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-400"
-				/>
+				<!-- Mobile search as inline element -->
+				<div class="md:hidden w-full">
+					<input
+						type="search"
+						placeholder="Search albums..."
+						bind:value={searchQuery}
+						class="w-full px-4 py-2 text-sm rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-400"
+					/>
+				</div>
 			</div>
+		</div>
+	</div>
 
-			<!-- Album Count -->
-			{#if searchQuery}
-				<div class="mb-6">
-					<Card padding="sm">
-						<Typography variant="body" class="text-charcoal-300">
-							{displayAlbums.length.toLocaleString()} {displayAlbums.length === 1 ? 'album' : 'albums'} found
-						</Typography>
-					</Card>
-				</div>
-			{/if}
+	<!-- Album Grid Content -->
+	<div use:motion class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-			<!-- Album Grid -->
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+		<!-- Search results indicator -->
+		{#if searchQuery && displayAlbums.length > 0}
+			<div class="mb-4">
+				<Typography variant="caption" class="text-charcoal-400 text-xs">
+					{displayAlbums.length.toLocaleString()} {displayAlbums.length === 1 ? 'album' : 'albums'} found
+				</Typography>
+			</div>
+		{/if}
+
+		<!-- Album Grid -->
+		{#if displayAlbums.length > 0}
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 				{#each displayAlbums as album, index}
 					<AlbumCard {album} {index} onclick={handleAlbumClick} />
 				{/each}
 			</div>
-
+		{:else}
 			<!-- Empty State -->
-			{#if displayAlbums.length === 0}
-				<Motion
-					let:motion
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={MOTION.spring.gentle}
-				>
-					<div use:motion>
-						<Card padding="lg" class="text-center">
-							<FolderOpen class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
-							<Typography variant="h3" class="mb-2">No albums found</Typography>
-							<Typography variant="body" class="text-charcoal-400">
-								Try adjusting your search
-							</Typography>
-						</Card>
-					</div>
-				</Motion>
-			{/if}
-		</div>
+			<Motion
+				let:motion
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={MOTION.spring.gentle}
+			>
+				<div use:motion>
+					<Card padding="lg" class="text-center">
+						<FolderOpen class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
+						<Typography variant="h3" class="mb-2">No albums found</Typography>
+						<Typography variant="body" class="text-charcoal-400 text-sm">
+							{searchQuery ? 'Try adjusting your search' : 'No albums available'}
+						</Typography>
+					</Card>
+				</div>
+			</Motion>
+		{/if}
 	</div>
 </Motion>

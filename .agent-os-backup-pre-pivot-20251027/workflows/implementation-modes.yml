@@ -1,0 +1,315 @@
+# Agent-OS Implementation Workflow Modes
+# Configurable workflow strategies for different project complexity levels
+
+version: 1.0.0
+default_mode: direct  # Options: direct, selective, thorough
+
+modes:
+  # Mode A: Direct Implementation (Fastest, Least Tokens)
+  # Recommended for: UI polish, straightforward features, routine updates
+  direct:
+    name: "Direct Implementation"
+    description: "AI implements tasks directly without agent delegation"
+    token_efficiency: "70-80% savings vs thorough mode"
+    speed_multiplier: "3-4x faster"
+
+    workflow:
+      - phase: implementation
+        strategy: direct
+        documentation: minimal
+
+      - phase: verification
+        strategy: self_verify
+        documentation: summary_only
+
+    characteristics:
+      - No agent delegation for implementation
+      - Self-verification with spot checks
+      - Minimal documentation (code comments + brief summary)
+      - Single-pass implementation
+      - Focus on code delivery over process documentation
+
+    use_cases:
+      - UI component creation
+      - Styling and layout adjustments
+      - Microinteractions and animations
+      - Bug fixes and minor enhancements
+      - Refactoring existing code
+      - Test file creation (non-critical)
+
+    skip_steps:
+      - Agent delegation for implementation
+      - Intermediate verification phases
+      - Comprehensive implementation documentation
+      - Multi-phase verification reports
+
+    quality_assurance:
+      - Code follows project standards (checked via linting/type-checking)
+      - Self-review against acceptance criteria
+      - Spot testing of critical paths
+      - Final summary of changes
+
+  # Mode B: Selective Delegation (Balanced)
+  # Recommended for: Complex features, backend work, critical paths
+  selective:
+    name: "Selective Delegation"
+    description: "Delegate complex task groups, handle simple tasks directly"
+    token_efficiency: "40-50% savings vs thorough mode"
+    speed_multiplier: "2x faster"
+
+    workflow:
+      - phase: planning
+        strategy: analyze_complexity
+
+      - phase: implementation
+        strategy: hybrid
+        rules:
+          - delegate_if: complexity_high
+          - delegate_if: backend_work
+          - delegate_if: multi_component_integration
+          - direct_if: single_component
+          - direct_if: styling_only
+          - direct_if: straightforward_logic
+
+      - phase: verification
+        strategy: targeted
+        documentation: focused
+
+    characteristics:
+      - Intelligent task complexity analysis
+      - Delegate only high-complexity or risky tasks
+      - Direct implementation for straightforward work
+      - Single final verification instead of multi-phase
+      - Focused documentation on complex areas
+
+    complexity_indicators:
+      high_complexity:
+        - 3D graphics and WebGL work
+        - Complex state management patterns
+        - Database schema migrations
+        - API integration with external services
+        - Authentication/authorization logic
+        - Real-time features (WebSockets, etc.)
+        - Performance-critical algorithms
+
+      medium_complexity:
+        - Multi-step user workflows
+        - Form validation and submission
+        - Data transformation pipelines
+        - Component composition patterns
+
+      low_complexity:
+        - Single UI components
+        - CSS/Tailwind styling
+        - Simple event handlers
+        - Static content updates
+        - Configuration changes
+
+    delegation_rules:
+      - backend_work: database-engineer, api-engineer
+      - frontend_complex: ui-designer
+      - testing_critical: testing-engineer
+
+    use_cases:
+      - Features with mixed complexity levels
+      - Backend + frontend integration work
+      - Features requiring database changes
+      - Multi-step user workflows
+      - Features with critical security implications
+
+    quality_assurance:
+      - Delegated tasks verified by specialized verifiers
+      - Direct implementations self-verified
+      - Single comprehensive verification at end
+      - Focused documentation on complex areas
+
+  # Mode C: Thorough Multi-Agent (Most Comprehensive)
+  # Recommended for: Mission-critical features, complex integrations, production releases
+  thorough:
+    name: "Thorough Multi-Agent"
+    description: "Full multi-agent workflow with comprehensive verification"
+    token_efficiency: "Baseline (highest token usage)"
+    speed_multiplier: "1x (most thorough)"
+
+    workflow:
+      - phase: planning
+        strategy: detailed
+        outputs:
+          - task-assignments.yml
+          - execution-plan.md
+
+      - phase: implementation
+        strategy: delegate_all
+        documentation: comprehensive
+
+      - phase: component_verification
+        strategy: specialized_verifiers
+        outputs:
+          - frontend-verification.md
+          - backend-verification.md
+
+      - phase: final_verification
+        strategy: implementation_verifier
+        outputs:
+          - final-verification.md
+          - test-results.md
+
+    characteristics:
+      - All task groups delegated to specialized agents
+      - Multi-phase verification process
+      - Comprehensive documentation at each step
+      - Separate verifiers for frontend/backend
+      - Final implementation-verifier approval
+      - Extensive test coverage validation
+
+    use_cases:
+      - Mission-critical production features
+      - Complex 3D graphics implementations
+      - Major architectural changes
+      - Security-sensitive features
+      - Features requiring SOC2/HIPAA compliance
+      - Complex multi-system integrations
+      - Features with high user impact
+
+    quality_assurance:
+      - Specialized agents for each discipline
+      - Multi-phase verification (component → integration → final)
+      - Comprehensive documentation trail
+      - Full test coverage validation
+      - Standards compliance audit
+      - Performance and accessibility verification
+
+# Context-Aware Mode Selection
+# Automatic mode selection based on project and task characteristics
+
+auto_select:
+  enabled: true
+
+  project_profiles:
+    # Small projects (< 10 components, < 5 routes)
+    small:
+      default_mode: direct
+      override_conditions:
+        - condition: backend_changes
+          mode: selective
+        - condition: security_critical
+          mode: thorough
+
+    # Medium projects (10-50 components, 5-20 routes)
+    medium:
+      default_mode: selective
+      override_conditions:
+        - condition: ui_only_changes
+          mode: direct
+        - condition: mission_critical
+          mode: thorough
+
+    # Large projects (50+ components, 20+ routes)
+    large:
+      default_mode: selective
+      override_conditions:
+        - condition: microinteractions_polish
+          mode: direct
+        - condition: core_architecture_change
+          mode: thorough
+
+  task_group_analysis:
+    keywords:
+      ui_only:
+        - "styling"
+        - "layout"
+        - "CSS"
+        - "Tailwind"
+        - "component styling"
+        - "visual polish"
+        - "microinteractions"
+
+      backend_work:
+        - "database"
+        - "migration"
+        - "API"
+        - "endpoint"
+        - "authentication"
+        - "authorization"
+
+      high_complexity:
+        - "3D"
+        - "WebGL"
+        - "Three.js"
+        - "real-time"
+        - "WebSocket"
+        - "complex state"
+        - "performance optimization"
+
+      mission_critical:
+        - "security"
+        - "authentication"
+        - "payment"
+        - "data privacy"
+        - "compliance"
+
+# Per-Spec Configuration Override
+# Allows specs to override default workflow mode
+
+spec_configuration:
+  location: "agent-os/specs/{spec-id}/planning/workflow-config.yml"
+
+  example_override:
+    # File: agent-os/specs/2025-10-16-innovation-implementation/planning/workflow-config.yml
+    phases:
+      phase_1:
+        mode: thorough  # Foundation work needs thorough verification
+        reason: "Critical accessibility fixes require comprehensive testing"
+
+      phase_2:
+        mode: selective  # Some complexity, mixed task types
+        reason: "Mix of complex (MagneticFilterOrb) and simple (badges) tasks"
+
+      phase_3:
+        mode: direct  # UI polish work is straightforward
+        reason: "Microinteractions and polish are straightforward UI work"
+
+      phase_4:
+        mode: thorough  # 3D work is high complexity
+        reason: "Three.js 3D galaxy requires specialized expertise"
+
+# CLI Usage Examples
+
+usage_examples:
+  # Use default mode from config
+  - command: "/agent-os:implement-spec"
+    mode: "Uses config.yml default_mode or auto-selects based on project profile"
+
+  # Explicit mode override
+  - command: "/agent-os:implement-spec --mode=direct"
+    mode: "Forces direct implementation mode regardless of defaults"
+
+  - command: "/agent-os:implement-spec --mode=selective"
+    mode: "Forces selective delegation mode"
+
+  - command: "/agent-os:implement-spec --mode=thorough"
+    mode: "Forces thorough multi-agent mode"
+
+  # Phase-specific mode override
+  - command: "/agent-os:implement-spec --phase=3 --mode=direct"
+    mode: "Uses direct mode only for Phase 3, other phases use defaults"
+
+  # Auto-select with project context
+  - command: "/agent-os:implement-spec --auto"
+    mode: "Analyzes task complexity and selects appropriate mode automatically"
+
+# Migration Guide for Existing Specs
+
+migration:
+  status: "All existing specs use thorough mode by default"
+  recommendation: |
+    For specs in progress (like Innovation Implementation):
+    - Phase 1: Already complete (thorough mode) ✓
+    - Phase 2: Already complete (thorough mode) ✓
+    - Phase 3: Switch to direct mode (microinteractions/polish)
+    - Phase 4: Use selective mode (3D work needs delegation for complex tasks)
+
+  backward_compatibility: |
+    Existing task-assignments.yml files remain valid.
+    New workflow-config.yml is optional.
+    If workflow-config.yml is absent, defaults to thorough mode.

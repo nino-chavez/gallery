@@ -5,8 +5,20 @@
  * Reference: src/lib/design-tokens.ts
  */
 @theme {
-  /* Typography */
+  /* Typography - Core Gallery Scale (Chrome Budget Protected) */
   --font-family-sans: 'Inter Variable', system-ui, -apple-system, sans-serif;
+
+  /* Extended Typography - Display Scale (Marketing/Content Pages Only)
+   * ⚠️ DO NOT USE on gallery pages (explore, albums, collections)
+   * These sizes are for About, Contact, Landing, and Marketing pages only
+   * Gallery pages must maintain text-xl max to preserve chrome budget
+   */
+  --font-size-3xl: 1.875rem;  /* 30px - Large display headings */
+  --font-size-4xl: 2.25rem;   /* 36px - Hero section titles */
+  --font-size-5xl: 3rem;      /* 48px - Landing page headlines */
+  --font-size-6xl: 3.75rem;   /* 60px - Marketing hero (use sparingly) */
+  --font-size-7xl: 4.5rem;    /* 72px - Extra large displays */
+  --font-size-8xl: 6rem;      /* 96px - Massive hero text */
 
   /* Colors - Charcoal (neutral) */
   --color-charcoal-50: #f8f8f9;
@@ -124,58 +136,7 @@
 }
 
 @layer utilities {
-  /* P1-2: Emotion halos - GPU accelerated colored glows */
-  .emotion-halo-triumph {
-    box-shadow: 0 0 12px 4px rgba(255, 215, 0, 0.6);
-    will-change: box-shadow;
-  }
-
-  .emotion-halo-intensity {
-    box-shadow: 0 0 12px 4px rgba(255, 69, 0, 0.6);
-    will-change: box-shadow;
-  }
-
-  .emotion-halo-focus {
-    box-shadow: 0 0 12px 4px rgba(65, 105, 225, 0.6);
-    will-change: box-shadow;
-  }
-
-  .emotion-halo-determination {
-    box-shadow: 0 0 12px 4px rgba(139, 0, 139, 0.6);
-    will-change: box-shadow;
-  }
-
-  .emotion-halo-excitement {
-    box-shadow: 0 0 12px 4px rgba(255, 105, 180, 0.6);
-    will-change: box-shadow;
-  }
-
-  .emotion-halo-serenity {
-    box-shadow: 0 0 12px 4px rgba(64, 224, 208, 0.6);
-    will-change: box-shadow;
-  }
-
-  /* P1-2: Quality glow - shimmer animation for portfolio-worthy photos */
-  @keyframes shimmer {
-    0%, 100% {
-      box-shadow: 0 0 8px 2px rgba(212, 175, 55, 0.4);
-    }
-    50% {
-      box-shadow: 0 0 16px 4px rgba(212, 175, 55, 0.8);
-    }
-  }
-
-  .quality-shimmer {
-    animation: shimmer 3s ease-in-out infinite;
-  }
-
-  /* P1-2: Non-portfolio dimming for low-quality photos */
-  .quality-dimmed {
-    opacity: 0.6;
-    filter: blur(2px);
-  }
-
-  /* Emotion gradient utilities */
+  /* Emotion gradient utilities (used in design system components) */
   .bg-emotion-triumph {
     background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
   }

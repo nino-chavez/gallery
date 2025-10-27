@@ -17,22 +17,23 @@ export const load: PageServerLoad = async ({ url, parent }) => {
   // Get cached sport/category distributions from layout
   const { sports, categories } = await parent();
 
-  // Get filter params from URL
-  const portfolioOnly = url.searchParams.get('portfolio') === 'true';
-  const minQuality = url.searchParams.get('minQuality');
-  const sportFilter = url.searchParams.get('sport') || undefined; // NEW: Sport filtering
-  const categoryFilter = url.searchParams.get('category') || undefined; // NEW: Category filtering
-  // P1-1: Default to quality sort (portfolio-worthy first)
-  const sortBy = (url.searchParams.get('sort') || 'quality') as 'quality' | 'newest' | 'oldest' | 'highest_quality' | 'lowest_quality';
+  // Get Bucket 1 (user-facing) filter params from URL
+  const sportFilter = url.searchParams.get('sport') || undefined;
+  const categoryFilter = url.searchParams.get('category') || undefined;
+  const lightingFilter = url.searchParams.get('lighting') || undefined;
+  const colorTempFilter = url.searchParams.get('color_temp') || undefined;
+
+  // Sort mode (default to newest)
+  const sortBy = (url.searchParams.get('sort') || 'newest') as 'newest' | 'oldest' | 'action' | 'intensity';
   const page = parseInt(url.searchParams.get('page') || '1');
   const pageSize = 24;
   const offset = (page - 1) * pageSize;
 
   const filterOptions = {
-    portfolioWorthy: portfolioOnly || undefined,
-    minQualityScore: minQuality ? parseFloat(minQuality) : undefined,
-    sportType: sportFilter, // NEW: Pass sport filter
-    photoCategory: categoryFilter, // NEW: Pass category filter
+    sportType: sportFilter,
+    photoCategory: categoryFilter,
+    lighting: lightingFilter ? [lightingFilter] : undefined,
+    colorTemperature: colorTempFilter ? [colorTempFilter] : undefined,
   };
 
   // Fetch photos with pagination
@@ -56,9 +57,7 @@ export const load: PageServerLoad = async ({ url, parent }) => {
     selectedSport: sportFilter || null,
     categories, // From parent layout (cached)
     selectedCategory: categoryFilter || null,
-    initialFilters: {
-      portfolioOnly,
-      minQuality: minQuality ? parseFloat(minQuality) : 0,
-    },
+    selectedLighting: lightingFilter || null,
+    selectedColorTemp: colorTempFilter || null,
   };
 };

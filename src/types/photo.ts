@@ -5,13 +5,10 @@
  * Migrated from v2 Next.js implementation
  */
 
-export type EmotionType =
-  | 'triumph'
-  | 'focus'
-  | 'intensity'
-  | 'determination'
-  | 'excitement'
-  | 'serenity';
+// =============================================================================
+// BUCKET 1: Concrete & Filterable (USER-FACING)
+// These types are exposed as search filters
+// =============================================================================
 
 export type PlayType =
   | 'attack'
@@ -19,56 +16,111 @@ export type PlayType =
   | 'dig'
   | 'set'
   | 'serve'
-  | 'pass'
   | 'celebration'
-  | 'timeout'
+  | 'transition'
   | null;
 
 export type ActionIntensity = 'low' | 'medium' | 'high' | 'peak';
 
 export type CompositionType =
-  | 'rule-of-thirds'
-  | 'leading-lines'
+  | 'rule_of_thirds'
+  | 'leading_lines'
+  | 'framing'
   | 'symmetry'
-  | 'depth-of-field';
+  | 'depth'
+  | 'negative_space';
+
+export type TimeOfDay =
+  | 'golden_hour'
+  | 'midday'
+  | 'evening'
+  | 'blue_hour'
+  | 'night'
+  | 'dawn';
+
+export type LightingType =
+  | 'natural'
+  | 'backlit'
+  | 'dramatic'
+  | 'soft'
+  | 'artificial';
+
+export type ColorTemperature = 'warm' | 'cool' | 'neutral';
+
+// =============================================================================
+// BUCKET 2: Abstract & Internal (AI-ONLY)
+// These types are NOT exposed as user-facing filters
+// =============================================================================
+
+export type EmotionType =
+  | 'triumph'
+  | 'determination'
+  | 'intensity'
+  | 'focus'
+  | 'excitement'
+  | 'serenity';
+
+export type TimeInGame =
+  | 'first_5_min'
+  | 'middle'
+  | 'final_5_min'
+  | 'overtime'
+  | 'unknown';
+
+// =============================================================================
+// AI Provider
+// =============================================================================
 
 export type AIProvider = 'gemini' | 'claude' | 'openai';
 
 /**
- * AI-enriched photo metadata (12 semantic dimensions)
+ * AI-enriched photo metadata (Two-Bucket Model)
+ *
+ * BUCKET 1: Concrete & Filterable (user-facing search filters)
+ * BUCKET 2: Abstract & Internal (AI story detection only)
  */
 export interface PhotoMetadata {
-  // Quality scores (0-10)
-  sharpness: number;
-  exposure_accuracy: number;
-  composition_score: number;
-  emotional_impact: number;
+  // ==========================================================================
+  // BUCKET 1: Concrete & Filterable (USER-FACING)
+  // ==========================================================================
 
-  // Portfolio flags
-  portfolio_worthy: boolean;
-  print_ready: boolean;
-  social_media_optimized: boolean;
-
-  // Composition & Emotion
-  emotion: EmotionType;
-  composition: string;
-  time_of_day: string;
-
-  // Volleyball-specific (legacy)
+  // Action dimension
   play_type: PlayType;
   action_intensity: ActionIntensity;
+  sport_type: string;        // volleyball, basketball, soccer
+  photo_category: string;    // action, celebration, candid, portrait
 
-  // Sport taxonomy (NEW - Week 1 multi-sport migration)
-  sport_type?: string;       // volleyball, basketball, soccer, portrait, etc.
-  photo_category?: string;   // action, celebration, candid, portrait, warmup, ceremony
-  action_type?: string | null;      // Sport-specific action type (e.g., attack, dunk, goal)
+  // Aesthetic dimension
+  composition: CompositionType;
+  time_of_day: TimeOfDay;
+  lighting: LightingType;              // NEW
+  color_temperature: ColorTemperature; // NEW
 
-  // Use cases
-  use_cases: string[];
+  // ==========================================================================
+  // BUCKET 2: Abstract & Internal (AI-ONLY, NOT USER-FACING)
+  // ==========================================================================
 
-  // AI metadata
+  // Emotion (internal for story detection)
+  emotion: EmotionType;
+
+  // Quality metrics (internal scoring)
+  sharpness: number;              // 0-10
+  composition_score: number;      // 0-10
+  exposure_accuracy: number;      // 0-10
+  emotional_impact: number;       // 0-10
+
+  // Story detection context (internal)
+  time_in_game?: TimeInGame;      // NEW: For game-winning rally detection
+  athlete_id?: string;            // NEW: For player highlight reels
+  event_id?: string;              // NEW: For grouping by game/tournament
+
+  // ==========================================================================
+  // AI Metadata
+  // ==========================================================================
+
   ai_provider: AIProvider;
   ai_cost: number;
+  ai_confidence: number;          // NEW: Overall detection confidence (0-1)
   enriched_at: string;
 }
 
@@ -121,51 +173,67 @@ export interface Photo {
 }
 
 /**
- * Filter state for photo browsing
+ * Filter state for photo browsing (CONCRETE FILTERS ONLY)
+ *
+ * Only Bucket 1 (user-facing) fields are exposed as filters.
+ * Bucket 2 (internal) fields are NOT searchable.
  */
 export interface PhotoFilterState {
-  // Quality filters
-  portfolioWorthy?: boolean;
-  printReady?: boolean;
-  socialMediaOptimized?: boolean;
-  minQualityScore?: number;
-  maxQualityScore?: number; // Added for gallery quality range support
-
-  // Semantic filters
-  emotions?: EmotionType[];
+  // ==========================================================================
+  // Action Filters (Concrete)
+  // ==========================================================================
   playTypes?: PlayType[];
   actionIntensity?: ActionIntensity[];
+  sportType?: string;
+  photoCategory?: string;
+
+  // ==========================================================================
+  // Aesthetic Filters (Concrete)
+  // ==========================================================================
   compositions?: CompositionType[];
-  timeOfDay?: string[];
+  timeOfDay?: TimeOfDay[];
+  lighting?: LightingType[];              // NEW
+  colorTemperature?: ColorTemperature[];  // NEW
 
-  // Sport taxonomy filters (NEW - Week 2)
-  sportType?: string;           // volleyball, basketball, soccer, etc.
-  photoCategory?: string;       // action, celebration, candid, portrait, etc.
-  actionType?: string;          // Sport-specific action type
-
-  // Album filter
+  // ==========================================================================
+  // Context Filters
+  // ==========================================================================
   albumKey?: string;
-
-  // Search
   searchQuery?: string;
+
+  // ==========================================================================
+  // REMOVED: Obsolete/Internal Filters
+  // ==========================================================================
+  // ❌ portfolioWorthy (assumes quality varies)
+  // ❌ printReady (subjective, not extractable)
+  // ❌ socialMediaOptimized (subjective, not extractable)
+  // ❌ minQualityScore / maxQualityScore (futile filter)
+  // ❌ emotions (abstract, not useful alone - moved to Bucket 2)
 }
 
 /**
- * Sort modes for photo grid
+ * Sort modes for photo grid (CONCRETE ONLY)
  */
 export type PhotoSortMode =
-  | 'quality' // Sort by average quality score
-  | 'chronological' // Sort by created_at
-  | 'emotion' // Sort by emotion
-  | 'play-type'; // Sort by play type
+  | 'chronological' // Sort by created_at (default)
+  | 'play-type'     // Sort by play type
+  | 'intensity';    // Sort by action intensity
 
 /**
  * Photo grid view mode
  */
 export type PhotoGridMode =
-  | 'standard' // Equal visual weight
-  | 'quality-stratified' // Portfolio photos prioritized
-  | 'emotion-grouped'; // Grouped by emotion
+  | 'standard'      // Equal visual weight (default)
+  | 'play-grouped'  // Grouped by play type
+  | 'time-grouped'; // Grouped by time of day
+
+// =============================================================================
+// REMOVED: Obsolete sort/view modes
+// =============================================================================
+// ❌ 'quality' sort (assumes quality varies)
+// ❌ 'emotion' sort (abstract, not user-facing)
+// ❌ 'quality-stratified' view (assumes quality varies)
+// ❌ 'emotion-grouped' view (abstract, not user-facing)
 
 /**
  * Narrative arc type for AI story curation

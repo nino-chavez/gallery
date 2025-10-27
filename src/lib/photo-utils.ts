@@ -6,6 +6,67 @@
  */
 
 import type { Photo, PhotoMetadata } from '$types/photo';
+import {
+	Trophy,
+	Flame,
+	Target,
+	Zap,
+	Sparkles,
+	Waves,
+	type Icon
+} from 'lucide-svelte';
+
+/**
+ * Emotion Color Mapping (from app.css emotion palette)
+ * These colors are used for emotion halos and visual indicators
+ */
+export const emotionColors: Record<string, string> = {
+	triumph: '#FFD700',
+	intensity: '#FF4500',
+	focus: '#4169E1',
+	determination: '#8B008B',
+	excitement: '#FF69B4',
+	serenity: '#20B2AA'
+};
+
+/**
+ * Emotion Icon Mapping (WCAG 1.4.1 Compliance)
+ *
+ * Icons provide a non-color indicator to supplement emotion halos.
+ * This ensures users with color blindness can distinguish emotions.
+ *
+ * @see https://www.w3.org/WAI/WCAG21/Understanding/use-of-color.html
+ */
+export const emotionIcons: Record<string, typeof Icon> = {
+	triumph: Trophy,
+	intensity: Flame,
+	focus: Target,
+	determination: Zap,
+	excitement: Sparkles,
+	serenity: Waves
+};
+
+/**
+ * Get emotion icon component for a given emotion
+ *
+ * @param emotion - Emotion string (case-insensitive)
+ * @returns Icon component or null if emotion not found
+ */
+export function getEmotionIcon(emotion: string | null | undefined): typeof Icon | null {
+	if (!emotion) return null;
+	return emotionIcons[emotion.toLowerCase()] || null;
+}
+
+/**
+ * Get emotion color hex value for a given emotion
+ *
+ * @param emotion - Emotion string (case-insensitive)
+ * @returns Hex color string or null if emotion not found
+ */
+export function getEmotionColor(emotion: string | null | undefined): string | null {
+	if (!emotion) return null;
+	return emotionColors[emotion.toLowerCase()] || null;
+}
 
 /**
  * Calculate average quality score from photo metadata
@@ -60,55 +121,9 @@ export function getQualityTier(score: number): 'low' | 'medium' | 'high' | 'exce
   return 'exceptional';
 }
 
-/**
- * Determine if photo meets portfolio quality standards
- *
- * A photo is considered portfolio-worthy if:
- * - Metadata flag is true, OR
- * - Quality score >= 8.0 (exceptional tier)
- *
- * @param photo - Photo object
- * @returns Whether photo meets portfolio standards
- */
-export function isPortfolioQuality(photo: Photo): boolean {
-  return photo.metadata.portfolio_worthy || getPhotoQualityScore(photo) >= 8.0;
-}
-
-/**
- * Get quality-based opacity for stratified display
- *
- * Used in quality-stratified grids to de-emphasize low-quality photos
- *
- * @param score - Quality score (0-10)
- * @param stratified - Whether stratification is enabled
- * @returns Opacity value (0-1)
- */
-export function getQualityOpacity(score: number, stratified: boolean): number {
-  if (!stratified) return 1;
-
-  const tier = getQualityTier(score);
-  switch (tier) {
-    case 'low':
-      return 0.4;
-    case 'medium':
-      return 0.7;
-    case 'high':
-    case 'exceptional':
-      return 1.0;
-  }
-}
-
-/**
- * Get quality-based blur CSS class
- *
- * @param score - Quality score (0-10)
- * @param stratified - Whether stratification is enabled
- * @returns Tailwind blur class or empty string
- */
-export function getQualityBlurClass(score: number, stratified: boolean): string {
-  if (!stratified) return '';
-  return getQualityTier(score) === 'low' ? 'blur-[2px]' : '';
-}
+// REMOVED: isPortfolioQuality - Assumes quality varies (against two-bucket model)
+// REMOVED: getQualityOpacity - Quality stratification removed
+// REMOVED: getQualityBlurClass - Quality stratification removed
 
 /**
  * Sort photos by quality score (descending)
@@ -138,64 +153,72 @@ export function sortPhotosByDate(photos: Photo[]): Photo[] {
   });
 }
 
-/**
- * Filter photos by minimum quality threshold
- *
- * @param photos - Array of photos to filter
- * @param minQuality - Minimum quality score (0-10)
- * @returns Filtered array
- */
-export function filterPhotosByQuality(photos: Photo[], minQuality: number): Photo[] {
-  return photos.filter((photo) => getPhotoQualityScore(photo) >= minQuality);
-}
+// REMOVED: filterPhotosByQuality - User-facing quality filtering against two-bucket model
 
 /**
  * Generate accessible alt text for a photo
  *
- * Combines metadata attributes into descriptive alt text for screen readers
+ * Combines metadata attributes into descriptive alt text for screen readers.
+ * WCAG 1.4.1 compliant: includes emotion information that supplements visual halos.
  *
  * @param photo - Photo object
+ * @param includeTitle - Whether to prepend photo title
  * @returns Alt text string
  *
  * @example
  * generatePhotoAltText(photo)
- * // => "Portfolio-worthy Triumph attack photo with quality score 8.5/10, high intensity"
+ * // => "Portfolio-worthy volleyball photo. Emotion: Triumph. Quality score 8.5/10. High intensity action."
  */
-export function generatePhotoAltText(photo: Photo): string {
+export function generatePhotoAltText(photo: Photo, includeTitle: boolean = true): string {
   const { metadata } = photo;
   const qualityScore = getPhotoQualityScore(photo);
   const parts: string[] = [];
 
-  if (metadata.portfolio_worthy) {
-    parts.push('Portfolio-worthy');
+  // Include title if available and requested
+  if (includeTitle && photo.title) {
+    parts.push(photo.title);
   }
 
+  // Sport type
+  if (metadata.sport_type) {
+    parts.push(`${metadata.sport_type} photo`);
+  }
+
+  // Emotion (WCAG 1.4.1: non-color indicator for emotion halo)
   if (metadata.emotion) {
-    parts.push(metadata.emotion);
+    parts.push(`Emotion: ${metadata.emotion}`);
   }
 
+  // Lighting and aesthetic info (Bucket 1)
+  if (metadata.lighting) {
+    parts.push(`${metadata.lighting} lighting`);
+  }
+
+  if (metadata.time_of_day) {
+    parts.push(`${metadata.time_of_day}`);
+  }
+
+  // Action intensity
+  if (metadata.action_intensity) {
+    parts.push(`${metadata.action_intensity} intensity action`);
+  }
+
+  // Play type
   if (metadata.play_type) {
     parts.push(metadata.play_type);
   }
 
-  parts.push(`photo with quality score ${qualityScore.toFixed(1)}/10`);
-
-  if (metadata.action_intensity) {
-    parts.push(`${metadata.action_intensity} intensity`);
-  }
-
-  return parts.join(' ');
+  return parts.join('. ');
 }
 
 /**
  * Calculate emotion-based glow intensity
  *
- * Portfolio photos get double glow intensity
+ * Uses internal quality metrics (Bucket 2) for visual effects
  *
  * @param metadata - Photo metadata
  * @returns Glow intensity in pixels
  */
 export function calculateGlowIntensity(metadata: PhotoMetadata): number {
-  const baseQuality = calculateQualityScore(metadata);
-  return metadata.portfolio_worthy ? baseQuality * 2 : baseQuality;
+  return calculateQualityScore(metadata);
 }

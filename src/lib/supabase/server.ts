@@ -46,7 +46,7 @@ export const supabaseServer = createClient(supabaseUrl, supabaseServiceRoleKey, 
 export interface FetchPhotosOptions extends PhotoFilterState {
   limit?: number;
   offset?: number;
-  sortBy?: 'quality' | 'newest' | 'oldest' | 'highest_quality' | 'lowest_quality';
+  sortBy?: 'newest' | 'oldest' | 'action' | 'intensity';
 }
 
 /**
@@ -60,83 +60,71 @@ export interface FetchPhotosOptions extends PhotoFilterState {
  * Never call from browser components!
  */
 export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]> {
-  const { limit, offset, sortBy = 'quality', ...filters } = options || {};
+  const { limit, offset, sortBy = 'newest', ...filters } = options || {};
 
   let query = supabaseServer
     .from('photo_metadata')
     .select('*')
     .not('sharpness', 'is', null); // Only show enriched photos
 
-  // P1-1: Apply quality stratification sorting
+  // Apply concrete sorting (aligned with two-bucket model)
   switch (sortBy) {
-    case 'quality':
-      // Portfolio-worthy photos first, then by quality score
-      query = query
-        .order('portfolio_worthy', { ascending: false, nullsFirst: false })
-        .order('quality_score', { ascending: false, nullsFirst: false });
-      break;
     case 'newest':
       // Use upload_date (SmugMug upload) or date_added (album add) as fallback
-      // photo_date is currently backfilled with enriched_at which is incorrect for sorting
       query = query.order('upload_date', { ascending: false });
       break;
     case 'oldest':
       query = query.order('upload_date', { ascending: true });
       break;
-    case 'highest_quality':
-      query = query.order('quality_score', { ascending: false });
+    case 'action':
+      // Sort by play type (alphabetical grouping)
+      query = query.order('play_type', { ascending: true, nullsFirst: false });
       break;
-    case 'lowest_quality':
-      query = query.order('quality_score', { ascending: true });
+    case 'intensity':
+      // Sort by action intensity (peak -> high -> medium -> low)
+      query = query.order('action_intensity', { ascending: false, nullsFirst: false });
       break;
   }
 
-  // Apply filters - columns are directly on the table
-  if (filters?.portfolioWorthy) {
-    query = query.eq('portfolio_worthy', true);
-  }
+  // Apply Bucket 1 (user-facing) filters only
 
-  // Quality score filter (uses computed column from database)
-  if (filters?.minQualityScore) {
-    query = query.gte('quality_score', filters.minQualityScore);
-  }
-
-  if (filters?.maxQualityScore) {
-    query = query.lte('quality_score', filters.maxQualityScore);
-  }
-
-  if (filters?.printReady) {
-    query = query.eq('print_ready', true);
-  }
-
-  if (filters?.socialMediaOptimized) {
-    query = query.eq('social_media_optimized', true);
-  }
-
+  // Action filters
   if (filters?.playTypes && filters.playTypes.length > 0) {
     query = query.in('play_type', filters.playTypes);
-  }
-
-  if (filters?.emotions && filters.emotions.length > 0) {
-    query = query.in('emotion', filters.emotions);
   }
 
   if (filters?.actionIntensity && filters.actionIntensity.length > 0) {
     query = query.in('action_intensity', filters.actionIntensity);
   }
 
-  if (filters?.albumKey) {
-    query = query.eq('album_key', filters.albumKey);
-  }
-
-  // Sport type filter (NEW - Week 2)
   if (filters?.sportType) {
     query = query.eq('sport_type', filters.sportType);
   }
 
-  // Photo category filter (NEW - Week 2)
   if (filters?.photoCategory) {
     query = query.eq('photo_category', filters.photoCategory);
+  }
+
+  // Aesthetic filters
+  if (filters?.compositions && filters.compositions.length > 0) {
+    query = query.in('composition', filters.compositions);
+  }
+
+  if (filters?.timeOfDay && filters.timeOfDay.length > 0) {
+    query = query.in('time_of_day', filters.timeOfDay);
+  }
+
+  if (filters?.lighting && filters.lighting.length > 0) {
+    query = query.in('lighting', filters.lighting);
+  }
+
+  if (filters?.colorTemperature && filters.colorTemperature.length > 0) {
+    query = query.in('color_temperature', filters.colorTemperature);
+  }
+
+  // Context filters
+  if (filters?.albumKey) {
+    query = query.eq('album_key', filters.albumKey);
   }
 
   // Apply pagination
@@ -154,7 +142,7 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
     throw new Error(`Failed to fetch photos: ${error.message}`);
   }
 
-  // Map photo_metadata to Photo type
+  // Map photo_metadata to Photo type (two-bucket model)
   const photos: Photo[] = (data || []).map((row: any) => {
     const imageUrl = row.ImageUrl || row.OriginalUrl || `/api/smugmug/images/${row.image_key}`;
     const thumbnailUrl = row.ThumbnailUrl || null;
@@ -171,25 +159,30 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
       keywords: [],
       created_at: row.photo_date || row.enriched_at,
       metadata: {
-        sharpness: parseFloat(row.sharpness) || 0,
-        exposure_accuracy: parseFloat(row.exposure_accuracy) || 0,
-        composition_score: parseFloat(row.composition_score) || 0,
-        emotional_impact: parseFloat(row.emotional_impact) || 0,
-        portfolio_worthy: row.portfolio_worthy ?? false,
-        print_ready: row.print_ready ?? false,
-        social_media_optimized: row.social_media_optimized ?? false,
-        emotion: row.emotion || 'focus',
-        composition: row.composition || '',
-        time_of_day: row.time_of_day || '',
+        // BUCKET 1: Concrete & Filterable (user-facing)
         play_type: row.play_type,
         action_intensity: row.action_intensity || 'medium',
-        // Sport taxonomy (NEW - Week 1)
         sport_type: row.sport_type,
         photo_category: row.photo_category,
-        action_type: row.action_type,
-        use_cases: row.use_cases || [],
+        composition: row.composition || '',
+        time_of_day: row.time_of_day || '',
+        lighting: row.lighting,
+        color_temperature: row.color_temperature,
+
+        // BUCKET 2: Abstract & Internal (AI-only)
+        emotion: row.emotion || 'focus',
+        sharpness: parseFloat(row.sharpness) || 0,
+        composition_score: parseFloat(row.composition_score) || 0,
+        exposure_accuracy: parseFloat(row.exposure_accuracy) || 0,
+        emotional_impact: parseFloat(row.emotional_impact) || 0,
+        time_in_game: row.time_in_game,
+        athlete_id: row.athlete_id,
+        event_id: row.event_id,
+
+        // AI metadata
         ai_provider: row.ai_provider || 'gemini',
         ai_cost: parseFloat(row.ai_cost) || 0,
+        ai_confidence: parseFloat(row.ai_confidence) || 0,
         enriched_at: row.enriched_at || new Date().toISOString(),
       },
     };
@@ -207,31 +200,37 @@ export async function getPhotoCount(filters?: PhotoFilterState): Promise<number>
     .select('*', { count: 'exact', head: true })
     .not('sharpness', 'is', null);
 
-  // Apply same filters as fetchPhotos
-  if (filters?.portfolioWorthy) {
-    query = query.eq('portfolio_worthy', true);
-  }
-
-  if (filters?.minQualityScore) {
-    query = query.gte('quality_score', filters.minQualityScore);
-  }
-
+  // Apply same Bucket 1 filters as fetchPhotos
   if (filters?.playTypes && filters.playTypes.length > 0) {
     query = query.in('play_type', filters.playTypes);
   }
 
-  if (filters?.emotions && filters.emotions.length > 0) {
-    query = query.in('emotion', filters.emotions);
+  if (filters?.actionIntensity && filters.actionIntensity.length > 0) {
+    query = query.in('action_intensity', filters.actionIntensity);
   }
 
-  // Sport type filter (NEW - Week 2)
   if (filters?.sportType) {
     query = query.eq('sport_type', filters.sportType);
   }
 
-  // Photo category filter (NEW - Week 2)
   if (filters?.photoCategory) {
     query = query.eq('photo_category', filters.photoCategory);
+  }
+
+  if (filters?.compositions && filters.compositions.length > 0) {
+    query = query.in('composition', filters.compositions);
+  }
+
+  if (filters?.timeOfDay && filters.timeOfDay.length > 0) {
+    query = query.in('time_of_day', filters.timeOfDay);
+  }
+
+  if (filters?.lighting && filters.lighting.length > 0) {
+    query = query.in('lighting', filters.lighting);
+  }
+
+  if (filters?.colorTemperature && filters.colorTemperature.length > 0) {
+    query = query.in('color_temperature', filters.colorTemperature);
   }
 
   const { count, error } = await query;

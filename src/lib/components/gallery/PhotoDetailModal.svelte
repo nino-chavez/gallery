@@ -166,16 +166,6 @@
 											</div>
 										{/if}
 
-										<!-- Portfolio Badge -->
-										{#if metadata?.portfolio_worthy}
-											<div class="flex items-center gap-2 px-4 py-3 bg-gold-500/10 border border-gold-500/30 rounded-lg">
-												<Award class="w-5 h-5 text-gold-500" aria-hidden="true" />
-												<Typography variant="body" class="text-gold-500 font-medium">
-													Portfolio Worthy
-												</Typography>
-											</div>
-										{/if}
-
 										<!-- Caption/Description if available -->
 										{#if photo.caption}
 											<div>

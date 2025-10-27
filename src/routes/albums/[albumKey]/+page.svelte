@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Motion } from 'svelte-motion';
-	import { ArrowLeft, FolderOpen, Home, ChevronRight } from 'lucide-svelte';
+	import { FolderOpen, ChevronRight } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
@@ -43,31 +42,26 @@
 	}
 </script>
 
-<!-- Header Section -->
-<Motion
-	let:motion
-	initial={{ opacity: 0, y: 20 }}
-	animate={{ opacity: 1, y: 0 }}
-	transition={MOTION.spring.gentle}
->
-	<div use:motion class="p-8">
-		<div class="max-w-7xl mx-auto">
-			<!-- Breadcrumb Navigation -->
-			<nav aria-label="Breadcrumb" class="mb-4">
-				<ol class="flex items-center gap-2 text-sm text-charcoal-400">
+<!-- Minimal Header - Content First Design -->
+<Motion let:motion initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+	<div use:motion class="sticky top-0 z-20 bg-charcoal-950/95 backdrop-blur-sm border-b border-charcoal-800/50">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+
+			<!-- Compact Breadcrumb Navigation -->
+			<nav aria-label="Breadcrumb" class="mb-2">
+				<ol class="flex items-center gap-1 text-xs text-charcoal-400">
 					<li>
 						<button
 							type="button"
 							onclick={() => goto('/')}
-							class="flex items-center gap-1 hover:text-gold-500 transition-colors"
+							class="hover:text-gold-500 transition-colors"
 							aria-label="Navigate to home"
 						>
-							<Home class="w-4 h-4" aria-hidden="true" />
-							<span>Home</span>
+							Home
 						</button>
 					</li>
 					<li aria-hidden="true">
-						<ChevronRight class="w-4 h-4" />
+						<ChevronRight class="w-3 h-3" />
 					</li>
 					<li>
 						<button
@@ -80,85 +74,96 @@
 						</button>
 					</li>
 					<li aria-hidden="true">
-						<ChevronRight class="w-4 h-4" />
+						<ChevronRight class="w-3 h-3" />
 					</li>
 					<li>
-						<span class="text-white font-medium line-clamp-1" aria-current="page">
+						<span class="text-white font-medium truncate max-w-[200px] md:max-w-none" aria-current="page">
 							{data.albumName}
 						</span>
 					</li>
 				</ol>
 			</nav>
 
-			<!-- Back Button -->
-			<div class="mb-6">
-				<Button variant="ghost" size="sm" onclick={goBackToAlbums}>
-					<ArrowLeft class="w-4 h-4 mr-2" />
-					Back to Albums
-				</Button>
-			</div>
-
-			<!-- Title & Description -->
-			<div class="flex items-center gap-4 mb-6">
-				<div class="p-3 rounded-full bg-gold-500/10" aria-hidden="true">
-					<FolderOpen class="w-8 h-8 text-gold-500" />
-				</div>
-				<div>
-					<Typography variant="h1" class="text-4xl">{data.albumName}</Typography>
-					<Typography variant="body" class="text-charcoal-300 mt-1">
-						{data.photoCount.toLocaleString()} {data.photoCount === 1 ? 'photo' : 'photos'}
+			<!-- Compact Header: Title + Count + Search -->
+			<div class="flex items-center justify-between gap-4">
+				<div class="flex items-center gap-2 min-w-0 flex-1">
+					<Typography variant="h1" class="text-xl lg:text-2xl truncate">{data.albumName}</Typography>
+					<Typography variant="caption" class="text-charcoal-400 text-xs whitespace-nowrap">
+						{data.photoCount.toLocaleString()}
 					</Typography>
 				</div>
+
+				<!-- Desktop search -->
+				<div class="hidden md:flex items-center gap-2">
+					<button
+						type="button"
+						onclick={goBackToAlbums}
+						class="px-2 py-1 text-xs text-charcoal-400 hover:text-gold-500 transition-colors whitespace-nowrap"
+						aria-label="Back to albums"
+					>
+						← Back
+					</button>
+					<div class="flex-1 max-w-md">
+						<input
+							type="search"
+							placeholder="Search photos..."
+							bind:value={searchQuery}
+							class="w-full px-4 py-2 text-sm rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-400"
+						/>
+					</div>
+				</div>
 			</div>
 
-			<!-- Search Bar -->
-			<div class="mb-6">
+			<!-- Mobile search -->
+			<div class="md:hidden mt-3">
 				<input
 					type="search"
-					placeholder="Search photos in this album..."
+					placeholder="Search photos..."
 					bind:value={searchQuery}
-					class="w-full px-4 py-3 rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-400"
+					class="w-full px-4 py-2 text-sm rounded-lg bg-charcoal-900 border border-charcoal-800 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/50 transition-colors text-white placeholder-charcoal-400"
 				/>
 			</div>
+		</div>
+	</div>
 
-			<!-- Photo Count -->
-			{#if searchQuery}
-				<div class="mb-6">
-					<Card padding="sm">
-						<Typography variant="body" class="text-charcoal-300">
-							{displayPhotos.length.toLocaleString()} {displayPhotos.length === 1 ? 'photo' : 'photos'} found
-						</Typography>
-					</Card>
-				</div>
-			{/if}
+	<!-- Photo Grid Content -->
+	<div use:motion class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-			<!-- Photo Grid -->
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+		<!-- Search results indicator -->
+		{#if searchQuery && displayPhotos.length > 0}
+			<div class="mb-4">
+				<Typography variant="caption" class="text-charcoal-400 text-xs">
+					{displayPhotos.length.toLocaleString()} {displayPhotos.length === 1 ? 'photo' : 'photos'} found
+				</Typography>
+			</div>
+		{/if}
+
+		<!-- Photo Grid -->
+		{#if displayPhotos.length > 0}
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 				{#each displayPhotos as photo, index}
 					<PhotoCard {photo} {index} onclick={handlePhotoClick} />
 				{/each}
 			</div>
-
+		{:else}
 			<!-- Empty State -->
-			{#if displayPhotos.length === 0}
-				<Motion
-					let:motion
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={MOTION.spring.gentle}
-				>
-					<div use:motion>
-						<Card padding="lg" class="text-center">
-							<FolderOpen class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
-							<Typography variant="h3" class="mb-2">No photos found</Typography>
-							<Typography variant="body" class="text-charcoal-400">
-								Try adjusting your search
-							</Typography>
-						</Card>
-					</div>
-				</Motion>
-			{/if}
-		</div>
+			<Motion
+				let:motion
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={MOTION.spring.gentle}
+			>
+				<div use:motion>
+					<Card padding="lg" class="text-center">
+						<FolderOpen class="w-16 h-16 text-charcoal-600 mx-auto mb-4" aria-hidden="true" />
+						<Typography variant="h3" class="mb-2">No photos found</Typography>
+						<Typography variant="body" class="text-charcoal-400 text-sm">
+							{searchQuery ? 'Try adjusting your search' : 'This album is empty'}
+						</Typography>
+					</Card>
+				</div>
+			</Motion>
+		{/if}
 	</div>
 </Motion>
 

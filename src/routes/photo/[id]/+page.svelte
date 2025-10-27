@@ -44,20 +44,19 @@
 		sport: data.photo.metadata.sport_type,
 		category: data.photo.metadata.photo_category,
 		emotion: data.photo.metadata.emotion,
-		aggregateRating: data.photo.metadata.portfolio_worthy
-			? {
-					'@type': 'AggregateRating',
-					ratingValue: Math.round(
-						(data.photo.metadata.sharpness +
-							data.photo.metadata.exposure_accuracy +
-							data.photo.metadata.composition_score +
-							data.photo.metadata.emotional_impact) /
-							4
-					),
-					bestRating: 10,
-					worstRating: 0
-				}
-			: undefined
+		// Include rating for SEO (using internal Bucket 2 quality metrics)
+		aggregateRating: {
+			'@type': 'AggregateRating',
+			ratingValue: Math.round(
+				(data.photo.metadata.sharpness +
+					data.photo.metadata.exposure_accuracy +
+					data.photo.metadata.composition_score +
+					data.photo.metadata.emotional_impact) /
+					4
+			),
+			bestRating: 10,
+			worstRating: 0
+		}
 	};
 </script>
 

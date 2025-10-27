@@ -97,6 +97,22 @@
 									Collections
 								</a>
 							</li>
+							<li>
+								<a
+									href="/settings/accessibility"
+									class="text-charcoal-400 hover:text-gold-500 transition-colors inline-block"
+								>
+									Accessibility Settings
+								</a>
+							</li>
+							<li>
+								<a
+									href="/style-guide"
+									class="text-charcoal-400 hover:text-gold-500 transition-colors inline-block"
+								>
+									Style Guide
+								</a>
+							</li>
 						</ul>
 					</nav>
 				</div>

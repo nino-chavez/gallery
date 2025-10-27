@@ -7,9 +7,11 @@
 		ZoomIn,
 		ZoomOut,
 		Download,
-		Share2
+		Share2,
+		Sparkles
 	} from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
+	import { getEmotionColor } from '$lib/photo-utils';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import DownloadButton from '$lib/components/photo/DownloadButton.svelte';
 	import type { Photo } from '$types/photo';
@@ -40,6 +42,12 @@
 	// Navigation availability
 	const canGoNext = $derived(photos.length > 0 && currentIndex < photos.length - 1);
 	const canGoPrev = $derived(photos.length > 0 && currentIndex > 0);
+
+	// "Find Similar" functionality
+	const emotionColor = $derived(photo ? getEmotionColor(photo.metadata.emotion) : null);
+	const findSimilarUrl = $derived(
+		photo?.metadata.emotion ? `/explore?emotion=${photo.metadata.emotion.toLowerCase()}` : null
+	);
 
 	function handleClose() {
 		open = false;
@@ -235,9 +243,7 @@
 						use:motion
 						class="relative w-full h-full flex items-center justify-center p-20"
 						onmousedown={handleMouseDown}
-						role="img"
-						aria-label="Zoomable photo - drag to pan when zoomed"
-						tabindex="0"
+						role="presentation"
 						style="cursor: {zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'}"
 					>
 						<img
@@ -290,10 +296,29 @@
 							{#if photo.metadata.photo_category}
 								<span class="capitalize">{photo.metadata.photo_category}</span>
 							{/if}
-							{#if photo.metadata.portfolio_worthy}
-								<span class="px-2 py-1 rounded bg-gold-500/20 text-gold-400 text-xs">
-									Portfolio
-								</span>
+							{#if photo.metadata.lighting}
+								<span class="capitalize">{photo.metadata.lighting} light</span>
+							{/if}
+							{#if photo.metadata.time_of_day}
+								<span class="capitalize">{photo.metadata.time_of_day.replace('_', ' ')}</span>
+							{/if}
+
+							<!-- "Find Similar" Button -->
+							{#if findSimilarUrl && emotionColor}
+								<a
+									href={findSimilarUrl}
+									class="px-3 py-1.5 rounded-full text-xs font-medium
+									       bg-white/10 hover:bg-white/20 backdrop-blur-sm
+									       transition-colors flex items-center gap-1.5
+									       border border-white/20 hover:border-current
+									       focus:outline-none focus:ring-2 focus:ring-gold-500"
+									style="color: {emotionColor}"
+									aria-label="Find similar {photo.metadata.emotion} photos"
+									title="Find more photos with {photo.metadata.emotion} emotion"
+								>
+									<Sparkles class="w-3.5 h-3.5" aria-hidden="true" />
+									<span>Similar Photos</span>
+								</a>
 							{/if}
 						</div>
 
