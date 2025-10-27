@@ -1,16 +1,27 @@
 # Week 5: Browse + Search Modes - Implementation Plan
 
 **Date:** 2025-10-27
-**Status:** Planning
+**Status:** IN PROGRESS
 **Prerequisites:** ✅ Week 3-4 complete (Player tagging integrated)
+
+---
+
+## Route Mapping (4-Mode IA)
+
+**Mode 1: Browse** = `/albums` + `/timeline`
+**Mode 2: Search** = `/explore` ← We're enhancing THIS route
+**Mode 3: Collections** = `/collections` (Week 6-7)
+**Mode 4: Explore** = TBD (Post-MVP, dynamic discovery feed)
+
+**Note:** The `/explore` route is actually the **Search Mode** with filters, not to be confused with "Explore Mode" (Mode 4, future feature).
 
 ---
 
 ## Overview
 
 Week 5 focuses on enhancing discovery through:
-1. **Browse Mode** (2 days) - Polish existing album/timeline navigation
-2. **Search Mode** (3 days) - Add Bucket 1 filters for concrete search
+1. **Browse Mode** (2 days) - Polish `/albums` and `/timeline` routes
+2. **Search Mode** (3 days) - Add Bucket 1 filters to `/explore` route
 
 ---
 
