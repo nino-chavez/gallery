@@ -41,8 +41,9 @@ if (!supabaseAnonKey) {
  */
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: false, // We're not using auth yet
-    autoRefreshToken: false,
+    persistSession: true, // Enable session persistence for admin auth
+    autoRefreshToken: true,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
   },
 });
 

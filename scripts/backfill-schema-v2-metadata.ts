@@ -1,5 +1,5 @@
 /**
- * Backfill Script: Schema v2.0 - New Metadata Fields
+ * Backfill Script: Schema v2.0 - New Metadata Fields (Concurrent)
  *
  * Purpose: Populate new columns added in schema v2.0 migration
  *
@@ -8,19 +8,39 @@
  * - Bucket 2 (internal): time_in_game, athlete_id, event_id, ai_confidence
  *
  * Strategy:
- * 1. Extract new user-facing fields via AI (Bucket 1 prompt)
- * 2. Extract new internal fields via AI (Bucket 2 prompt)
- * 3. Update database in batches for performance
- * 4. Track progress and costs
+ * 1. Filter to photos from last 24 months (reduces scope & cost)
+ * 2. Process 50 concurrent API calls per batch (50x faster)
+ * 3. Extract metadata via combined prompt (Bucket 1 + Bucket 2)
+ * 4. Update database after each batch completes
+ * 5. Track progress and costs
  *
- * Cost Estimate: $0.006-0.015 per photo (combined prompt)
- * For 20,000 photos: $120-300 total
+ * Performance:
+ * - Concurrent batch size: 50 photos at a time
+ * - Rate limiting: 1 second delay between batches
+ * - Expected throughput: ~750 photos/min (50x improvement)
  *
- * Run time: ~3-5 hours (rate-limited API calls)
+ * Cost Estimate: $0.01 per photo (Gemini 2.0 Flash)
+ * - Last 24 months (~8,000-12,000 photos): $80-120
+ * - Full 20,000 photos: ~$200
+ *
+ * Run time:
+ * - Last 24 months: ~15-20 minutes (concurrent)
+ * - Full 20,000 photos: ~30-40 minutes (concurrent)
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { COMBINED_PROMPT, type CombinedResponse } from '$lib/ai/enrichment-prompts';
+import {
+  COMBINED_PROMPT,
+  SCHEMA_V2_DELTA_PROMPT,
+  type CombinedResponse,
+  type SchemaV2DeltaResponse
+} from '$lib/ai/enrichment-prompts';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+// Load environment variables
+config({ path: resolve(process.cwd(), '.env.local') });
 
 // =============================================================================
 // Configuration
@@ -30,10 +50,21 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL!;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY!;
 const GEMINI_API_KEY = process.env.GOOGLE_API_KEY!;
 
-const BATCH_SIZE = 50; // Process 50 photos at a time
-const RATE_LIMIT_DELAY_MS = 1000; // 1 second between API calls
+const CONCURRENT_BATCH_SIZE = 50; // Process 50 photos concurrently (Gemini can handle this)
+const DB_FETCH_LIMIT = 500; // Fetch photos from DB in larger chunks
+const BATCH_DELAY_MS = 1000; // 1 second delay between concurrent batches (rate limiting)
 const DRY_RUN = process.env.DRY_RUN === 'true'; // Set to 'true' to test without writing to DB
 const ALBUM_KEY = process.env.ALBUM_KEY; // Optional: Filter by specific album for testing
+const MONTHS_BACK = parseInt(process.env.MONTHS_BACK || '24'); // Default: last 24 months
+const TEST_LIMIT = process.env.TEST_LIMIT ? parseInt(process.env.TEST_LIMIT) : undefined; // Optional: Limit for testing
+
+// Cost optimization options
+const USE_SIMPLIFIED_PROMPT = process.env.USE_SIMPLIFIED_PROMPT !== 'false'; // Default: true (use minimal prompt)
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash-lite'; // Model selection
+// Options:
+// - 'gemini-2.0-flash-lite' (default): $0.000128/photo, best cost efficiency
+// - 'gemini-2.5-flash-lite': $0.000170/photo, newer generation
+// - 'gemini-2.0-flash': $0.000170/photo, more capable if needed
 
 // =============================================================================
 // Initialize Clients
@@ -65,54 +96,69 @@ async function extractNewMetadata(
   imageUrl: string
 ): Promise<EnrichmentResult> {
   try {
-    // Call Gemini Vision API
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key=${GEMINI_API_KEY}`,
+    // Use SDK approach (proven working)
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+
+    // Fetch and convert image to base64
+    const base64Data = await fetchImageAsBase64(imageUrl);
+
+    // Select prompt based on configuration
+    const prompt = USE_SIMPLIFIED_PROMPT ? SCHEMA_V2_DELTA_PROMPT : COMBINED_PROMPT;
+
+    // Call Gemini using SDK
+    const result = await model.generateContent([
+      prompt,
       {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: COMBINED_PROMPT },
-                {
-                  inline_data: {
-                    mime_type: 'image/jpeg',
-                    data: await fetchImageAsBase64(imageUrl)
-                  }
-                }
-              ]
-            }
-          ]
-        })
+        inlineData: {
+          data: base64Data,
+          mimeType: 'image/jpeg'
+        }
       }
-    );
+    ]);
 
-    const data = await response.json();
+    const responseText = result.response.text();
 
-    if (!response.ok) {
-      console.error('[Gemini API Error]', JSON.stringify(data, null, 2));
-      throw new Error(`API error: ${response.status} - ${JSON.stringify(data)}`);
+    // Extract JSON from response
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error(`Could not extract JSON from Gemini response: ${responseText}`);
     }
-    const text = data.candidates[0].content.parts[0].text;
 
-    // Parse JSON response
-    const result: CombinedResponse = JSON.parse(text);
+    // Parse JSON response based on prompt type
+    if (USE_SIMPLIFIED_PROMPT) {
+      const parsedResult: SchemaV2DeltaResponse = JSON.parse(jsonMatch[0]);
 
-    return {
-      photo_id: photoId,
-      success: true,
-      bucket1: {
-        lighting: result.bucket1.lighting,
-        color_temperature: result.bucket1.color_temperature
-      },
-      bucket2: {
-        time_in_game: result.bucket2.time_in_game,
-        ai_confidence: result.bucket2.ai_confidence
-      },
-      cost: 0.01 // Estimated cost per photo
-    };
+      return {
+        photo_id: photoId,
+        success: true,
+        bucket1: {
+          lighting: parsedResult.lighting,
+          color_temperature: parsedResult.color_temperature
+        },
+        bucket2: {
+          time_in_game: parsedResult.time_in_game,
+          ai_confidence: parsedResult.ai_confidence
+        },
+        cost: 0.000128 // Actual cost per photo (Flash-Lite + simplified prompt)
+      };
+    } else {
+      const parsedResult: CombinedResponse = JSON.parse(jsonMatch[0]);
+
+      return {
+        photo_id: photoId,
+        success: true,
+        bucket1: {
+          lighting: parsedResult.bucket1.lighting,
+          color_temperature: parsedResult.bucket1.color_temperature
+        },
+        bucket2: {
+          time_in_game: parsedResult.bucket2.time_in_game,
+          ai_confidence: parsedResult.bucket2.ai_confidence
+        },
+        cost: 0.000170 // Estimated cost per photo (Flash-Lite + full prompt)
+      };
+    }
   } catch (error) {
     console.error(`Failed to extract metadata for ${photoId}:`, error);
     return {
@@ -136,8 +182,15 @@ async function fetchImageAsBase64(url: string): Promise<string> {
 async function getPhotosNeedingBackfill(limit: number) {
   let query = supabase
     .from('photo_metadata')
-    .select('photo_id, ImageUrl, ThumbnailUrl, album_key')
+    .select('photo_id, ImageUrl, ThumbnailUrl, album_key, photo_date')
     .is('lighting', null); // Photos missing new fields
+
+  // Filter to last N months (default: 24)
+  if (!ALBUM_KEY) {
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - MONTHS_BACK);
+    query = query.gte('photo_date', cutoffDate.toISOString());
+  }
 
   // Optional album filter for isolated testing
   if (ALBUM_KEY) {
@@ -209,21 +262,42 @@ function printProgress(stats: ProgressStats) {
 // =============================================================================
 
 async function backfillNewMetadata() {
-  console.log('Starting Schema v2.0 metadata backfill...\n');
+  console.log('Starting Schema v2.0 metadata backfill (Concurrent)...\n');
+
+  console.log('⚙️  Configuration:');
+  console.log(`   Model: ${GEMINI_MODEL}`);
+  console.log(`   Prompt: ${USE_SIMPLIFIED_PROMPT ? 'Simplified (4 fields only)' : 'Combined (15 fields)'}`);
+  console.log(`   Est. cost per photo: $${USE_SIMPLIFIED_PROMPT ? '0.000128' : '0.000170'}`);
+  console.log(`   Concurrent batch size: ${CONCURRENT_BATCH_SIZE} photos at a time`);
+  console.log(`   Rate limiting: ${BATCH_DELAY_MS}ms delay between batches`);
 
   if (DRY_RUN) {
-    console.log('⚠️  DRY RUN MODE: No database writes will occur\n');
+    console.log('\n⚠️  DRY RUN MODE: No database writes will occur');
   }
 
   if (ALBUM_KEY) {
-    console.log(`🎯 ALBUM FILTER: Running isolated test on album_key="${ALBUM_KEY}"\n`);
+    console.log(`\n🎯 ALBUM FILTER: Running isolated test on album_key="${ALBUM_KEY}"`);
+  } else {
+    console.log(`\n📅 DATE FILTER: Processing photos from last ${MONTHS_BACK} months`);
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - MONTHS_BACK);
+    console.log(`   Cutoff date: ${cutoffDate.toISOString().split('T')[0]}`);
   }
 
-  // Get total count (with optional album filter)
+  console.log('');
+
+  // Get total count (with date and optional album filters)
   let countQuery = supabase
     .from('photo_metadata')
     .select('photo_id', { count: 'exact', head: true })
     .is('lighting', null);
+
+  // Filter to last N months (default: 24)
+  if (!ALBUM_KEY) {
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - MONTHS_BACK);
+    countQuery = countQuery.gte('photo_date', cutoffDate.toISOString());
+  }
 
   if (ALBUM_KEY) {
     countQuery = countQuery.eq('album_key', ALBUM_KEY);
@@ -231,14 +305,21 @@ async function backfillNewMetadata() {
 
   const { count } = await countQuery;
 
-  const total = count || 0;
+  let total = count || 0;
 
   if (total === 0) {
     console.log('✅ No photos need backfilling. All photos have new metadata!');
     return;
   }
 
-  console.log(`Found ${total} photos needing backfill\n`);
+  // Apply test limit if specified
+  if (TEST_LIMIT && TEST_LIMIT < total) {
+    console.log(`📊 Found ${total} photos needing backfill`);
+    console.log(`🧪 TEST_LIMIT: Processing only first ${TEST_LIMIT} photos\n`);
+    total = TEST_LIMIT;
+  } else {
+    console.log(`Found ${total} photos needing backfill\n`);
+  }
 
   const stats: ProgressStats = {
     total,
@@ -249,38 +330,53 @@ async function backfillNewMetadata() {
     startTime: new Date()
   };
 
-  // Process in batches
-  while (stats.processed < total) {
-    // Get next batch
-    const photos = await getPhotosNeedingBackfill(BATCH_SIZE);
+  // Fetch all photos needing backfill
+  const allPhotos = await getPhotosNeedingBackfill(total);
 
-    if (photos.length === 0) break;
+  if (allPhotos.length === 0) {
+    console.log('✅ No photos need backfilling. All photos have new metadata!');
+    return;
+  }
 
-    // Process each photo in batch
-    for (const photo of photos) {
-      // Extract new metadata via AI
-      const imageUrl = photo.ThumbnailUrl || photo.ImageUrl;
-      const result = await extractNewMetadata(photo.photo_id, imageUrl);
+  console.log(`Processing ${allPhotos.length} photos in batches of ${CONCURRENT_BATCH_SIZE}...\n`);
 
-      // Update database
-      if (result.success) {
-        await updatePhotoMetadata(result);
-        stats.successful++;
-        stats.totalCost += result.cost || 0;
-      } else {
-        stats.failed++;
-        console.error(`❌ Failed: ${result.photo_id} - ${result.error}`);
-      }
+  // Process in concurrent batches (legacy app pattern)
+  for (let i = 0; i < allPhotos.length; i += CONCURRENT_BATCH_SIZE) {
+    const batch = allPhotos.slice(i, i + CONCURRENT_BATCH_SIZE);
 
-      stats.processed++;
+    // Process all photos in batch concurrently using Promise.all
+    await Promise.all(
+      batch.map(async (photo) => {
+        try {
+          // Extract new metadata via AI
+          const imageUrl = photo.ThumbnailUrl || photo.ImageUrl;
+          const result = await extractNewMetadata(photo.photo_id, imageUrl);
 
-      // Rate limiting
-      await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY_MS));
+          // Update database
+          if (result.success) {
+            await updatePhotoMetadata(result);
+            stats.successful++;
+            stats.totalCost += result.cost || 0;
+          } else {
+            stats.failed++;
+            console.error(`❌ Failed: ${result.photo_id} - ${result.error}`);
+          }
 
-      // Print progress every 10 photos
-      if (stats.processed % 10 === 0) {
-        printProgress(stats);
-      }
+          stats.processed++;
+        } catch (error) {
+          stats.failed++;
+          stats.processed++;
+          console.error(`❌ Error processing ${photo.photo_id}:`, error);
+        }
+      })
+    );
+
+    // Print progress after each batch
+    printProgress(stats);
+
+    // Rate limiting: delay between batches (not between individual photos)
+    if (i + CONCURRENT_BATCH_SIZE < allPhotos.length) {
+      await new Promise(resolve => setTimeout(resolve, BATCH_DELAY_MS));
     }
   }
 
@@ -328,31 +424,53 @@ backfillNewMetadata()
 /*
 USAGE:
 
-1. Dry run (test without writing to database):
-   DRY_RUN=true npm run backfill:schema-v2
+1. Production run (last 24 months, default):
+   npx tsx scripts/backfill-schema-v2-metadata.ts
 
-2. Production run (writes to database):
-   npm run backfill:schema-v2
+2. Test run (first 200 photos):
+   TEST_LIMIT=200 npx tsx scripts/backfill-schema-v2-metadata.ts
 
-3. Resume from failure:
+3. Custom time range (e.g., last 12 months):
+   MONTHS_BACK=12 npx tsx scripts/backfill-schema-v2-metadata.ts
+
+4. Dry run (test without writing to database):
+   DRY_RUN=true TEST_LIMIT=10 npx tsx scripts/backfill-schema-v2-metadata.ts
+
+5. Isolated test on specific album:
+   ALBUM_KEY="vla-630-breeze" npx tsx scripts/backfill-schema-v2-metadata.ts
+
+6. Resume from failure:
    Script automatically skips photos that already have new metadata
-   Just run again: npm run backfill:schema-v2
+   Just run again: npx tsx scripts/backfill-schema-v2-metadata.ts
 
-4. Monitor progress:
-   Progress is printed every 10 photos
-   Check console for success/failure counts
+ENVIRONMENT VARIABLES:
 
-ENVIRONMENT VARIABLES REQUIRED:
-
+Required:
 - VITE_SUPABASE_URL: Supabase project URL
 - SUPABASE_SERVICE_ROLE_KEY: Service role key (bypasses RLS)
-- GEMINI_API_KEY: Google AI Gemini API key
+- GOOGLE_API_KEY: Google AI Gemini API key
 
-ESTIMATED COSTS:
+Optional:
+- MONTHS_BACK: Filter to photos from last N months (default: 24)
+- ALBUM_KEY: Filter to specific album (disables date filter)
+- TEST_LIMIT: Limit number of photos to process (useful for testing)
+- DRY_RUN: Set to 'true' to test without database writes
 
-- $0.01 per photo (Gemini 1.5 Flash)
-- 20,000 photos = ~$200
-- Runtime: 3-5 hours (rate-limited)
+PERFORMANCE (CONCURRENT):
+
+- Batch size: 50 concurrent API calls per batch
+- Rate limiting: 1 second delay between batches
+- Throughput: ~750 photos/min (50x faster than sequential)
+
+ESTIMATED COSTS & TIME:
+
+Last 24 months (~8,000-12,000 photos):
+- Cost: $80-120
+- Time: ~15-20 minutes
+
+Full 20,000 photos:
+- Cost: ~$200
+- Time: ~30-40 minutes
 
 ROLLBACK:
 
@@ -363,9 +481,10 @@ If backfill fails or produces bad data:
 
 MONITORING:
 
+Progress is printed after each batch of 50 photos
 Watch for:
-- API rate limit errors (should auto-throttle)
-- Failed extractions (check error messages)
-- Unexpected values (validate sample of results)
-- Cost tracking (should match estimate)
+- Successful/failed counts
+- Cost tracking
+- Rate per minute
+- Error messages
 */

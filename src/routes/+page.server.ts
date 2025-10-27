@@ -68,17 +68,15 @@ function mapRowToPhoto(row: any): Photo {
 
 export const load: PageServerLoad = async () => {
   try {
-    // Fetch optimal volleyball portfolio photos for hero display
-    // Using strict quality thresholds to ensure only the best work is shown
+    // Fetch high-quality volleyball photos for hero display
+    // Schema v2: All photos are worthy, use internal quality metrics for selection
     const { data, error } = await supabaseServer
       .from('photo_metadata')
       .select('*')
-      .eq('portfolio_worthy', true)           // Must be curated
-      .eq('print_ready', true)                // Must be high-resolution
       .eq('sport_type', 'volleyball')         // Volleyball photos only
-      .gte('sharpness', 8.0)                  // Technical excellence
-      .gte('composition_score', 8.0)          // Strong composition
-      .gte('emotional_impact', 7.5)           // Visual impact
+      .gte('sharpness', 8.0)                  // Technical excellence (Bucket 2)
+      .gte('composition_score', 8.0)          // Strong composition (Bucket 2)
+      .gte('emotional_impact', 7.5)           // Visual impact (Bucket 2)
       .in('photo_category', ['action', 'celebration', 'portrait'])  // Hero-worthy categories
       .not('sharpness', 'is', null)
       .limit(15); // Fetch 15 candidates for variety
@@ -89,13 +87,12 @@ export const load: PageServerLoad = async () => {
     }
 
     if (!data || data.length === 0) {
-      console.warn('[Homepage] No optimal volleyball hero photos found, trying fallback strategies');
+      console.warn('[Homepage] No high-quality volleyball photos found, using fallback strategies');
 
-      // Fallback 1: Portfolio-worthy volleyball without strict quality filters
+      // Fallback 1: Volleyball without strict quality filters
       const { data: fallbackData, error: fallbackError } = await supabaseServer
         .from('photo_metadata')
         .select('*')
-        .eq('portfolio_worthy', true)
         .eq('sport_type', 'volleyball')
         .not('sharpness', 'is', null)
         .limit(10);
@@ -106,22 +103,21 @@ export const load: PageServerLoad = async () => {
         return { heroPhoto: mapRowToPhoto(row) };
       }
 
-      // Fallback 2: Any portfolio-worthy photo (multi-sport)
-      console.warn('[Homepage] No volleyball photos available, using any portfolio-worthy photo');
-      const { data: anyPortfolioData, error: anyPortfolioError } = await supabaseServer
+      // Fallback 2: Any photo (multi-sport)
+      console.warn('[Homepage] No volleyball photos available, using any photo');
+      const { data: anyPhotoData, error: anyPhotoError } = await supabaseServer
         .from('photo_metadata')
         .select('*')
-        .eq('portfolio_worthy', true)
         .not('sharpness', 'is', null)
         .limit(10);
 
-      if (anyPortfolioError || !anyPortfolioData || anyPortfolioData.length === 0) {
-        console.error('[Homepage] No portfolio photos available at all');
+      if (anyPhotoError || !anyPhotoData || anyPhotoData.length === 0) {
+        console.error('[Homepage] No photos available at all');
         return { heroPhoto: null };
       }
 
-      const randomIndex = Math.floor(Math.random() * anyPortfolioData.length);
-      const row = anyPortfolioData[randomIndex];
+      const randomIndex = Math.floor(Math.random() * anyPhotoData.length);
+      const row = anyPhotoData[randomIndex];
       return { heroPhoto: mapRowToPhoto(row) };
     }
 

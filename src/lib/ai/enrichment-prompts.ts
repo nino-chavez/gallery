@@ -218,6 +218,55 @@ export interface CombinedResponse {
 }
 
 // =============================================================================
+// Schema v2.0 Delta Prompt (Minimal - Only 4 New Fields)
+// =============================================================================
+
+export const SCHEMA_V2_DELTA_PROMPT = `Analyze this volleyball photo and extract ONLY these 4 metadata fields:
+
+1. **lighting** (string): The lighting type/quality
+   Options: "natural", "backlit", "dramatic", "soft", "artificial"
+   - "natural": Window or outdoor daylight
+   - "backlit": Subject silhouetted against light
+   - "dramatic": High contrast, directional light
+   - "soft": Diffused, even lighting
+   - "artificial": Gym/indoor artificial lighting
+
+2. **color_temperature** (string): Overall color temperature
+   Options: "warm", "cool", "neutral"
+   - "warm": Golden, orange, sunset tones
+   - "cool": Blue, teal, dawn tones
+   - "neutral": Balanced, no strong color cast
+
+3. **time_in_game** (string | null): When in the game this occurred
+   Options: "first_5_min", "middle", "final_5_min", "overtime", "unknown"
+   - Use visual cues: score displays, player fatigue, crowd intensity, body language
+   - If no clear indicators, return "unknown"
+
+4. **ai_confidence** (number): Overall detection confidence (0-1)
+   - How confident are you in these 4 assessments?
+   - 0.0-0.5: Low confidence
+   - 0.5-0.7: Medium confidence
+   - 0.7-0.9: High confidence
+   - 0.9-1.0: Very high confidence
+
+Return ONLY JSON in this exact format:
+{
+  "lighting": "artificial",
+  "color_temperature": "neutral",
+  "time_in_game": "final_5_min",
+  "ai_confidence": 0.85
+}
+
+NO explanations. NO markdown. ONLY JSON.`;
+
+export interface SchemaV2DeltaResponse {
+  lighting: string;
+  color_temperature: string;
+  time_in_game: string | null;
+  ai_confidence: number;
+}
+
+// =============================================================================
 // Usage Examples
 // =============================================================================
 
