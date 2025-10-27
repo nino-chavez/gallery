@@ -93,7 +93,7 @@
 									{#if tag.photo?.ThumbnailUrl}
 										<img
 											src={tag.photo.ThumbnailUrl}
-											alt="Photo"
+											alt="Thumbnail for {tag.athlete_name} tag"
 											class="h-16 w-16 rounded object-cover"
 										/>
 									{/if}

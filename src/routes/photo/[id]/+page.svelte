@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
 	import RelatedPhotosCarousel from '$lib/components/gallery/RelatedPhotosCarousel.svelte'; // NEW: Related photos
+	import TagDisplay from '$lib/components/photo/TagDisplay.svelte'; // NEW: Player tags
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
 
@@ -97,12 +98,36 @@
 			<img src={data.photo.image_url} alt={data.photo.title} class="w-full h-auto rounded-lg mb-4" />
 			<p class="text-charcoal-300 mb-4">{data.photo.caption}</p>
 			<p class="text-charcoal-400 text-sm mb-4">Sport: {data.photo.metadata.sport_type}</p>
-			<button
-				onclick={handleClose}
-				class="px-6 py-3 bg-gold-500 text-charcoal-950 rounded-md hover:bg-gold-400 transition-colors"
-			>
-				Close
-			</button>
+
+			<!-- Player Tags (NEW - Week 3-4) -->
+			{#if data.approvedTags && data.approvedTags.length > 0}
+				<div class="mb-4">
+					<h3 class="text-sm font-semibold text-charcoal-400 mb-2">Tagged Players:</h3>
+					<TagDisplay tags={data.approvedTags} />
+				</div>
+			{/if}
+			<div class="flex gap-4">
+				<button
+					onclick={handleClose}
+					class="px-6 py-3 bg-gold-500 text-charcoal-950 rounded-md hover:bg-gold-400 transition-colors"
+				>
+					Close
+				</button>
+				<a
+					href="/photo/{data.photo.image_key}/tag"
+					class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+						/>
+					</svg>
+					Tag Players
+				</a>
+			</div>
 		</div>
 
 		<!-- Related Photos Carousel (NEW - Week 2) -->

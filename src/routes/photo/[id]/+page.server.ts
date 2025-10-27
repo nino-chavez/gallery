@@ -78,9 +78,17 @@ export const load: PageServerLoad = async ({ params }) => {
 	// Fetch related photos (NEW - Week 2)
 	const relatedPhotos = await fetchRelatedPhotos(photo, photoData.album_key);
 
+	// Fetch approved tags (NEW - Week 3-4: Player Tagging)
+	const { data: tags } = await supabaseServer
+		.from('user_tags')
+		.select('*')
+		.eq('photo_id', photoData.photo_id)
+		.eq('approved', true);
+
 	return {
 		photo,
 		relatedPhotos, // NEW
+		approvedTags: tags || [], // NEW
 		seo: {
 			title: `${photo.title} | Nino Chavez Photography`,
 			description: seoDescription,
