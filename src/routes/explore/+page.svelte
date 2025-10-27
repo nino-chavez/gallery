@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { Camera, ChevronDown } from 'lucide-svelte';
+	import { Camera, ChevronDown, X, Filter, SlidersHorizontal } from 'lucide-svelte';
 	import { preferences } from '$lib/stores/preferences.svelte';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -38,6 +38,22 @@
 			photo.image_key?.toLowerCase().includes(query)
 		);
 	});
+
+	// Active filters count
+	let activeFilterCount = $derived.by(() => {
+		let count = 0;
+		if (data.selectedSport) count++;
+		if (data.selectedCategory) count++;
+		if (data.selectedPlayType) count++;
+		if (data.selectedIntensity) count++;
+		if (data.selectedLighting && data.selectedLighting.length > 0) count += data.selectedLighting.length;
+		if (data.selectedColorTemp) count++;
+		if (data.selectedTimeOfDay) count++;
+		return count;
+	});
+
+	// Mobile filter drawer state
+	let mobileFiltersOpen = $state(false);
 
 	// Lightbox handlers
 	function handlePhotoClick(photo: Photo) {
@@ -137,6 +153,21 @@
 		goto(url.toString());
 	}
 
+	function clearAllFilters() {
+		const url = new URL($page.url);
+		// Remove all filter params
+		url.searchParams.delete('sport');
+		url.searchParams.delete('category');
+		url.searchParams.delete('play_type');
+		url.searchParams.delete('intensity');
+		url.searchParams.delete('lighting');
+		url.searchParams.delete('color_temp');
+		url.searchParams.delete('time_of_day');
+		url.searchParams.delete('page');
+		// Keep sort preference
+		goto(url.toString());
+	}
+
 	function handleSortChange(event: Event) {
 		const select = event.target as HTMLSelectElement;
 		const sortBy = select.value as typeof preferences.sortBy;
@@ -205,7 +236,31 @@
 			/>
 		</div>
 
-		<!-- Filters -->
+		<!-- Filters Header with Clear All Button -->
+		<div class="flex items-center justify-between gap-2 mb-2">
+			<div class="flex items-center gap-2">
+				<Typography variant="label" class="text-charcoal-300 text-xs">
+					Filters
+					{#if activeFilterCount > 0}
+						<span class="ml-1 px-2 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs">
+							{activeFilterCount}
+						</span>
+					{/if}
+				</Typography>
+			</div>
+
+			{#if activeFilterCount > 0}
+				<button
+					onclick={clearAllFilters}
+					class="inline-flex items-center gap-1 px-2 py-1 text-xs text-charcoal-400 hover:text-gold-400 transition-colors"
+				>
+					<X class="w-3 h-3" />
+					<span>Clear All</span>
+				</button>
+			{/if}
+		</div>
+
+		<!-- Quick Filters (Sport/Category Pills) -->
 		<div class="flex flex-wrap items-center gap-2">
 			{#if data.sports && data.sports.length > 0}
 				<SportFilter
@@ -224,8 +279,29 @@
 			{/if}
 		</div>
 
-		<!-- Bucket 1 Filters (Collapsible) -->
-		<div class="mt-4 space-y-2">
+		<!-- Mobile Filter Toggle Button -->
+		<button
+			onclick={() => (mobileFiltersOpen = !mobileFiltersOpen)}
+			class="md:hidden mt-3 w-full flex items-center justify-between px-4 py-3 bg-charcoal-900 hover:bg-charcoal-800 rounded-lg border border-charcoal-800/50 transition-colors"
+		>
+			<div class="flex items-center gap-2">
+				<SlidersHorizontal class="w-4 h-4 text-charcoal-400" />
+				<Typography variant="label" class="text-charcoal-200">Advanced Filters</Typography>
+				{#if activeFilterCount > 0}
+					<span class="px-2 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs">
+						{activeFilterCount}
+					</span>
+				{/if}
+			</div>
+			<ChevronDown
+				class="w-4 h-4 text-charcoal-400 transition-transform duration-200 {mobileFiltersOpen
+					? 'rotate-180'
+					: ''}"
+			/>
+		</button>
+
+		<!-- Bucket 1 Filters (Desktop: Always visible, Mobile: Collapsible) -->
+		<div class="mt-4 space-y-2 {mobileFiltersOpen ? '' : 'hidden md:block'}">
 			<PlayTypeFilter selectedPlayType={data.selectedPlayType} onSelect={handlePlayTypeSelect} />
 
 			<ActionIntensityFilter
@@ -281,13 +357,31 @@
 			{/each}
 		</div>
 	{:else}
-		<!-- Empty State -->
-		<div class="flex flex-col items-center justify-center py-16 text-center">
-			<Camera class="w-16 h-16 text-charcoal-600 mb-4" aria-hidden="true" />
-			<Typography variant="h3" class="mb-2">No photos found</Typography>
-			<Typography variant="body" class="text-charcoal-400">
-				Try adjusting your search or filters
-			</Typography>
+		<!-- Enhanced Empty State with Filter Context -->
+		<div class="flex flex-col items-center justify-center py-16 text-center max-w-md mx-auto">
+			{#if activeFilterCount > 0}
+				<Filter class="w-16 h-16 text-charcoal-600 mb-4" aria-hidden="true" />
+				<Typography variant="h3" class="mb-2">No photos match your filters</Typography>
+				<Typography variant="body" class="text-charcoal-400 mb-4">
+					No photos found with {activeFilterCount}
+					{activeFilterCount === 1 ? 'active filter' : 'active filters'}. Try removing some filters to see
+					more results.
+				</Typography>
+				<Button onclick={clearAllFilters} size="md" variant="outline">
+					<X class="w-4 h-4 mr-2" />
+					Clear All Filters
+				</Button>
+			{:else}
+				<Camera class="w-16 h-16 text-charcoal-600 mb-4" aria-hidden="true" />
+				<Typography variant="h3" class="mb-2">No photos found</Typography>
+				<Typography variant="body" class="text-charcoal-400">
+					{#if searchQuery.trim()}
+						No photos match your search "{searchQuery}". Try a different search term.
+					{:else}
+						The gallery is empty. Check back later for new photos.
+					{/if}
+				</Typography>
+			{/if}
 		</div>
 	{/if}
 
