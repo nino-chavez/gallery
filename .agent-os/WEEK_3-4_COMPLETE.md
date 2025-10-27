@@ -1,7 +1,8 @@
 # Week 3-4: Simple Player Tagging - COMPLETE ✅
 
 **Date Completed:** 2025-10-27
-**Status:** Backend + Frontend Implementation Complete
+**Status:** Backend + Frontend Implementation Complete + Integrated into Photo Detail Pages
+**Latest Commit:** `f51b5ed` (Integration + accessibility fixes)
 
 ---
 
@@ -93,6 +94,17 @@
   - Tag submission form (TagInput)
   - Back to photo link
 
+### 7. Photo Detail Integration (NEW)
+- **Route:** `/photo/[id]`
+- **Files:**
+  - `src/routes/photo/[id]/+page.svelte` - UI with tag display
+  - `src/routes/photo/[id]/+page.server.ts` - Fetches approved tags
+- **Features:**
+  - "Tag Players" button on photo detail modal
+  - Displays approved tags with TagDisplay component
+  - Shows existing tags before users click through
+  - Accessible alt text for thumbnails (a11y compliance)
+
 ---
 
 ## 🧪 Testing Instructions
@@ -124,9 +136,10 @@
 
 ### 3. Test Tag Submission
 
+**Option A: Via Photo Detail Page (NEW)**
 1. Pick any photo from gallery (e.g., `/explore`)
-2. Navigate to `/photo/[image_key]/tag`
-3. Click "+ Tag Player"
+2. Click on photo to open detail modal
+3. Click blue "Tag Players" button
 4. Fill out form:
    - Player Name: "Sarah Johnson"
    - Jersey Number: "12"
@@ -134,13 +147,18 @@
 5. Click "Submit Tag"
 6. Should see success message
 
+**Option B: Direct URL**
+1. Navigate to `/photo/[image_key]/tag`
+2. Follow same steps as above
+
 ### 4. Test Tag Moderation
 
 1. Go to `/admin/tags`
-2. Should see 1 pending tag
+2. Should see 1 pending tag with photo thumbnail
 3. Click "Approve" → Tag disappears from pending list
-4. Go back to `/photo/[image_key]/tag`
-5. Should see approved tag displayed
+4. Go back to photo detail page (click any photo in `/explore`)
+5. Should see approved tag displayed on photo detail modal
+6. Click "Tag Players" to see full tagging page with approved tag
 
 ---
 
