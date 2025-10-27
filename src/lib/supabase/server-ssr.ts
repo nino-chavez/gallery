@@ -7,7 +7,10 @@
 import { createServerClient } from '@supabase/ssr';
 import type { Cookies } from '@sveltejs/kit';
 import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+
+// Use VITE_ prefixed env vars for public values
+const PUBLIC_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const PUBLIC_SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 /**
  * Create a Supabase client for server-side use with proper cookie handling
@@ -18,7 +21,7 @@ export function createSupabaseServerClient(cookies: Cookies) {
 			getAll: () => cookies.getAll(),
 			setAll: (cookiesToSet) => {
 				cookiesToSet.forEach(({ name, value, options }) => {
-					cookies.set(name, value, options);
+					cookies.set(name, value, { ...options, path: options.path ?? '/' });
 				});
 			}
 		}
@@ -34,7 +37,7 @@ export function createSupabaseAdminClient(cookies: Cookies) {
 			getAll: () => cookies.getAll(),
 			setAll: (cookiesToSet) => {
 				cookiesToSet.forEach(({ name, value, options }) => {
-					cookies.set(name, value, options);
+					cookies.set(name, value, { ...options, path: options.path ?? '/' });
 				});
 			}
 		}
