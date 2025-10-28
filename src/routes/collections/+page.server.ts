@@ -13,6 +13,7 @@
 
 import { supabaseServer } from '$lib/supabase/server';
 import type { PageServerLoad } from './$types';
+import type { CoverPhotoRow } from '$types/database';
 
 // Collection definitions (HYBRID: Story + Quality)
 // Matching generate-collections.ts with quality thresholds
@@ -95,7 +96,7 @@ interface CollectionWithPhotos {
 	narrative: string;
 	description: string;
 	photoCount: number;
-	coverPhoto: any | null;
+	coverPhoto: CoverPhotoRow | null;
 }
 
 export const load: PageServerLoad = async () => {

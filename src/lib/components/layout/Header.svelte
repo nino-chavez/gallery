@@ -48,7 +48,8 @@
 		return currentPath.startsWith(path);
 	}
 
-	function handleNavClick(path: string) {
+	function handleNavClick(path: string, event?: MouseEvent) {
+		event?.stopPropagation();
 		goto(path);
 	}
 
@@ -78,7 +79,7 @@
 					role="button"
 					tabindex="0"
 					aria-label="Go to homepage"
-					onclick={() => handleNavClick('/')}
+					onclick={(e) => handleNavClick('/', e)}
 					onkeydown={(e) => handleKeyDown(e, '/')}
 				>
 					<div
@@ -114,7 +115,7 @@
 										? 'bg-gold-500/10 text-gold-500'
 										: 'text-charcoal-300 hover:text-white hover:bg-charcoal-800'
 								)}
-								onclick={() => handleNavClick(item.path)}
+								onclick={(e) => handleNavClick(item.path, e)}
 								aria-current={active ? 'page' : undefined}
 							>
 								<Icon class="w-4 h-4" aria-hidden="true" />

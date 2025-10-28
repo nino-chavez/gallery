@@ -27,3 +27,11 @@ supabase/.temp/
 test-results/
 playwright-report/
 playwright/.cache/
+
+# Temporary agent files
+.temp/
+*.temp.*
+*-report.csv
+*-report.json
+*-drift.*
+*-audit-temp.*

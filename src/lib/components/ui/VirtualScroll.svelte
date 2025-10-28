@@ -15,6 +15,7 @@
 
 <script lang="ts" generics="T">
 	import { onMount } from 'svelte';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		items: T[];
@@ -22,7 +23,7 @@
 		gap?: number; // Gap between items in pixels
 		overscan?: number; // Number of items to render above/below visible area
 		class?: string;
-		children?: any;
+		children?: Snippet<[{ item: T; index: number }]>;
 	}
 
 	let {

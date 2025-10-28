@@ -19,6 +19,7 @@
 	import { ChevronDown, Gauge } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
+	import FilterPill from '$lib/components/ui/FilterPill.svelte';
 
 	interface Props {
 		selectedIntensity?: string | null;
@@ -110,35 +111,27 @@
 		<!-- Content -->
 		{#if isExpanded}
 			<div id="intensity-filter-content" class="px-4 pb-4" transition:slide={{ duration: 200 }}>
-				<!-- All Intensities Pill -->
+				<!-- Filter Pills - Phase 2: Intelligent Filter System -->
 				<div class="flex flex-wrap gap-2">
-					<button
+					<!-- All Intensities Pill -->
+					<FilterPill
+						label="All Intensities"
+						state={selectedIntensity === null ? 'active' : 'available'}
+						description="Show all intensity levels"
+						size="sm"
 						onclick={() => handleIntensityClick(null)}
-						class="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200
-              {selectedIntensity === null
-							? 'bg-gold-500 text-charcoal-950 shadow-md'
-							: 'bg-charcoal-800/50 text-charcoal-300 hover:bg-charcoal-800 hover:text-charcoal-100'}"
-					>
-						<Typography variant="caption" class="font-medium">All Intensities</Typography>
-					</button>
+					/>
 
 					<!-- Intensity Pills -->
 					{#each intensities as intensity}
-						<button
+						<FilterPill
+							label={intensity.label}
+							state={selectedIntensity === intensity.value ? 'active' : 'available'}
+							description={intensity.description}
+							icon={Gauge}
+							size="sm"
 							onclick={() => handleIntensityClick(intensity.value)}
-							class="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 overflow-hidden
-                {selectedIntensity === intensity.value
-								? intensity.activeClass + ' text-white shadow-md'
-								: 'bg-gradient-to-r ' + intensity.colorClass + ' ' + intensity.textClass}"
-							title={intensity.description}
-						>
-							<Gauge
-								class="w-3.5 h-3.5 {selectedIntensity === intensity.value
-									? 'text-white'
-									: intensity.textClass}"
-							/>
-							<Typography variant="caption" class="font-medium">{intensity.label}</Typography>
-						</button>
+						/>
 					{/each}
 				</div>
 

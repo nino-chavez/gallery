@@ -70,6 +70,11 @@
 
 	// Handle image error
 	function handleError() {
+		console.error('[OptimizedImage] Failed to load image:', {
+			src,
+			thumbnailSrc,
+			alt: alt.substring(0, 50)
+		});
 		imageError = true;
 		onError?.();
 	}

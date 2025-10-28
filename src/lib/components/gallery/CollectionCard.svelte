@@ -45,7 +45,8 @@
 		EMOTION_PALETTE[emotion as keyof typeof EMOTION_PALETTE] || EMOTION_PALETTE.triumph
 	);
 
-	function handleClick() {
+	function handleClick(event?: MouseEvent) {
+		event?.stopPropagation();
 		onclick?.();
 	}
 

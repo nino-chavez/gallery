@@ -51,7 +51,8 @@
 	const MAGNETIC_RADIUS = 100; // px
 	const ATTRACTION_STRENGTH = 0.3; // 0-1 scale
 
-	function handleSportClick(sportName: string | null) {
+	function handleSportClick(sportName: string | null, event?: MouseEvent) {
+		event?.stopPropagation();
 		onSelect?.(sportName);
 	}
 
@@ -142,7 +143,7 @@
 				>
 					<button
 						use:motion
-						onclick={() => handleSportClick(null)}
+						onclick={(e) => handleSportClick(null, e)}
 						class="min-h-[48px] px-6 py-3 rounded-full text-sm font-medium transition-all {!selectedSport
 							? 'bg-gold-500 text-charcoal-950 shadow-lg shadow-gold-500/20'
 							: 'bg-charcoal-800/50 text-charcoal-100 border border-charcoal-700 hover:border-gold-500/30 hover:bg-charcoal-800'}"
@@ -166,7 +167,7 @@
 					>
 						<button
 							use:motion
-							onclick={() => handleSportClick(sport.name)}
+							onclick={(e) => handleSportClick(sport.name, e)}
 							class="min-h-[48px] px-6 py-3 rounded-full text-sm font-medium transition-all {selectedSport === sport.name
 								? 'bg-gold-500 text-charcoal-950 shadow-lg shadow-gold-500/20'
 								: 'bg-charcoal-800/50 text-charcoal-100 border border-charcoal-700 hover:border-gold-500/30 hover:bg-charcoal-800'}"
@@ -274,7 +275,7 @@
 				<button
 					use:motion
 					use:setPillRef={`sport-${sport.name}`}
-					onclick={() => handleSportClick(sport.name)}
+					onclick={(e) => handleSportClick(sport.name, e)}
 					class="min-h-[48px] px-6 py-3 rounded-full text-sm font-medium transition-colors {selectedSport === sport.name
 						? 'bg-gold-500 text-charcoal-950 shadow-lg shadow-gold-500/20'
 						: 'bg-charcoal-800/50 text-charcoal-100 border border-charcoal-700 hover:border-gold-500/30 hover:bg-charcoal-800'}"

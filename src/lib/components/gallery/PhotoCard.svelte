@@ -79,29 +79,33 @@
 	<!-- Metadata Overlay - Bottom (Hover Only) -->
 	<div
 		class="absolute bottom-0 left-0 right-0 p-3
-		       bg-gradient-to-t from-black/90 via-black/60 to-transparent
 		       opacity-0 group-hover:opacity-100 group-focus-within:opacity-100
 		       transition-opacity"
 	>
+		<!-- Gradient Background (separate layer to avoid blur on pills) -->
+		<div
+			class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent backdrop-blur-sm -z-10"
+		></div>
+
 		<!-- Key Metadata Tags (No Title/Photo ID - just useful filter info) -->
-		<div class="flex flex-wrap gap-1.5">
+		<div class="relative flex flex-wrap gap-1.5">
 			<!-- Sport Type -->
 			{#if photo.metadata?.sport_type}
-				<span class="text-xs px-1.5 py-0.5 rounded bg-gold-500/20 text-gold-300 font-medium">
+				<span class="text-xs px-2 py-1 rounded-md bg-gold-500 text-white font-semibold shadow-sm">
 					{photo.metadata.sport_type}
 				</span>
 			{/if}
 
 			<!-- Category -->
 			{#if photo.metadata?.photo_category}
-				<span class="text-xs px-1.5 py-0.5 rounded bg-charcoal-700/80 text-charcoal-200">
+				<span class="text-xs px-2 py-1 rounded-md bg-charcoal-700 text-white shadow-sm">
 					{photo.metadata.photo_category}
 				</span>
 			{/if}
 
-			<!-- Action Intensity (if high/extreme) -->
-			{#if photo.metadata?.action_intensity === 'high' || photo.metadata?.action_intensity === 'extreme'}
-				<span class="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-300">
+			<!-- Action Intensity (if high/peak) -->
+			{#if photo.metadata?.action_intensity === 'high' || photo.metadata?.action_intensity === 'peak'}
+				<span class="text-xs px-2 py-1 rounded-md bg-red-500 text-white font-semibold shadow-sm">
 					{photo.metadata.action_intensity}
 				</span>
 			{/if}

@@ -17,6 +17,7 @@
 	import { ChevronDown, Sunrise, Sun, Sunset, Moon } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
+	import FilterPill from '$lib/components/ui/FilterPill.svelte';
 
 	interface Props {
 		selectedTime?: string | null;
@@ -72,34 +73,27 @@
 
 		{#if isExpanded}
 			<div class="px-4 pb-4" transition:slide={{ duration: 200 }}>
+				<!-- Filter Pills - Phase 2: Intelligent Filter System -->
 				<div class="flex flex-wrap gap-2">
-					<button
+					<!-- All Times Pill -->
+					<FilterPill
+						label="All Times"
+						state={selectedTime === null ? 'active' : 'available'}
+						description="Show all time periods"
+						size="sm"
 						onclick={() => handleTimeClick(null)}
-						class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 {selectedTime ===
-						null
-							? 'bg-gold-500 text-charcoal-950 shadow-md'
-							: 'bg-charcoal-800/50 text-charcoal-300 hover:bg-charcoal-800 hover:text-charcoal-100'}"
-					>
-						<Typography variant="caption" class="font-medium">All Times</Typography>
-					</button>
+					/>
 
+					<!-- Individual Time Pills -->
 					{#each times as time}
-						<button
+						<FilterPill
+							label={time.label}
+							state={selectedTime === time.value ? 'active' : 'available'}
+							description={time.description}
+							icon={time.icon}
+							size="sm"
 							onclick={() => handleTimeClick(time.value)}
-							class="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 {selectedTime ===
-							time.value
-								? 'bg-gold-500 text-charcoal-950 shadow-md'
-								: 'bg-charcoal-800/50 text-charcoal-300 hover:bg-charcoal-800 hover:text-charcoal-100'}"
-							title={time.description}
-						>
-							<svelte:component
-								this={time.icon}
-								class="w-3.5 h-3.5 {selectedTime === time.value
-									? 'text-charcoal-950'
-									: 'text-charcoal-400 group-hover:text-charcoal-200'}"
-							/>
-							<Typography variant="caption" class="font-medium">{time.label}</Typography>
-						</button>
+						/>
 					{/each}
 				</div>
 			</div>

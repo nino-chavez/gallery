@@ -114,50 +114,58 @@
 			/>
 		</button>
 
-		<!-- Content -->
+		<!-- Content (Enhanced: Icon Grid Layout) -->
 		{#if isExpanded}
 			<div id="lighting-filter-content" class="px-4 pb-4" transition:slide={{ duration: 200 }}>
-				<div class="flex flex-wrap gap-2">
-					<!-- Clear All Button (only shows when items selected) -->
-					{#if selectedCount > 0}
-						<button
-							onclick={clearAll}
-							class="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-red-500/20 text-red-400 hover:bg-red-500/30"
-						>
-							<Typography variant="caption" class="font-medium">Clear All</Typography>
-						</button>
-					{/if}
-
-					<!-- Lighting Pills (Multi-select) -->
+				<!-- Icon Grid (similar to CompositionFilter) -->
+				<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-3">
 					{#each lightingTypes as lighting}
 						<button
 							onclick={() => handleLightingClick(lighting.value)}
-							class="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200
-                {selectedLighting?.includes(lighting.value)
-								? 'bg-gold-500 text-charcoal-950 shadow-md'
-								: 'bg-charcoal-800/50 text-charcoal-300 hover:bg-charcoal-800 hover:text-charcoal-100'}"
-							title={lighting.description}
+							class="group relative flex flex-col items-center gap-2 px-3 py-2.5 rounded-lg border transition-all duration-200 {selectedLighting?.includes(
+								lighting.value
+							)
+								? 'bg-gold-500 border-gold-500 text-charcoal-950'
+								: 'bg-charcoal-900/50 border-charcoal-700/50 text-charcoal-400 hover:border-charcoal-600 hover:bg-charcoal-800/50'}"
+							aria-pressed={selectedLighting?.includes(lighting.value)}
+							aria-label="Filter by {lighting.label}"
 						>
 							<svelte:component
 								this={lighting.icon}
-								class="w-3.5 h-3.5 {selectedLighting?.includes(lighting.value)
+								class="w-4 h-4 {selectedLighting?.includes(lighting.value)
 									? 'text-charcoal-950'
 									: 'text-charcoal-400 group-hover:text-charcoal-200'}"
 							/>
-							<Typography variant="caption" class="font-medium">{lighting.label}</Typography>
+							<Typography
+								variant="caption"
+								class="font-medium text-xs {selectedLighting?.includes(lighting.value)
+									? 'text-charcoal-950'
+									: ''}">{lighting.label}</Typography
+							>
+
+							<!-- Tooltip -->
+							<div
+								class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-charcoal-800 text-charcoal-200 text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+							>
+								{lighting.description}
+							</div>
 						</button>
 					{/each}
 				</div>
 
-				<!-- Helper text for multi-select -->
-				{#if selectedCount === 0}
-					<p class="mt-2 text-xs text-charcoal-500">
-						Select one or more lighting types to filter
-					</p>
-				{:else}
-					<p class="mt-2 text-xs text-gold-400">
-						Showing photos with {selectedCount === 1 ? 'this lighting type' : 'these lighting types'}
-					</p>
+				<!-- Clear All button (if selections exist) -->
+				{#if selectedCount > 0}
+					<div class="flex items-center justify-between text-xs">
+						<Typography variant="caption" class="text-gold-400">
+							{selectedCount} selected
+						</Typography>
+						<button
+							onclick={clearAll}
+							class="text-gold-500 hover:text-gold-400 transition-colors"
+						>
+							Clear All
+						</button>
+					</div>
 				{/if}
 			</div>
 		{/if}

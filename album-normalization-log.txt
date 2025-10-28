@@ -1,0 +1,3580 @@
+🎯 Album Name Normalization
+
+Min drift score to update: 0/100
+
+📡 Fetching albums from SmugMug...
+
+Authenticated as: Nino Chavez (ninochavez)
+
+Found 296 albums
+
+📊 Fetching Supabase album metadata...
+
+Found 206 albums in Supabase
+
+✅ Synced album name to 100 photos in Supabase
+[1/296] (0.3%) ✅ vKQKbN
+  Current: Chicago AVP - San Diego Smash -... - Sep 2025
+  Proposed: Chicago AVP - San Diego Smash -...... - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[2/296] (0.7%) ✅ wTmc3X
+  Current: Acc Boys Basketball 01-Dec - Dec 3
+  Proposed: Acc Boys Basketball 01-Dec - Dec 3
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 62 photos in Supabase
+[3/296] (1.0%) ✅ cRsw7K
+  Current: ACC Boys vs St. Edwards - Dec 3
+  Proposed: ACC Boys vs St. Edwards
+  Drift: 5/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 91 photos in Supabase
+[4/296] (1.4%) ✅ QczZrc
+  Current: ACC Boys Basketball 08-Dec - Dec 9
+  Proposed: ACC Boys Basketball 08-Dec - Dec 9
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[5/296] (1.7%) ✅ FmgTrc
+  Current: ACC Boys vs CPSA 02-07-2023 - Feb 9
+  Proposed: ACC Boys vs CPSA 02-07-2023 - Feb 7
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[6/296] (2.0%) ✅ CK8S7M
+  Current: ACC Girls vs Rosary - Dec 8
+  Proposed: ACC Girls vs Rosary
+  Drift: 8/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 55 photos in Supabase
+[7/296] (2.4%) ✅ wdQKGt
+  Current: ACC Girls vs Rosary (Away) - Jan 25
+  Proposed: ACC Girls vs Rosary (Away)
+  Drift: 5/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[8/296] (2.7%) ✅ L378T2
+  Current: PEHS Boys VB Senior Night - May 6
+  Proposed: PEHS Boys VB Senior Night - May 6
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[9/296] (3.0%) ✅ NgTdkm
+  Current: ACC Girls Basketball Regional - Feb 22
+  Proposed: ACC Girls Basketball Regional - Feb 22
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 63 photos in Supabase
+[10/296] (3.4%) ✅ B3Sfhj
+  Current: Richard Griesheim Invite - Apr 24
+  Proposed: Richard Griesheim Invite - Apr 24
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[11/296] (3.7%) ✅ vkfRn9
+  Current: ACC Girls Basketball 12-Dec - Dec 14
+  Proposed: ACC Girls Basketball 12-Dec - Dec 14
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[12/296] (4.1%) ✅ 4DLxfC
+  Current: DU Cross Country at NCCXC Invite - Sep 10
+  Proposed: DU Cross Country at NCCXC Invite - Sep 10
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 77 photos in Supabase
+[13/296] (4.4%) ✅ HtSbSc
+  Current: 2024 DGN Boys vs Wheaton North - Apr 23
+  Proposed: 2024 DGN Boys vs Wheaton North - Jan 1
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 76 photos in Supabase
+[14/296] (4.7%) ✅ 2RQpk8
+  Current: Team One Beach - Jul 1 - Jul 1
+  Proposed: Team One Beach - Jul 1 - Jul 1
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[15/296] (5.1%) ✅ 4zZrcX
+  Current: IHSA Regionals (Boys) - Oct 15
+  Proposed: IHSA Regionals (Boys) - Oct 15
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 31 photos in Supabase
+[16/296] (5.4%) ✅ NGNNJP
+  Current: Huntington Beach Pier - Nov 2
+  Proposed: Huntington Beach Pier - Nov 2
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[17/296] (5.7%) ✅ vdCSLx
+  Current: Windy City Qualifier - Apr - Apr 2023
+  Proposed: Windy City Qualifier - Apr - Apr - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 66 photos in Supabase
+[18/296] (6.1%) ✅ n5bFJ7
+  Current: VLA Chicago Icemen - Aug 26 - Aug 26
+  Proposed: VLA Chicago Icemen - Aug 26 - Aug 26
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[19/296] (6.4%) ✅ dmkXB5
+  Current: 2022 ACC vs Rosary - Sep 14
+  Proposed: 2022 ACC vs Rosary - Jan 1
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[20/296] (6.8%) ✅ JBqKmz
+  Current: Millikin at North Park University - Nov 4
+  Proposed: Millikin at North Park University - Nov 4
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[21/296] (7.1%) ✅ Dfg7TD
+  Current: ACC Football Homecoming - Sep 23 - Sep 23
+  Proposed: ACC Football Homecoming - Sep 23 - Sep 23
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[22/296] (7.4%) ✅ NWMdn5
+  Current: AVP League - Week 7 - Nov 9 - Nov 9
+  Proposed: AVP League - Week 7 - Nov 9 - Nov 9
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 87 photos in Supabase
+[23/296] (7.8%) ✅ sq8VD7
+  Current: ACC Girl's Basketball 28-Nov - Nov 30
+  Proposed: ACC Girl's Basketball 28-Nov - Nov 30
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[24/296] (8.1%) ✅ V8Dd9t
+  Current: ACC Girl's Basketball 24-Nov - Nov 25
+  Proposed: ACC Girl's Basketball 24-Nov - Nov 25
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 97 photos in Supabase
+[25/296] (8.4%) ✅ DzwqLV
+  Current: ACC at Chicago Christian - Sep 7
+  Proposed: ACC at Chicago Christian - Sep 7
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[26/296] (8.8%) ✅ p2KJfs
+  Current: TeamOne - 2023 Great Lakes Region... - Mar 12
+  Proposed: TeamOne - 2023 Great Lakes Region.... - Jan 1
+  Drift: 4/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 83 photos in Supabase
+[27/296] (9.1%) ✅ CgbH8q
+  Current: 2023 ACC vs De Lasalle - Sep 14
+  Proposed: 2023 ACC vs De Lasalle - Jan 1
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 96 photos in Supabase
+[28/296] (9.5%) ✅ 62tv4W
+  Current: Morton Unido - Jan 29 - Jan 29 - Jan 29
+  Proposed: Morton Unido - Jan 29 - Jan 29 - Jan 29
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 75 photos in Supabase
+[29/296] (9.8%) ✅ LsdDcQ
+  Current: ACC Boys Soccer 04-Oct - Oct 5
+  Proposed: ACC Boys Soccer 04-Oct - Oct 5
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[30/296] (10.1%) ✅ kqGRRG
+  Current: Chicago Big Dig - Aug 26
+  Proposed: Chicago Big Dig - Aug 26
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 74 photos in Supabase
+[31/296] (10.5%) ✅ jFRVKj
+  Current: Miya & Miguel Marriage Proposal - Nov 3
+  Proposed: Miya & Miguel Marriage Proposal - Nov 3
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[32/296] (10.8%) ✅ NG9K5C
+  Current: VLA Central Cup - Icemen - Mar 7
+  Proposed: VLA Central Cup - Icemen - Mar 7
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 49 photos in Supabase
+[33/296] (11.1%) ✅ HbQqH4
+  Current: 2023 ACC vs IMSA - Sep 14
+  Proposed: 2023 ACC vs IMSA - Jan 1
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[34/296] (11.5%) ✅ R2SP6n
+  Current: 2024 PEHS Boys vs Lincoln Way - Mar 21
+  Proposed: 2024 PEHS Boys vs Lincoln Way - Jan 1
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 75 photos in Supabase
+[35/296] (11.8%) ✅ VMDZJC
+  Current: ACC at Wheaton Academy - Sep 10 - Sep 10
+  Proposed: ACC at Wheaton Academy - Sep 10 - Sep 10
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[36/296] (12.2%) ✅ Rz6kdB
+  Current: Stars at Wheaton Thunder - Aug 24
+  Proposed: Stars at Wheaton Thunder - Aug 24
+  Drift: 0/100 (min: 0)
+  Photos: 8 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[37/296] (12.5%) ✅ VxpL9T
+  Current: DU Women's Volleyball - Sep 16 - Sep 16
+  Proposed: DU Women's Volleyball - Sep 16 - Sep 16
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[38/296] (12.8%) ✅ 89Lbhk
+  Current: West Chicago Volleyball 17-Oct - Oct 18
+  Proposed: West Chicago Volleyball 17-Oct - Oct 18
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 74 photos in Supabase
+[39/296] (13.2%) ✅ L9KGHZ
+  Current: VLA Southside Xtreme Showdown - Mar 11
+  Proposed: VLA Southside Xtreme Showdown - Mar 11
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 46 photos in Supabase
+[40/296] (13.5%) ✅ XfPqzK
+  Current: TeamOne 16 Onyx - Jan 22
+  Proposed: TeamOne 16 Onyx - Jan 22
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[41/296] (13.9%) ✅ dmWwRk
+  Current: 2023 ACC vs Rosary 05-Oct-2023 - Oct 8
+  Proposed: 2023 ACC vs Rosary 05-Oct-2023 - Jan 1
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 57 photos in Supabase
+[42/296] (14.2%) ✅ CWBnh9
+  Current: ACC Fall Sports Recognition 2023 - Aug 18
+  Proposed: ACC Fall Sports Recognition 2023 -... - Jan 1
+  Drift: 10/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[43/296] (14.5%) ✅ jDbB4z
+  Current: DU Women's Soccer - Homecoming We... - Sep 20
+  Proposed: DU Women's Soccer - Homecoming We... - Sep 20
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[44/296] (14.9%) ✅ cbHg5q
+  Current: ACC vs ICCP - Sep 24
+  Proposed: ACC vs ICCP
+  Drift: 17/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[45/296] (15.2%) ✅ 2r4m7W
+  Current: Millikin VB - Sep 17 - Sep 17
+  Proposed: Millikin VB - Sep 17 - Sep 17
+  Drift: 0/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[46/296] (15.5%) ✅ bjTXfm
+  Current: AVP Chicago Open - Sep 4 - Sep 4
+  Proposed: AVP Chicago Open - Sep 4 - Sep 4
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 85 photos in Supabase
+[47/296] (15.9%) ✅ XjLBCR
+  Current: VLA Cup - Icemen - May 13 - May 13
+  Proposed: VLA Cup - Icemen - May 13 - May 13
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[48/296] (16.2%) ✅ KFk8JC
+  Current: Xochitl – Graduation - May 28
+  Proposed: Xochitl – Graduation - May 28
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 23 photos in Supabase
+[49/296] (16.6%) ✅ NS3RKb
+  Current: VLA Cup - Midwest Magic - May 13 - May 13
+  Proposed: VLA Cup - Midwest Magic - May 13 - May 13
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[50/296] (16.9%) ✅ cxdSzz
+  Current: St. Francis GVB Senior Night - Oct 23
+  Proposed: St. Francis GVB Senior Night - Oct 23
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 95 photos in Supabase
+[51/296] (17.2%) ✅ 8jtrtw
+  Current: ACC at St. Francis - Oct 19 - Oct 19
+  Proposed: ACC at St. Francis - Oct 19 - Oct 19
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[52/296] (17.6%) ✅ PH5dWr
+  Current: ACC at St. Edwards CCHS - Aug 31 - Aug 31
+  Proposed: ACC at St. Edwards CCHS - Aug 31 - Aug 31
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[53/296] (17.9%) ✅ fQnRDW
+  Current: ACC Girl's Basketball 20-Nov - Nov 21
+  Proposed: ACC Girl's Basketball 20-Nov - Nov 21
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 74 photos in Supabase
+[54/296] (18.2%) ✅ QgHPhz
+  Current: ACC Boys Golf September 16, - Sep 17
+  Proposed: ACC Boys Golf September 16, - Sep 17
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[55/296] (18.6%) ✅ zTVkXM
+  Current: Surf City Collegiate Challenge - Nov 1
+  Proposed: Surf City Collegiate Challenge - Nov 1
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 22 photos in Supabase
+[56/296] (18.9%) ✅ L5WwpM
+  Current: 2023 DU Women's vs AU 02-Nov - Nov 5
+  Proposed: 2023 DU Women's vs AU 02-Nov - Jan 1
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[57/296] (19.3%) ✅ MNNbgk
+  Current: Homecoming Jersey Photoshoot - Se... - Sep 26
+  Proposed: Homecoming Jersey Photoshoot - Se... - Sep 26
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[58/296] (19.6%) ✅ kZ3pTs
+  Current: Benet Academy – Senior Night - Ma... - May 23
+  Proposed: Benet Academy – Senior Night - Ma... - May 23
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 8 photos in Supabase
+[59/296] (19.9%) ✅ kCjvmS
+  Current: Athena - Oct 9 - Oct 9
+  Proposed: Athena - Oct 9 - Oct 9
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 57 photos in Supabase
+[60/296] (20.3%) ✅ FT8VTj
+  Current: / 2023 ACC Fall Sports - Sep 2 - Sep 2
+  Proposed: / 2023 ACC Fall Sports - Sep 2 - S... - Jan 1
+  Drift: 12/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 73 photos in Supabase
+[61/296] (20.6%) ✅ CHmtBq
+  Current: ACC Girls vs Newark - Nov 19
+  Proposed: ACC Girls vs Newark
+  Drift: 9/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 67 photos in Supabase
+[62/296] (20.9%) ✅ dHsLFk
+  Current: Zack D. - Senior Portraits - Oct 29
+  Proposed: Zack D. - Senior Portraits - Oct 29
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[63/296] (21.3%) ✅ VFTwzS
+  Current: ACC Drama – Alice in Wonderland (F... - Nov 6
+  Proposed: ACC Drama – Alice in Wonderland (F... - Nov 6
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[64/296] (21.6%) ✅ 4v8CJJ
+  Current: Middle School Volleyball Champ - Oct 28
+  Proposed: Middle School Volleyball Champ - Oct 28
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 213 photos in Supabase
+[65/296] (22.0%) ✅ 5dvLQR
+  Current: VLA BREEZE - Fall - Oct 26
+  Proposed: VLA BREEZE - Fall - Oct 26
+  Drift: 0/100 (min: 0)
+  Photos: 7 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 53 photos in Supabase
+[66/296] (22.3%) ✅ kgCfkn
+  Current: Sure Shot Pickleball Facility - Dec 24
+  Proposed: Sure Shot Pickleball Facility - Dec 24
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[67/296] (22.6%) ✅ 33nPHv
+  Current: Bruno & Beni - Sep 9 - Sep 9
+  Proposed: Bruno & Beni - Sep 9 - Sep 9
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 96 photos in Supabase
+[68/296] (23.0%) ✅ D6M8cZ
+  Current: 2024 PNHS vs PEHS - May 13
+  Proposed: 2024 PNHS vs PEHS - Jan 1
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[69/296] (23.3%) ✅ c5zHhc
+  Current: DU Women's Bowling 08-Nov - Nov 9 - Nov 9
+  Proposed: DU Women's Bowling 08-Nov - Nov 9 - Nov 9
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[70/296] (23.6%) ✅ HtxsgN
+  Current: ACC Boys Golf - Sep 13 - Sep 13
+  Proposed: ACC Boys Golf - Sep 13 - Sep 13
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 99 photos in Supabase
+[71/296] (24.0%) ✅ qQW2Kj
+  Current: ACC Girls Tennis - Sep 11 - Sep 11
+  Proposed: ACC Girls Tennis - Sep 11 - Sep 11
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[72/296] (24.3%) ✅ 2TFLNV
+  Current: ACC Boys vs Wheaton Academy - Dec 15
+  Proposed: ACC Boys vs Wheaton Academy
+  Drift: 5/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 71 photos in Supabase
+[73/296] (24.7%) ✅ 9tQv2P
+  Current: ACC Boys vs Harvest Christian - Nov 29
+  Proposed: ACC Boys vs Harvest Christian
+  Drift: 4/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[74/296] (25.0%) ✅ zzSDBG
+  Current: GCU vs UCLA - Apr 4
+  Proposed: GCU vs UCLA
+  Drift: 15/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[75/296] (25.3%) ✅ PD3XxC
+  Current: VLA Cup - May 30 - May 30
+  Proposed: VLA Cup - May 30 - May 30
+  Drift: 0/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[76/296] (25.7%) ✅ BkpB24
+  Current: ACC at Aurora Christian - Oct 7
+  Proposed: ACC at Aurora Christian - Oct 7
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[77/296] (26.0%) ✅ vbB2vD
+  Current: DU Men's Golf at AU Fall Invite - Sep 5
+  Proposed: DU Men's Golf at AU Fall Invite - Sep 5
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[78/296] (26.4%) ✅ m3nhJ7
+  Current: AVP Chicago - Miami Mayhem - Sep 1
+  Proposed: AVP Chicago - Miami Mayhem - Sep 1
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 79 photos in Supabase
+[79/296] (26.7%) ✅ ktBGNz
+  Current: NJCAA OWT - McHenry College - Aug 20
+  Proposed: NJCAA OWT - McHenry College - Aug 20
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[80/296] (27.0%) ✅ Mg2ggP
+  Current: ACC Homecoming Powderpuff - Oct 14
+  Proposed: ACC Homecoming Powderpuff - Oct 14
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: qjMSL2
+[81/296] (27.4%) ✅ qjMSL2
+  Current: Demo
+  Proposed: Demo
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 59 photos in Supabase
+[82/296] (27.7%) ✅ 2Xv5JS
+  Current: WVB - North Central vs Carthage
+  Proposed: WVB - North Central vs Carthage
+  Drift: 0/100 (min: 0)
+  Photos: 9 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 27 photos in Supabase
+[83/296] (28.0%) ✅ GbsPZX
+  Current: 630 Breeze - Women's Tryouts
+  Proposed: 630 Breeze - Women's Tryouts
+  Drift: 0/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 50 photos in Supabase
+[84/296] (28.4%) ✅ KZf9RF
+  Current: Players Player Appreciation Turf 4s
+  Proposed: Players Player Appreciation Turf 4s
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[85/296] (28.7%) ✅ 9VLQFQ
+  Current: WMVB - North Central College vs Aurora University
+  Proposed: WMVB - North Central College vs Aurora Uni...
+  Drift: 0/100 (min: 0)
+  Photos: 18 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 77 photos in Supabase
+[86/296] (29.1%) ✅ pVB6hf
+  Current: 630 Breeze 2025 Tryouts
+  Proposed: 630 Breeze 2025 Tryouts - Jan 1
+  Drift: 15/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[87/296] (29.4%) ✅ WmJvT5
+  Current: UWM Panther Invitational - Part 2
+  Proposed: UWM Panther Invite - Part 2
+  Drift: 12/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[88/296] (29.7%) ✅ vgC8z9
+  Current: UW-Milwaukee Panther Invitational
+  Proposed: UW-Milwaukee Panther Invite
+  Drift: 12/100 (min: 0)
+  Photos: 16 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 99 photos in Supabase
+[89/296] (30.1%) ✅ qzd2SP
+  Current: Krush Reverse Co-Ed #2
+  Proposed: Krush Reverse Co-Ed #2
+  Drift: 0/100 (min: 0)
+  Photos: 10 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: QwhCK5
+[90/296] (30.4%) ✅ QwhCK5
+  Current: 2025 Bell Pepper - Final Match Highlights
+  Proposed: Bell Pepper - Final Match Highlights - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: FRxVCn
+[91/296] (30.7%) ✅ FRxVCn
+  Current: 2025 Cookout Grass Tourney - Reels
+  Proposed: Cookout Grass Tourney - Reels - Jan 1
+  Drift: 16/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[92/296] (31.1%) ✅ fTpMCN
+  Current: 2025 Cookout Volleyball Grass Tournament
+  Proposed: Cookout Volleyball Grass Tourney - Jan 1
+  Drift: 14/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: p4J2jk
+[93/296] (31.4%) ✅ p4J2jk
+  Current: 2025 Bell Pepper Open - Video Highlights
+  Proposed: Bell Pepper Open - Video Highlights - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[94/296] (31.8%) ✅ wJGz8n
+  Current: Krush Reverse Co-Ed
+  Proposed: Krush Reverse Co-Ed
+  Drift: 0/100 (min: 0)
+  Photos: 18 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[95/296] (32.1%) ✅ j5MfJD
+  Current: 2025 Bell Pepper Open – Official Gallery
+  Proposed: Bell Pepper Open – Official Gallery - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[96/296] (32.4%) ✅ GCtpkS
+  Current: 630 Girls VB - 2025 Tryouts
+  Proposed: 630 Girls VB - 2025 Tryouts - Jan 1
+  Drift: 14/100 (min: 0)
+  Photos: 17 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 86 photos in Supabase
+[97/296] (32.8%) ✅ W2Qq62
+  Current: 2025 AAU Nationals - Club 1
+  Proposed: AAU Nationals - Club 1 - Jan 1
+  Drift: 19/100 (min: 0)
+  Photos: 14 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 19 photos in Supabase
+[98/296] (33.1%) ✅ C7qdcm
+  Current: 2025 AAU Nationals -  Cinci Attack 15 Black
+  Proposed: AAU Nationals - Cinci Attack 15 Black - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 56 photos in Supabase
+[99/296] (33.4%) ✅ v7bVL7
+  Current: 2025 AAU Junior Nationals - AJV Boys 15 Adidas
+  Proposed: AAU Junior Nationals - AJV Boys 15... - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[100/296] (33.8%) ✅ Qzgq3Z
+  Current: 2025 Windy City Roundup – Boys Volleyball
+  Proposed: Windy City Roundup – Boys Volleyball - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 24 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 31 photos in Supabase
+[101/296] (34.1%) ✅ WNStGn
+  Current: Club VB - 630 17-1 Boys Scrimmage
+  Proposed: Club VB - 630 17-1 Boys Scrimmage
+  Drift: 0/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[102/296] (34.5%) ✅ 5M7kNx
+  Current: "Grass Launch | Open Triples Tournament 2025"
+  Proposed: "Grass Launch | Open Triples Tourn... - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: Lm4B7Q
+[103/296] (34.8%) ✅ Lm4B7Q
+  Current: Keri's B-day
+  Proposed: Keri's B-day
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 82 photos in Supabase
+[104/296] (35.1%) ✅ XGDw9B
+  Current: HS VB - Wheaton South vs Wheaton North – South Elgin Sectional 2025
+  Proposed: Wheaton South vs Wheaton North - Jan 1
+  Drift: 33/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[105/296] (35.5%) ✅ G8dMVS
+  Current: Suburban Slam Triples Tournament 2025
+  Proposed: Suburban Slam Triples Tourney - Jan 1
+  Drift: 11/100 (min: 0)
+  Photos: 16 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[106/296] (35.8%) ✅ 7bJwPj
+  Current: HS VB - Downers Grove North vs Plainfield South – Regional Championship 2025
+  Proposed: Downers Grove North vs Plainfield ... - Jan 1
+  Drift: 33/100 (min: 0)
+  Photos: 11 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 21 photos in Supabase
+[107/296] (36.1%) ✅ G6cwGk
+  Current: HS VB - Bolingbrook at Oswego East - 2025
+  Proposed: Bolingbrook at Oswego East - Jan 1
+  Drift: 31/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: C7K7MS
+[108/296] (36.5%) ✅ C7K7MS
+  Current: 630 Volleyball Coaches Appreciation BBQ
+  Proposed: 630 Volleyball Coaches Appreciation BBQ
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: xH5Jdd
+[109/296] (36.8%) ✅ xH5Jdd
+  Current: carousel-highlights
+  Proposed: carousel-highlights
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: bcPCFG
+[110/296] (37.2%) ✅ bcPCFG
+  Current: Homepage Images
+  Proposed: Homepage Images
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 78 photos in Supabase
+[111/296] (37.5%) ✅ bQSmXs
+  Current: 630 Boy's Volleyball Club
+  Proposed: 630 Boy's Volleyball Club
+  Drift: 0/100 (min: 0)
+  Photos: 15 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[112/296] (37.8%) ✅ dkHxbR
+  Current: 2023 Players Sports Winter Grass Luau
+  Proposed: Players Sports Winter Grass Luau - Jan 1
+  Drift: 14/100 (min: 0)
+  Photos: 16 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[113/296] (38.2%) ✅ prjR7M
+  Current: Milwaukee Dive Turf Tourney
+  Proposed: Milwaukee Dive Turf Tourney
+  Drift: 0/100 (min: 0)
+  Photos: 11 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 49 photos in Supabase
+[114/296] (38.5%) ✅ Xt7W42
+  Current: Players Sports Spring Turf Luau 2023 - Team Sikora
+  Proposed: Players Sports Spring Turf Luau 20... - Jan 1
+  Drift: 12/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[115/296] (38.9%) ✅ c7zMTk
+  Current: Players Sports Spring Turf Luau 2023
+  Proposed: Players Sports Spring Turf Luau - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 96 photos in Supabase
+[116/296] (39.2%) ✅ srkJm4
+  Current: Players Sports Winter Turf Luau 2023
+  Proposed: Players Sports Winter Turf Luau - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: HFFht7
+[117/296] (39.5%) ✅ HFFht7
+  Current: VLA Cup – Video – 2025-05-10
+  Proposed: VLA Cup – Video - May 10
+  Drift: 26/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[118/296] (39.9%) ✅ LpPp9v
+  Current: VLA Cup – 2025-05-10
+  Proposed: VLA Cup - May 10
+  Drift: 32/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 81 photos in Supabase
+[119/296] (40.2%) ✅ F3DgcR
+  Current: VLA – Breeze vs Sweedies – Scrimmage – 2025-03-14
+  Proposed: VLA – Breeze vs Sweedies - Mar 14
+  Drift: 21/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[120/296] (40.5%) ✅ C6zJ3r
+  Current: VLA – Chicago Frost vs 630 Breeze – 2025-02-22
+  Proposed: VLA – Chicago Frost vs 630 Breeze - Feb 22
+  Drift: 10/100 (min: 0)
+  Photos: 15 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: BwJ5pX
+[121/296] (40.9%) ✅ BwJ5pX
+  Current: College VB – GCU vs UCLA – Video – 2025-04-04
+  Proposed: GCU vs UCLA - Apr 4
+  Drift: 53/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 86 photos in Supabase
+[122/296] (41.2%) ✅ f7kMhJ
+  Current: College VB – Lindenwood vs Loyola – 2025-03-28
+  Proposed: Lindenwood vs Loyola - Mar 28
+  Drift: 42/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[123/296] (41.6%) ✅ MjwFjP
+  Current: College VB – Lewis vs Ohio State – 2025-03-22
+  Proposed: Lewis vs Ohio State - Mar 22
+  Drift: 42/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[124/296] (41.9%) ✅ W8GDz5
+  Current: HS VB – Plainfield North – Senior Night 2025
+  Proposed: Plainfield North – Senior Night - Jan 1
+  Drift: 31/100 (min: 0)
+  Photos: 12 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[125/296] (42.2%) ✅ rSgGjT
+  Current: HS VB - Plainfield South – Senior Night 2025
+  Proposed: Plainfield South – Senior Night - Jan 1
+  Drift: 31/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: VnpwZR
+[126/296] (42.6%) ✅ VnpwZR
+  Current: Bolingbrook at Oswego East - Video - 2025
+  Proposed: Bolingbrook at Oswego East - Video - Jan 1
+  Drift: 5/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 33 photos in Supabase
+[127/296] (42.9%) ✅ ghTBdv
+  Current: WWS Spring Invite 2025 – Photos
+  Proposed: WWS Spring Invite 2025 – - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: cwsfbf
+[128/296] (43.2%) ✅ cwsfbf
+  Current: WWS Spring Invite 2025 – Video
+  Proposed: WWS Spring Invite 2025 – Video - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: Nchw82
+[129/296] (43.6%) ✅ Nchw82
+  Current: Lifezone Turf 4s – Video
+  Proposed: Lifezone Turf 4s – Video
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: sCCMnX
+[130/296] (43.9%) ✅ sCCMnX
+  Current: Stanford 2025 – Video
+  Proposed: Stanford 2025 – Video - Jan 1
+  Drift: 17/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 80 photos in Supabase
+[131/296] (44.3%) ✅ zFFF3t
+  Current: Stanford 2025 – Photos
+  Proposed: Stanford 2025 – - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 17 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: fPV8Rd
+[132/296] (44.6%) ✅ fPV8Rd
+  Current: MPSF Rumble 2025 – Video
+  Proposed: MPSF Rumble 2025 – Video - Jan 1
+  Drift: 15/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[133/296] (44.9%) ✅ Mtrmdh
+  Current: MPSF Rumble 2025 – Photo
+  Proposed: MPSF Rumble 2025 – - Jan 1
+  Drift: 12/100 (min: 0)
+  Photos: 9 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 65 photos in Supabase
+[134/296] (45.3%) ✅ rcT8hR
+  Current: ACC College Athletics Signing - 2025
+  Proposed: ACC College Athletics Signing - Jan 1
+  Drift: 6/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: vhZ2v8
+[135/296] (45.6%) ✅ vhZ2v8
+  Current: 2023 ACC Fall Picture Day
+  Proposed: ACC Fall - Jan 1
+  Drift: 31/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: 2dZjBm
+[136/296] (45.9%) ✅ 2dZjBm
+  Current: 2023 ACC HoCo
+  Proposed: ACC HoCo - Jan 1
+  Drift: 36/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: s2D8NZ
+[137/296] (46.3%) ✅ s2D8NZ
+  Current: Matthew 2024
+  Proposed: Matthew - Jan 1
+  Drift: 23/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: 3KpVvZ
+[138/296] (46.6%) ✅ 3KpVvZ
+  Current: 630 Boys Spring 2025
+  Proposed: 630 Boys Spring - Jan 1
+  Drift: 15/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: mT8fQs
+[139/296] (47.0%) ✅ mT8fQs
+  Current: 2025 PEHS Boys Baseball Senior Day
+  Proposed: PEHS Boys Baseball Senior Day - Jan 1
+  Drift: 16/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: CbsK7k
+[140/296] (47.3%) ✅ CbsK7k
+  Current: 2022 Bonnie Fest
+  Proposed: Bonnie Fest - Jan 1
+  Drift: 31/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: WMHqxB
+[141/296] (47.6%) ✅ WMHqxB
+  Current: 2023 Bonniefest
+  Proposed: Bonniefest - Jan 1
+  Drift: 32/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: X3mfHj
+[142/296] (48.0%) ✅ X3mfHj
+  Current: Shuff'ling In Maui
+  Proposed: Shuff'ling In Maui
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[143/296] (48.3%) ✅ 7LgZfZ
+  Current: Aurora Central Catholic – Powderpuff Football 2023
+  Proposed: Aurora Central Catholic – Powderpu... - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 98 photos in Supabase
+[144/296] (48.6%) ✅ gSd8PV
+  Current: Aurora Central Catholic – Graduation 2024
+  Proposed: Aurora Central Catholic – Graduation - Jan 1
+  Drift: 8/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 39 photos in Supabase
+[145/296] (49.0%) ✅ 3ZCdQc
+  Current: Aurora Central Catholic Homecoming - 2021
+  Proposed: Aurora Central Catholic Homecoming - Jan 1
+  Drift: 4/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 94 photos in Supabase
+[146/296] (49.3%) ✅ JhbS79
+  Current: Aurora Central Catholic – Graduation 2023
+  Proposed: Aurora Central Catholic – Graduation - Jan 1
+  Drift: 8/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[147/296] (49.7%) ✅ Bd4mNw
+  Current: ACC College Athletics Signing - 2023
+  Proposed: ACC College Athletics Signing - Jan 1
+  Drift: 6/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[148/296] (50.0%) ✅ FDLwnH
+  Current: 2nd Annual Rae Strong Bump Bash – 2023
+  Proposed: 2nd Annual Rae Strong Bump Bash - Jan 1
+  Drift: 7/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 28 photos in Supabase
+[149/296] (50.3%) ✅ mPjXhj
+  Current: Posey Family - Baby Announcement 2022
+  Proposed: Posey Family - Baby Announcement - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 72 photos in Supabase
+[150/296] (50.7%) ✅ tg2kqd
+  Current: Chloe R. - Senior Portraits 2023
+  Proposed: Chloe R. - Senior Portraits - Jan 1
+  Drift: 10/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[151/296] (51.0%) ✅ CN9SCh
+  Current: Karstens Family Portraits – Summer 2023
+  Proposed: Karstens Family Portraits – Summer - Jan 1
+  Drift: 8/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 85 photos in Supabase
+[152/296] (51.4%) ✅ gQ658D
+  Current: Isaac M. - Senior Portraits 2024
+  Proposed: Isaac M. - Senior Portraits - Jan 1
+  Drift: 10/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 79 photos in Supabase
+[153/296] (51.7%) ✅ gd8s5X
+  Current: Kevin S. - Senior Portraits 2024
+  Proposed: Kevin S. - Senior Portraits - Jan 1
+  Drift: 10/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[154/296] (52.0%) ✅ QxZFrN
+  Current: Posey Family Portraits - Spring 2024
+  Proposed: Posey Family Portraits - Spring - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 12 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[155/296] (52.4%) ✅ kc3nPX
+  Current: Stanislo Family Portraits - Spring 2024
+  Proposed: Stanislo Family Portraits - Spring - Jan 1
+  Drift: 8/100 (min: 0)
+  Photos: 9 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: NqMmG4
+[156/296] (52.7%) ✅ NqMmG4
+  Current: Mabry Baby Gender Reveal
+  Proposed: Mabry Baby Gender Reveal
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: zp72qv
+[157/296] (53.0%) ✅ zp72qv
+  Current: C. Anderson Senior Portraits
+  Proposed: C. Anderson Senior Portraits
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: CfnJgc
+[158/296] (53.4%) ✅ CfnJgc
+  Current: Maui Vacation 2024
+  Proposed: Maui Vacation - Jan 1
+  Drift: 16/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: wWZjfn
+[159/296] (53.7%) ✅ wWZjfn
+  Current: Matthew Ruge Memorial
+  Proposed: Matthew Ruge Memorial
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: vQztmV
+[160/296] (54.1%) ✅ vQztmV
+  Current: Dia De Los Muertos 2024
+  Proposed: Dia De Los Muertos - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: hgwvHs
+[161/296] (54.4%) ✅ hgwvHs
+  Current: Videos | 630 BVB - Windy City Grand Prix
+  Proposed: Videos | 630 BVB - Windy City Grand Prix
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: pPXgjD
+[162/296] (54.7%) ✅ pPXgjD
+  Current: Videos | SoCal Open - 630 Boys VB
+  Proposed: Videos | SoCal Open - 630 Boys VB
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: cJgCwj
+[163/296] (55.1%) ✅ cJgCwj
+  Current: Videos | VLA Frost v Breeze Scrimmage
+  Proposed: Videos | VLA Frost v Breeze Scrimmage
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: LhNF79
+[164/296] (55.4%) ✅ LhNF79
+  Current: Videos | VLA 630 Breeze (Men's)
+  Proposed: Videos | VLA 630 Breeze (Men's)
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: 58CV2w
+[165/296] (55.7%) ✅ 58CV2w
+  Current: Videos | Pepperdine @ Stanford MVB
+  Proposed: Videos | Pepperdine @ Stanford MVB
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: gtF9qz
+[166/296] (56.1%) ✅ gtF9qz
+  Current: Videos | Lewis Men's Volleyball
+  Proposed: Videos | Lewis Men's Volleyball
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: TMkBCr
+[167/296] (56.4%) ✅ TMkBCr
+  Current: Videos | BVB PSHS at OEHS
+  Proposed: Videos | BVB PSHS at OEHS
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: 5BTXF6
+[168/296] (56.8%) ✅ 5BTXF6
+  Current: Videos | BVB Benet vs DGN
+  Proposed: Videos | BVB Benet vs DGN
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: cCwwSR
+[169/296] (57.1%) ✅ cCwwSR
+  Current: Videos | BVB OPRF at Lyons Township
+  Proposed: Videos | BVB OPRF at Lyons Township
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: 2D8md3
+[170/296] (57.4%) ✅ 2D8md3
+  Current: Videos | Friday Night 4's
+  Proposed: Videos | Friday Night 4's
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: 9dJqVf
+[171/296] (57.8%) ✅ 9dJqVf
+  Current: Videos | 2024 Chicago AVP
+  Proposed: Videos | 2024 Chicago AVP - Jan 1
+  Drift: 15/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: Pg7dXD
+[172/296] (58.1%) ✅ Pg7dXD
+  Current: Videos | Indianapolis Brickyard Battle
+  Proposed: Videos | Indianapolis Brickyard Battle
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: VJPR4f
+[173/296] (58.4%) ✅ VJPR4f
+  Current: Videos | 2024 Chitown Boys Volleyball Challenge
+  Proposed: Videos | 2024 Chitown Boys Volleyb... - Jan 1
+  Drift: 10/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[174/296] (58.8%) ✅ cJqMn5
+  Current: 2023 DU Stars Men's Soccer Sep 16
+  Proposed: DU Stars Men's Soccer Sep 16 - Jan 1
+  Drift: 16/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[175/296] (59.1%) ✅ g2kBzs
+  Current: 2023 DU Women's Soccer vs UIC
+  Proposed: 2023 DU Women's vs UIC - Jan 1
+  Drift: 7/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[176/296] (59.5%) ✅ XTM6K3
+  Current: 2023 DU Women's Soccer 14-Oct-2023
+  Proposed: DU Women's Soccer 14-Oct - Jan 1
+  Drift: 15/100 (min: 0)
+  Photos: 16 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[177/296] (59.8%) ✅ BGz7XB
+  Current: 2023 Stars vs Dubuque Spartans
+  Proposed: 2023 Stars vs Dubuque Spartans - Jan 1
+  Drift: 3/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[178/296] (60.1%) ✅ 9VZLWF
+  Current: 2023 DU Women's Volleyball vs Marian 07-Oct-2023
+  Proposed: 2023 DU Women's vs Marian 07-Oct-2023 - Jan 1
+  Drift: 7/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 76 photos in Supabase
+[179/296] (60.5%) ✅ xdNLWV
+  Current: 2023 ACC Girls Softball 04-22-2023
+  Proposed: ACC Girls Softball - Apr 22
+  Drift: 19/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[180/296] (60.8%) ✅ Qg3SvJ
+  Current: 2023 ACC Boys Baseball 04-15-2023
+  Proposed: ACC Boys Baseball - Apr 15
+  Drift: 21/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 65 photos in Supabase
+[181/296] (61.1%) ✅ DnK4Cj
+  Current: 2023 ACC Girls Softball 03-14-2023
+  Proposed: ACC Girls Softball - Mar 14
+  Drift: 21/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 71 photos in Supabase
+[182/296] (61.5%) ✅ DtF7F2
+  Current: 2023 ACC Softball vs RBHS 05-03-2023
+  Proposed: 2023 ACC vs RBHS 05-03-2023 - May 3
+  Drift: 9/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 77 photos in Supabase
+[183/296] (61.8%) ✅ FXVH5r
+  Current: 2023 ACC Boys Baseball 04-22-2023
+  Proposed: ACC Boys Baseball - Apr 22
+  Drift: 20/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 45 photos in Supabase
+[184/296] (62.2%) ✅ FCH4X6
+  Current: 2023 ACC Baseball vs Elmwood Park 05-03-2023
+  Proposed: 2023 ACC vs Elmwood Park 05-03-2023 - May 3
+  Drift: 6/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[185/296] (62.5%) ✅ SH9PBp
+  Current: 2023 ACC Softball vs Rosary 04-28-2023
+  Proposed: 2023 ACC vs Rosary 04-28-2023 - Apr 28
+  Drift: 9/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[186/296] (62.8%) ✅ gBpKWP
+  Current: TeamOne 17 Onyx 2023 Iowa Tournament
+  Proposed: TeamOne 17 Onyx 2023 Iowa Tourney - Jan 1
+  Drift: 11/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 69 photos in Supabase
+[187/296] (63.2%) ✅ XST3gf
+  Current: TeamOne 17 Onyx 02-25-2023
+  Proposed: TeamOne 17 Onyx - Feb 25
+  Drift: 14/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 36 photos in Supabase
+[188/296] (63.5%) ✅ Pv29mp
+  Current: TeamOne 16 Onyx 02-05-2023
+  Proposed: TeamOne 16 Onyx - Feb 5
+  Drift: 16/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 62 photos in Supabase
+[189/296] (63.9%) ✅ CrVT3q
+  Current: TeamOne 16 Zen 02-05-2023
+  Proposed: TeamOne 16 Zen - Feb 5
+  Drift: 17/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 40 photos in Supabase
+[190/296] (64.2%) ✅ RKTfMc
+  Current: Halton Hurricanes - 2024 SoCal Cup
+  Proposed: Halton Hurricanes - 2024 SoCal Cup - Jan 1
+  Drift: 11/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[191/296] (64.5%) ✅ mRW4sK
+  Current: 630 Boys Volleyball Club 22-Dec-2023
+  Proposed: 630 Boys Volleyball Club 22-Dec - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[192/296] (64.9%) ✅ 6vxMqC
+  Current: 2024 630 Girls at Sky High Cosmos
+  Proposed: 630 Girls at Sky High Cosmos - Jan 1
+  Drift: 16/100 (min: 0)
+  Photos: 12 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 72 photos in Supabase
+[193/296] (65.2%) ✅ Z5XStD
+  Current: 630 BVB TPS 11/09/2024
+  Proposed: 630 BVB TPS 11/09/ - Jan 1
+  Drift: 15/100 (min: 0)
+  Photos: 14 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 17 photos in Supabase
+[194/296] (65.5%) ✅ t7NxSQ
+  Current: TeamOne 16 Pearl 2023 Iowa Tournament
+  Proposed: TeamOne 16 Pearl 2023 Iowa Tourney - Jan 1
+  Drift: 11/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 29 photos in Supabase
+[195/296] (65.9%) ✅ FvVCd5
+  Current: Best of 630 2024
+  Proposed: Best of 630 - Jan 1
+  Drift: 18/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[196/296] (66.2%) ✅ gWSzzb
+  Current: 630 BVB Windy City Round-Up
+  Proposed: 630 BVB Windy City Round-Up
+  Drift: 0/100 (min: 0)
+  Photos: 10 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 59 photos in Supabase
+[197/296] (66.6%) ✅ dvfdd5
+  Current: TeamOne 15 Zen 01-06-2024
+  Proposed: TeamOne 15 Zen - Jan 6
+  Drift: 17/100 (min: 0)
+  Photos: 12 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 42 photos in Supabase
+[198/296] (66.9%) ✅ zcgFDp
+  Current: TeamOne 15 Onyx 2023 Iowa Tournament
+  Proposed: TeamOne 15 Onyx 2023 Iowa Tourney - Jan 1
+  Drift: 11/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 27 photos in Supabase
+[199/296] (67.2%) ✅ 4JBJSm
+  Current: 630 BVB - Windy City Grand Prix
+  Proposed: 630 BVB - Windy City Grand Prix
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[200/296] (67.6%) ✅ mrbDR2
+  Current: 630 BVB - Summer Bash
+  Proposed: 630 BVB - Summer Bash
+  Drift: 0/100 (min: 0)
+  Photos: 8 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 88 photos in Supabase
+[201/296] (67.9%) ✅ LB93g2
+  Current: TeamOne 16 Onyx 2023 Iowa Tournament
+  Proposed: TeamOne 16 Onyx 2023 Iowa Tourney - Jan 1
+  Drift: 11/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 77 photos in Supabase
+[202/296] (68.2%) ✅ v5SL2j
+  Current: 630 BVB TPS 10/20/24
+  Proposed: 630 BVB TPS 10/20/24
+  Drift: 0/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[203/296] (68.6%) ✅ 2RF4Tz
+  Current: 630 BVB Pre-Nationals
+  Proposed: 630 BVB Pre-Nationals
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 62 photos in Supabase
+[204/296] (68.9%) ✅ NPbpbq
+  Current: Power League - Chi City LOVB
+  Proposed: Power League - Chi City LOVB
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 42 photos in Supabase
+[205/296] (69.3%) ✅ T2FSSQ
+  Current: Power League - Team One
+  Proposed: Power League - Team One
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 29 photos in Supabase
+[206/296] (69.6%) ✅ tH3Pws
+  Current: 2025 BVB PNHS Spring Tournament
+  Proposed: BVB PNHS Spring Tourney - Jan 1
+  Drift: 18/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 45 photos in Supabase
+[207/296] (69.9%) ✅ rbxw3h
+  Current: 2025 BVB PSHS vs OEHS
+  Proposed: 2025 BVB PSHS vs OEHS - Jan 1
+  Drift: 7/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 85 photos in Supabase
+[208/296] (70.3%) ✅ 7prZcf
+  Current: 2025 BVB Benet vs DGN
+  Proposed: 2025 BVB Benet vs DGN - Jan 1
+  Drift: 7/100 (min: 0)
+  Photos: 7 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 63 photos in Supabase
+[209/296] (70.6%) ✅ SqLLmZ
+  Current: 2025 BVB OPRF at Lyons Township
+  Proposed: BVB OPRF at Lyons Township - Jan 1
+  Drift: 17/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 47 photos in Supabase
+[210/296] (70.9%) ✅ KPRf4t
+  Current: 630 Breeze - Best of the Midwest
+  Proposed: 630 Breeze - Best of the Midwest
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[211/296] (71.3%) ✅ xL6HbX
+  Current: Lewis Flyers vs CSUN
+  Proposed: Lewis Flyers vs CSUN
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 80 photos in Supabase
+[212/296] (71.6%) ✅ hWh2X5
+  Current: Pepperdine MVB @ Stanford
+  Proposed: Pepperdine MVB @ Stanford
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[213/296] (72.0%) ✅ 7QdJJj
+  Current: USC Men's Volleyball vs Emmanuel
+  Proposed: USC Men's vs Emmanuel
+  Drift: 11/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 52 photos in Supabase
+[214/296] (72.3%) ✅ tPWtVk
+  Current: 2024 ACC Girls Basketball vs Rosary
+  Proposed: 2024 ACC Girls vs Rosary - Jan 1
+  Drift: 10/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 57 photos in Supabase
+[215/296] (72.6%) ✅ RvH563
+  Current: 630 Breeze - Women's Practice
+  Proposed: 630 Breeze - Women's Practice
+  Drift: 0/100 (min: 0)
+  Photos: 10 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 67 photos in Supabase
+[216/296] (73.0%) ✅ tSk5mG
+  Current: 630 Breeze - Women's Tryouts
+  Proposed: 630 Breeze - Women's Tryouts
+  Drift: 0/100 (min: 0)
+  Photos: 8 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 32 photos in Supabase
+[217/296] (73.3%) ✅ JXTP2c
+  Current: 2025 VLA Tournament - MOSH Performance Center
+  Proposed: VLA Tourney - MOSH Performance Center - Jan 1
+  Drift: 15/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 26 photos in Supabase
+[218/296] (73.6%) ✅ ZZhxJf
+  Current: Players Sports Friday Night 4s
+  Proposed: Players Sports Friday Night 4s
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 26 photos in Supabase
+[219/296] (74.0%) ✅ d6gt72
+  Current: VLA Icemen Chitown Boys Challenge
+  Proposed: VLA Icemen Chitown Boys Challenge
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[220/296] (74.3%) ✅ pJswFS
+  Current: GCU Fall Invitational
+  Proposed: GCU Fall Invite
+  Drift: 19/100 (min: 0)
+  Photos: 11 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 49 photos in Supabase
+[221/296] (74.7%) ✅ qsxzWR
+  Current: 630 Breeze 11/09/2024
+  Proposed: 630 Breeze 11/09/ - Jan 1
+  Drift: 16/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[222/296] (75.0%) ✅ zhnpxh
+  Current: 2024 ACC VB Senior Night
+  Proposed: ACC VB Senior Night - Jan 1
+  Drift: 21/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 31 photos in Supabase
+[223/296] (75.3%) ✅ rnFLCs
+  Current: Orange County PopUp Volleyball
+  Proposed: Orange County PopUp Volleyball
+  Drift: 0/100 (min: 0)
+  Photos: 13 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 66 photos in Supabase
+[224/296] (75.7%) ✅ s5mrZR
+  Current: California Sand Volleyball
+  Proposed: California Sand Volleyball
+  Drift: 0/100 (min: 0)
+  Photos: 11 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[225/296] (76.0%) ✅ L4cF4b
+  Current: PEHS GVB Senior Night
+  Proposed: PEHS GVB Senior Night
+  Drift: 0/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[226/296] (76.4%) ✅ MDvTGx
+  Current: PEHS Girls VB - Dig Pink
+  Proposed: PEHS Girls VB - Dig Pink
+  Drift: 0/100 (min: 0)
+  Photos: 9 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 99 photos in Supabase
+[227/296] (76.7%) ✅ wrddpB
+  Current: ACC at Yorkville Christian Invitational
+  Proposed: ACC at Yorkville Christian Invite
+  Drift: 10/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[228/296] (77.0%) ✅ WqPG4S
+  Current: 2024 Millikin Women's Volleyball Senior Day
+  Proposed: Millikin Women's Volleyball Senior... - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 14 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 64 photos in Supabase
+[229/296] (77.4%) ✅ d3z5Bk
+  Current: 2024 ACC VB vs Newark
+  Proposed: 2024 ACC vs Newark - Jan 1
+  Drift: 11/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[230/296] (77.7%) ✅ g3zWxF
+  Current: 2024 AVP Chicago Open
+  Proposed: AVP Chicago Open - Jan 1
+  Drift: 24/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[231/296] (78.0%) ✅ CcPVbp
+  Current: NIU Grass Volleyball Fundraiser
+  Proposed: NIU Grass Volleyball Fundraiser
+  Drift: 0/100 (min: 0)
+  Photos: 9 in Supabase
+  ✅ UPDATED
+
+⚠️  No photos found for album_key: 76SnqS
+[232/296] (78.4%) ✅ 76SnqS
+  Current: 630 Camp V - Pittsburgh
+  Proposed: 630 Camp V - Pittsburgh
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[233/296] (78.7%) ✅ KzSFcH
+  Current: Future VBC 1st Annual Cookout
+  Proposed: Future VBC 1st Annual Cookout
+  Drift: 0/100 (min: 0)
+  Photos: 7 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[234/296] (79.1%) ✅ Sf5WTv
+  Current: 2024 Men's VB - Lewis vs Lindenwood
+  Proposed: 2024 Men's VB - Lewis vs Lindenwood - Jan 1
+  Drift: 1/100 (min: 0)
+  Photos: 7 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[235/296] (79.4%) ✅ 9bbNdR
+  Current: 2024 VLA Cenrtral - Event #1
+  Proposed: VLA Cenrtral - Event #1 - Jan 1
+  Drift: 19/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 26 photos in Supabase
+[236/296] (79.7%) ✅ 5gbdjs
+  Current: 2024 Men's VB - Lewis vs Merrimack
+  Proposed: 2024 Men's VB - Lewis vs Merrimack - Jan 1
+  Drift: 1/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[237/296] (80.1%) ✅ mFz8DT
+  Current: 2024 Men's VB - Lewis vs UCLA 11-Jan
+  Proposed: 2024 Men's VB - Lewis vs UCLA 11-Jan - Jan 1
+  Drift: 1/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 17 photos in Supabase
+[238/296] (80.4%) ✅ Vpr4RP
+  Current: Ash & Athena - Morning Sun
+  Proposed: Ash & Athena - Morning Sun
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[239/296] (80.7%) ✅ 6HBTKG
+  Current: AU Spartans Women's Volleyball 02-Nov-2023
+  Proposed: AU Spartans Women's Volleyball 02-Nov - Jan 1
+  Drift: 8/100 (min: 0)
+  Photos: 10 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 52 photos in Supabase
+[240/296] (81.1%) ✅ F2m3D5
+  Current: 2023 ACC VB IHSA Regional Final 26-Oct
+  Proposed: ACC VB IHSA Regional Final 26-Oct - Jan 1
+  Drift: 14/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[241/296] (81.4%) ✅ RcT9wB
+  Current: Millikin Volleyball at North Central 25-Oct-2023
+  Proposed: Millikin Volleyball at North Centr... - Jan 1
+  Drift: 12/100 (min: 0)
+  Photos: 9 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 48 photos in Supabase
+[242/296] (81.8%) ✅ 9CZLzc
+  Current: 2023 ACC VB vs Regina Dominican 24-Oct
+  Proposed: 2023 ACC vs Regina Dominican 24-Oct - Jan 1
+  Drift: 3/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[243/296] (82.1%) ✅ J6rmLK
+  Current: 2023 ACC VB Senior Night 19-Oct
+  Proposed: ACC VB Senior Night 19-Oct - Jan 1
+  Drift: 17/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 77 photos in Supabase
+[244/296] (82.4%) ✅ K8WWK4
+  Current: 2023 ACC Volleyball vs Rockford 16-Oct-2023
+  Proposed: 2023 ACC vs Rockford 16-Oct-2023 - Jan 1
+  Drift: 9/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 47 photos in Supabase
+[245/296] (82.8%) ✅ GHmbXw
+  Current: 2023 NNHS vs NCHS 11-Oct-2023
+  Proposed: 2023 NNHS vs NCHS 11-Oct-2023 - Jan 1
+  Drift: 3/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 29 photos in Supabase
+[246/296] (83.1%) ✅ 2jQ97B
+  Current: 2023 ACC Volleyball at Providence 10-Oct-2023
+  Proposed: ACC Volleyball at Providence 10-Oct - Jan 1
+  Drift: 12/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 99 photos in Supabase
+[247/296] (83.4%) ✅ mHXSdx
+  Current: 2023 ACC Volleyball at Kaneland Invite
+  Proposed: ACC Volleyball at Kaneland Invite - Jan 1
+  Drift: 14/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 37 photos in Supabase
+[248/296] (83.8%) ✅ nqvqSM
+  Current: 2023 ACC Volleyball at Newark
+  Proposed: ACC Volleyball at Newark - Jan 1
+  Drift: 18/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 43 photos in Supabase
+[249/296] (84.1%) ✅ X4vbfF
+  Current: 2023 ACC Volleyball at Hinckley-Big Rock
+  Proposed: ACC Volleyball at Hinckley-Big Rock - Jan 1
+  Drift: 13/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[250/296] (84.5%) ✅ s4FJJC
+  Current: 2023 ACC Volleyball at West Chicago
+  Proposed: ACC Volleyball at West Chicago - Jan 1
+  Drift: 15/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[251/296] (84.8%) ✅ JKzdNR
+  Current: 2023 ACC Vollleyball vs ACS
+  Proposed: 2023 ACC Vollleyball vs ACS - Jan 1
+  Drift: 4/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 49 photos in Supabase
+[252/296] (85.1%) ✅ Cwgm3R
+  Current: 2023 ACC at East Aurora HS
+  Proposed: ACC at East Aurora HS - Jan 1
+  Drift: 20/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[253/296] (85.5%) ✅ RFsHZ8
+  Current: 2022 ACC vs Sandwhich
+  Proposed: 2022 ACC vs Sandwhich - Jan 1
+  Drift: 7/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[254/296] (85.8%) ✅ B9SJSn
+  Current: 2022 Chicago Christian Invitational
+  Proposed: Chicago Christian Invite - Jan 1
+  Drift: 17/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[255/296] (86.1%) ✅ qwKLRQ
+  Current: 2022 ACC vs St. Edwards
+  Proposed: 2022 ACC vs St. Edwards - Jan 1
+  Drift: 5/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 79 photos in Supabase
+[256/296] (86.5%) ✅ bczxkj
+  Current: 2022 Joliet Central Tournament
+  Proposed: Joliet Central Tourney - Jan 1
+  Drift: 19/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 38 photos in Supabase
+[257/296] (86.8%) ✅ VBXs7M
+  Current: 2022 Naperville North vs Wheaton-Warrenville South
+  Proposed: 2022 Naperville North vs Wheaton-W... - Jan 1
+  Drift: 4/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 64 photos in Supabase
+[258/296] (87.2%) ✅ SkDc3D
+  Current: 2022 ACC vs Timothy Christian
+  Proposed: 2022 ACC vs Timothy Christian - Jan 1
+  Drift: 3/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[259/296] (87.5%) ✅ Gp5jz4
+  Current: 2022 ACC vs Riverside-Brookfield
+  Proposed: 2022 ACC vs Riverside-Brookfield - Jan 1
+  Drift: 2/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 63 photos in Supabase
+[260/296] (87.8%) ✅ NrhpFq
+  Current: 2022 ACC vs Westmont
+  Proposed: 2022 ACC vs Westmont - Jan 1
+  Drift: 7/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[261/296] (88.2%) ✅ H6t5Qx
+  Current: 2022 West Chicago vs Wheaton North
+  Proposed: 2022 West Chicago vs Wheaton North - Jan 1
+  Drift: 1/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[262/296] (88.5%) ✅ BR7NgL
+  Current: 2022 ACC vs Wheaton Academy
+  Proposed: 2022 ACC vs Wheaton Academy - Jan 1
+  Drift: 4/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[263/296] (88.9%) ✅ hXV3Pc
+  Current: 2022 ACC vs Ridgewood
+  Proposed: 2022 ACC vs Ridgewood - Jan 1
+  Drift: 7/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 74 photos in Supabase
+[264/296] (89.2%) ✅ Xm3Dmp
+  Current: 2022 ACC vs Lisle (Regional)
+  Proposed: 2022 ACC vs Lisle (Regional) - Jan 1
+  Drift: 3/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 94 photos in Supabase
+[265/296] (89.5%) ✅ 9d97Mg
+  Current: 2022 ACC vs Marengo (Regional)
+  Proposed: 2022 ACC vs Marengo (Regional) - Jan 1
+  Drift: 3/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[266/296] (89.9%) ✅ fWTrx7
+  Current: 2023 NJCAA OWT (Day 2)
+  Proposed: NJCAA OWT (Day 2) - Jan 1
+  Drift: 23/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 66 photos in Supabase
+[267/296] (90.2%) ✅ 7BrJ96
+  Current: Downtown Aurora
+  Proposed: Downtown Aurora
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[268/296] (90.5%) ✅ Bnghgz
+  Current: Grass Triples & Cookout
+  Proposed: Grass Triples & Cookout
+  Drift: 0/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 56 photos in Supabase
+[269/296] (90.9%) ✅ 7tQgpT
+  Current: Prairie Point Softball League 05-24-2023
+  Proposed: Prairie Point Softball League - May 24
+  Drift: 9/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 23 photos in Supabase
+[270/296] (91.2%) ✅ fQZ9Z2
+  Current: 2023 Boys PNHS vs Glenbard East
+  Proposed: 2023 Boys PNHS vs Glenbard East - Jan 1
+  Drift: 2/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 19 photos in Supabase
+[271/296] (91.6%) ✅ Mwb4sK
+  Current: 2023 Willowbrook HS Boys Volleyball
+  Proposed: Willowbrook HS Boys Volleyball - Jan 1
+  Drift: 15/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 71 photos in Supabase
+[272/296] (91.9%) ✅ Jr8qCx
+  Current: 2023 Boys PNHS vs NCHS 05-22-2023
+  Proposed: 2023 Boys PNHS vs NCHS 05-22-2023 - May 22
+  Drift: 3/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[273/296] (92.2%) ✅ Hf2bfn
+  Current: 2023 VLA Cup (Day 2)
+  Proposed: VLA Cup (Day 2) - Jan 1
+  Drift: 25/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 54 photos in Supabase
+[274/296] (92.6%) ✅ 6B5M4J
+  Current: 2023 VLA Cup - Sweed vs LVC
+  Proposed: 2023 VLA Cup - Sweed vs LVC - Jan 1
+  Drift: 4/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 35 photos in Supabase
+[275/296] (92.9%) ✅ sHWvfc
+  Current: Prairie Point Softball League 05-10-2023
+  Proposed: Prairie Point Softball League - May 10
+  Drift: 10/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 18 photos in Supabase
+[276/296] (93.2%) ✅ mjcRF3
+  Current: Lauridsen Skatepark - Downtown Iowa
+  Proposed: Lauridsen Skatepark - Downtown Iowa
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 82 photos in Supabase
+[277/296] (93.6%) ✅ GcLQHp
+  Current: 2023 ACC Girls Track & Field 05-05-2023
+  Proposed: ACC Girls Track & Field - May 5
+  Drift: 18/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[278/296] (93.9%) ✅ d2p3WF
+  Current: 2023 ACC Boys Track & Field 04-28-2023
+  Proposed: ACC Boys Track & Field - Apr 28
+  Drift: 17/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 97 photos in Supabase
+[279/296] (94.3%) ✅ JqZMgg
+  Current: 2023 Boys PNHS vs OHS 04-27-2023
+  Proposed: 2023 Boys PNHS vs OHS 04-27-2023 - Apr 27
+  Drift: 3/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 61 photos in Supabase
+[280/296] (94.6%) ✅ MkTh5m
+  Current: 2023 ACC Boys Tennis 04-15-2023
+  Proposed: ACC Boys Tennis - Apr 15
+  Drift: 23/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 69 photos in Supabase
+[281/296] (94.9%) ✅ 34JwTK
+  Current: 2023 ACC Girls Soccer vs Providence
+  Proposed: 2023 ACC Girls vs Providence - Jan 1
+  Drift: 7/100 (min: 0)
+  Photos: 3 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[282/296] (95.3%) ✅ mj53jG
+  Current: VLA Chicago Icemen vs Milwaukee Dive
+  Proposed: VLA Chicago Icemen vs Milwaukee Dive
+  Drift: 0/100 (min: 0)
+  Photos: 8 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 24 photos in Supabase
+[283/296] (95.6%) ✅ ffZ2Qq
+  Current: 2023 VLA Central Cup - Buddy Bear
+  Proposed: VLA Central Cup - Buddy Bear - Jan 1
+  Drift: 16/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 46 photos in Supabase
+[284/296] (95.9%) ✅ FzTVTq
+  Current: 2023 VLA Central Cup - Team Pineapple
+  Proposed: VLA Central Cup - Team Pineapple - Jan 1
+  Drift: 14/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 18 photos in Supabase
+[285/296] (96.3%) ✅ NBzxxW
+  Current: 2023 VLA Central Cup - Milwaukee Dive
+  Proposed: VLA Central Cup - Milwaukee Dive - Jan 1
+  Drift: 14/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[286/296] (96.6%) ✅ qjSqbQ
+  Current: Men's VB Lewis vs Loyola 02-22-2023
+  Proposed: Lewis vs Loyola 02-22-2023 - Feb 22
+  Drift: 26/100 (min: 0)
+  Photos: 2 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[287/296] (97.0%) ✅ QXcXGv
+  Current: ACC Boys Basketball Senior Night 02-10-2023
+  Proposed: ACC Boys Basketball Senior Night - Feb 10
+  Drift: 9/100 (min: 0)
+  Photos: 4 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[288/296] (97.3%) ✅ JWB3JC
+  Current: ACC Girls Basketball vs Bishop McNamara
+  Proposed: ACC Girls vs Bishop McNamara
+  Drift: 7/100 (min: 0)
+  Photos: 6 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 81 photos in Supabase
+[289/296] (97.6%) ✅ 32BF9K
+  Current: Northwestern vs Nebraska
+  Proposed: Northwestern vs Nebraska
+  Drift: 0/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[290/296] (98.0%) ✅ XPvg9W
+  Current: 2023 Middle School Championship
+  Proposed: Middle School Champ - Jan 1
+  Drift: 19/100 (min: 0)
+  Photos: 5 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 89 photos in Supabase
+[291/296] (98.3%) ✅ 6VmL7f
+  Current: ACC (Homecoming) vs Ridgewood
+  Proposed: ACC (Homecoming) vs Ridgewood
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 27 photos in Supabase
+[292/296] (98.6%) ✅ zPvGkk
+  Current: Illinois Institute of Technology
+  Proposed: Illinois Institute of Technology
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 88 photos in Supabase
+[293/296] (99.0%) ✅ bQS6m5
+  Current: 2022 ACC vs ICCP (Girls)
+  Proposed: 2022 ACC vs ICCP (Girls) - Jan 1
+  Drift: 5/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 62 photos in Supabase
+[294/296] (99.3%) ✅ nn4wQG
+  Current: 2022 ACC vs Rosary (Girls)
+  Proposed: 2022 ACC vs Rosary (Girls) - Jan 1
+  Drift: 4/100 (min: 0)
+  Photos: 1 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 90 photos in Supabase
+[295/296] (99.7%) ✅ chqVV4
+  Current: Project Logan
+  Proposed: Project Logan
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+✅ Synced album name to 100 photos in Supabase
+[296/296] (100.0%) ✅ 5MxsXT
+  Current: ACC Football Practice
+  Proposed: ACC Football Practice
+  Drift: 0/100 (min: 0)
+  Photos: 0 in Supabase
+  ✅ UPDATED
+
+
+================================================================================
+✅ Normalization Complete
+
+Total albums:    296
+Updated:         296
+Skipped:         0
+Errors:          0
+Elapsed:         9.5 min
+
+Albums with significant changes (drift >= 0):
+
+vKQKbN (drift: 9)
+  Chicago AVP - San Diego Smash -... - Sep 2025
+  → Chicago AVP - San Diego Smash -...... - Jan 1
+
+wTmc3X (drift: 0)
+  Acc Boys Basketball 01-Dec - Dec 3
+  → Acc Boys Basketball 01-Dec - Dec 3
+
+cRsw7K (drift: 5)
+  ACC Boys vs St. Edwards - Dec 3
+  → ACC Boys vs St. Edwards
+
+QczZrc (drift: 0)
+  ACC Boys Basketball 08-Dec - Dec 9
+  → ACC Boys Basketball 08-Dec - Dec 9
+
+FmgTrc (drift: 0)
+  ACC Boys vs CPSA 02-07-2023 - Feb 9
+  → ACC Boys vs CPSA 02-07-2023 - Feb 7
+
+CK8S7M (drift: 8)
+  ACC Girls vs Rosary - Dec 8
+  → ACC Girls vs Rosary
+
+wdQKGt (drift: 5)
+  ACC Girls vs Rosary (Away) - Jan 25
+  → ACC Girls vs Rosary (Away)
+
+L378T2 (drift: 0)
+  PEHS Boys VB Senior Night - May 6
+  → PEHS Boys VB Senior Night - May 6
+
+NgTdkm (drift: 0)
+  ACC Girls Basketball Regional - Feb 22
+  → ACC Girls Basketball Regional - Feb 22
+
+B3Sfhj (drift: 0)
+  Richard Griesheim Invite - Apr 24
+  → Richard Griesheim Invite - Apr 24
+
+vkfRn9 (drift: 0)
+  ACC Girls Basketball 12-Dec - Dec 14
+  → ACC Girls Basketball 12-Dec - Dec 14
+
+4DLxfC (drift: 0)
+  DU Cross Country at NCCXC Invite - Sep 10
+  → DU Cross Country at NCCXC Invite - Sep 10
+
+HtSbSc (drift: 0)
+  2024 DGN Boys vs Wheaton North - Apr 23
+  → 2024 DGN Boys vs Wheaton North - Jan 1
+
+2RQpk8 (drift: 0)
+  Team One Beach - Jul 1 - Jul 1
+  → Team One Beach - Jul 1 - Jul 1
+
+4zZrcX (drift: 0)
+  IHSA Regionals (Boys) - Oct 15
+  → IHSA Regionals (Boys) - Oct 15
+
+NGNNJP (drift: 0)
+  Huntington Beach Pier - Nov 2
+  → Huntington Beach Pier - Nov 2
+
+vdCSLx (drift: 9)
+  Windy City Qualifier - Apr - Apr 2023
+  → Windy City Qualifier - Apr - Apr - Jan 1
+
+n5bFJ7 (drift: 0)
+  VLA Chicago Icemen - Aug 26 - Aug 26
+  → VLA Chicago Icemen - Aug 26 - Aug 26
+
+dmkXB5 (drift: 0)
+  2022 ACC vs Rosary - Sep 14
+  → 2022 ACC vs Rosary - Jan 1
+
+JBqKmz (drift: 0)
+  Millikin at North Park University - Nov 4
+  → Millikin at North Park University - Nov 4
+
+Dfg7TD (drift: 0)
+  ACC Football Homecoming - Sep 23 - Sep 23
+  → ACC Football Homecoming - Sep 23 - Sep 23
+
+NWMdn5 (drift: 0)
+  AVP League - Week 7 - Nov 9 - Nov 9
+  → AVP League - Week 7 - Nov 9 - Nov 9
+
+sq8VD7 (drift: 0)
+  ACC Girl's Basketball 28-Nov - Nov 30
+  → ACC Girl's Basketball 28-Nov - Nov 30
+
+V8Dd9t (drift: 0)
+  ACC Girl's Basketball 24-Nov - Nov 25
+  → ACC Girl's Basketball 24-Nov - Nov 25
+
+DzwqLV (drift: 0)
+  ACC at Chicago Christian - Sep 7
+  → ACC at Chicago Christian - Sep 7
+
+p2KJfs (drift: 4)
+  TeamOne - 2023 Great Lakes Region... - Mar 12
+  → TeamOne - 2023 Great Lakes Region.... - Jan 1
+
+CgbH8q (drift: 0)
+  2023 ACC vs De Lasalle - Sep 14
+  → 2023 ACC vs De Lasalle - Jan 1
+
+62tv4W (drift: 0)
+  Morton Unido - Jan 29 - Jan 29 - Jan 29
+  → Morton Unido - Jan 29 - Jan 29 - Jan 29
+
+LsdDcQ (drift: 0)
+  ACC Boys Soccer 04-Oct - Oct 5
+  → ACC Boys Soccer 04-Oct - Oct 5
+
+kqGRRG (drift: 0)
+  Chicago Big Dig - Aug 26
+  → Chicago Big Dig - Aug 26
+
+jFRVKj (drift: 0)
+  Miya & Miguel Marriage Proposal - Nov 3
+  → Miya & Miguel Marriage Proposal - Nov 3
+
+NG9K5C (drift: 0)
+  VLA Central Cup - Icemen - Mar 7
+  → VLA Central Cup - Icemen - Mar 7
+
+HbQqH4 (drift: 0)
+  2023 ACC vs IMSA - Sep 14
+  → 2023 ACC vs IMSA - Jan 1
+
+R2SP6n (drift: 0)
+  2024 PEHS Boys vs Lincoln Way - Mar 21
+  → 2024 PEHS Boys vs Lincoln Way - Jan 1
+
+VMDZJC (drift: 0)
+  ACC at Wheaton Academy - Sep 10 - Sep 10
+  → ACC at Wheaton Academy - Sep 10 - Sep 10
+
+Rz6kdB (drift: 0)
+  Stars at Wheaton Thunder - Aug 24
+  → Stars at Wheaton Thunder - Aug 24
+
+VxpL9T (drift: 0)
+  DU Women's Volleyball - Sep 16 - Sep 16
+  → DU Women's Volleyball - Sep 16 - Sep 16
+
+89Lbhk (drift: 0)
+  West Chicago Volleyball 17-Oct - Oct 18
+  → West Chicago Volleyball 17-Oct - Oct 18
+
+L9KGHZ (drift: 0)
+  VLA Southside Xtreme Showdown - Mar 11
+  → VLA Southside Xtreme Showdown - Mar 11
+
+XfPqzK (drift: 0)
+  TeamOne 16 Onyx - Jan 22
+  → TeamOne 16 Onyx - Jan 22
+
+dmWwRk (drift: 0)
+  2023 ACC vs Rosary 05-Oct-2023 - Oct 8
+  → 2023 ACC vs Rosary 05-Oct-2023 - Jan 1
+
+CWBnh9 (drift: 10)
+  ACC Fall Sports Recognition 2023 - Aug 18
+  → ACC Fall Sports Recognition 2023 -... - Jan 1
+
+jDbB4z (drift: 0)
+  DU Women's Soccer - Homecoming We... - Sep 20
+  → DU Women's Soccer - Homecoming We... - Sep 20
+
+cbHg5q (drift: 17)
+  ACC vs ICCP - Sep 24
+  → ACC vs ICCP
+
+2r4m7W (drift: 0)
+  Millikin VB - Sep 17 - Sep 17
+  → Millikin VB - Sep 17 - Sep 17
+
+bjTXfm (drift: 0)
+  AVP Chicago Open - Sep 4 - Sep 4
+  → AVP Chicago Open - Sep 4 - Sep 4
+
+XjLBCR (drift: 0)
+  VLA Cup - Icemen - May 13 - May 13
+  → VLA Cup - Icemen - May 13 - May 13
+
+KFk8JC (drift: 0)
+  Xochitl – Graduation - May 28
+  → Xochitl – Graduation - May 28
+
+NS3RKb (drift: 0)
+  VLA Cup - Midwest Magic - May 13 - May 13
+  → VLA Cup - Midwest Magic - May 13 - May 13
+
+cxdSzz (drift: 0)
+  St. Francis GVB Senior Night - Oct 23
+  → St. Francis GVB Senior Night - Oct 23
+
+8jtrtw (drift: 0)
+  ACC at St. Francis - Oct 19 - Oct 19
+  → ACC at St. Francis - Oct 19 - Oct 19
+
+PH5dWr (drift: 0)
+  ACC at St. Edwards CCHS - Aug 31 - Aug 31
+  → ACC at St. Edwards CCHS - Aug 31 - Aug 31
+
+fQnRDW (drift: 0)
+  ACC Girl's Basketball 20-Nov - Nov 21
+  → ACC Girl's Basketball 20-Nov - Nov 21
+
+QgHPhz (drift: 0)
+  ACC Boys Golf September 16, - Sep 17
+  → ACC Boys Golf September 16, - Sep 17
+
+zTVkXM (drift: 0)
+  Surf City Collegiate Challenge - Nov 1
+  → Surf City Collegiate Challenge - Nov 1
+
+L5WwpM (drift: 0)
+  2023 DU Women's vs AU 02-Nov - Nov 5
+  → 2023 DU Women's vs AU 02-Nov - Jan 1
+
+MNNbgk (drift: 0)
+  Homecoming Jersey Photoshoot - Se... - Sep 26
+  → Homecoming Jersey Photoshoot - Se... - Sep 26
+
+kZ3pTs (drift: 0)
+  Benet Academy – Senior Night - Ma... - May 23
+  → Benet Academy – Senior Night - Ma... - May 23
+
+kCjvmS (drift: 0)
+  Athena - Oct 9 - Oct 9
+  → Athena - Oct 9 - Oct 9
+
+FT8VTj (drift: 12)
+  / 2023 ACC Fall Sports - Sep 2 - Sep 2
+  → / 2023 ACC Fall Sports - Sep 2 - S... - Jan 1
+
+CHmtBq (drift: 9)
+  ACC Girls vs Newark - Nov 19
+  → ACC Girls vs Newark
+
+dHsLFk (drift: 0)
+  Zack D. - Senior Portraits - Oct 29
+  → Zack D. - Senior Portraits - Oct 29
+
+VFTwzS (drift: 0)
+  ACC Drama – Alice in Wonderland (F... - Nov 6
+  → ACC Drama – Alice in Wonderland (F... - Nov 6
+
+4v8CJJ (drift: 0)
+  Middle School Volleyball Champ - Oct 28
+  → Middle School Volleyball Champ - Oct 28
+
+5dvLQR (drift: 0)
+  VLA BREEZE - Fall - Oct 26
+  → VLA BREEZE - Fall - Oct 26
+
+kgCfkn (drift: 0)
+  Sure Shot Pickleball Facility - Dec 24
+  → Sure Shot Pickleball Facility - Dec 24
+
+33nPHv (drift: 0)
+  Bruno & Beni - Sep 9 - Sep 9
+  → Bruno & Beni - Sep 9 - Sep 9
+
+D6M8cZ (drift: 0)
+  2024 PNHS vs PEHS - May 13
+  → 2024 PNHS vs PEHS - Jan 1
+
+c5zHhc (drift: 0)
+  DU Women's Bowling 08-Nov - Nov 9 - Nov 9
+  → DU Women's Bowling 08-Nov - Nov 9 - Nov 9
+
+HtxsgN (drift: 0)
+  ACC Boys Golf - Sep 13 - Sep 13
+  → ACC Boys Golf - Sep 13 - Sep 13
+
+qQW2Kj (drift: 0)
+  ACC Girls Tennis - Sep 11 - Sep 11
+  → ACC Girls Tennis - Sep 11 - Sep 11
+
+2TFLNV (drift: 5)
+  ACC Boys vs Wheaton Academy - Dec 15
+  → ACC Boys vs Wheaton Academy
+
+9tQv2P (drift: 4)
+  ACC Boys vs Harvest Christian - Nov 29
+  → ACC Boys vs Harvest Christian
+
+zzSDBG (drift: 15)
+  GCU vs UCLA - Apr 4
+  → GCU vs UCLA
+
+PD3XxC (drift: 0)
+  VLA Cup - May 30 - May 30
+  → VLA Cup - May 30 - May 30
+
+BkpB24 (drift: 0)
+  ACC at Aurora Christian - Oct 7
+  → ACC at Aurora Christian - Oct 7
+
+vbB2vD (drift: 0)
+  DU Men's Golf at AU Fall Invite - Sep 5
+  → DU Men's Golf at AU Fall Invite - Sep 5
+
+m3nhJ7 (drift: 0)
+  AVP Chicago - Miami Mayhem - Sep 1
+  → AVP Chicago - Miami Mayhem - Sep 1
+
+ktBGNz (drift: 0)
+  NJCAA OWT - McHenry College - Aug 20
+  → NJCAA OWT - McHenry College - Aug 20
+
+Mg2ggP (drift: 0)
+  ACC Homecoming Powderpuff - Oct 14
+  → ACC Homecoming Powderpuff - Oct 14
+
+qjMSL2 (drift: 0)
+  Demo
+  → Demo
+
+2Xv5JS (drift: 0)
+  WVB - North Central vs Carthage
+  → WVB - North Central vs Carthage
+
+GbsPZX (drift: 0)
+  630 Breeze - Women's Tryouts
+  → 630 Breeze - Women's Tryouts
+
+KZf9RF (drift: 0)
+  Players Player Appreciation Turf 4s
+  → Players Player Appreciation Turf 4s
+
+9VLQFQ (drift: 0)
+  WMVB - North Central College vs Aurora University
+  → WMVB - North Central College vs Aurora Uni...
+
+pVB6hf (drift: 15)
+  630 Breeze 2025 Tryouts
+  → 630 Breeze 2025 Tryouts - Jan 1
+
+WmJvT5 (drift: 12)
+  UWM Panther Invitational - Part 2
+  → UWM Panther Invite - Part 2
+
+vgC8z9 (drift: 12)
+  UW-Milwaukee Panther Invitational
+  → UW-Milwaukee Panther Invite
+
+qzd2SP (drift: 0)
+  Krush Reverse Co-Ed #2
+  → Krush Reverse Co-Ed #2
+
+QwhCK5 (drift: 13)
+  2025 Bell Pepper - Final Match Highlights
+  → Bell Pepper - Final Match Highlights - Jan 1
+
+FRxVCn (drift: 16)
+  2025 Cookout Grass Tourney - Reels
+  → Cookout Grass Tourney - Reels - Jan 1
+
+fTpMCN (drift: 14)
+  2025 Cookout Volleyball Grass Tournament
+  → Cookout Volleyball Grass Tourney - Jan 1
+
+p4J2jk (drift: 13)
+  2025 Bell Pepper Open - Video Highlights
+  → Bell Pepper Open - Video Highlights - Jan 1
+
+wJGz8n (drift: 0)
+  Krush Reverse Co-Ed
+  → Krush Reverse Co-Ed
+
+j5MfJD (drift: 13)
+  2025 Bell Pepper Open – Official Gallery
+  → Bell Pepper Open – Official Gallery - Jan 1
+
+GCtpkS (drift: 14)
+  630 Girls VB - 2025 Tryouts
+  → 630 Girls VB - 2025 Tryouts - Jan 1
+
+W2Qq62 (drift: 19)
+  2025 AAU Nationals - Club 1
+  → AAU Nationals - Club 1 - Jan 1
+
+C7qdcm (drift: 13)
+  2025 AAU Nationals -  Cinci Attack 15 Black
+  → AAU Nationals - Cinci Attack 15 Black - Jan 1
+
+v7bVL7 (drift: 13)
+  2025 AAU Junior Nationals - AJV Boys 15 Adidas
+  → AAU Junior Nationals - AJV Boys 15... - Jan 1
+
+Qzgq3Z (drift: 13)
+  2025 Windy City Roundup – Boys Volleyball
+  → Windy City Roundup – Boys Volleyball - Jan 1
+
+WNStGn (drift: 0)
+  Club VB - 630 17-1 Boys Scrimmage
+  → Club VB - 630 17-1 Boys Scrimmage
+
+5M7kNx (drift: 9)
+  "Grass Launch | Open Triples Tournament 2025"
+  → "Grass Launch | Open Triples Tourn... - Jan 1
+
+Lm4B7Q (drift: 0)
+  Keri's B-day
+  → Keri's B-day
+
+XGDw9B (drift: 33)
+  HS VB - Wheaton South vs Wheaton North – South Elgin Sectional 2025
+  → Wheaton South vs Wheaton North - Jan 1
+
+G8dMVS (drift: 11)
+  Suburban Slam Triples Tournament 2025
+  → Suburban Slam Triples Tourney - Jan 1
+
+7bJwPj (drift: 33)
+  HS VB - Downers Grove North vs Plainfield South – Regional Championship 2025
+  → Downers Grove North vs Plainfield ... - Jan 1
+
+G6cwGk (drift: 31)
+  HS VB - Bolingbrook at Oswego East - 2025
+  → Bolingbrook at Oswego East - Jan 1
+
+C7K7MS (drift: 0)
+  630 Volleyball Coaches Appreciation BBQ
+  → 630 Volleyball Coaches Appreciation BBQ
+
+xH5Jdd (drift: 0)
+  carousel-highlights
+  → carousel-highlights
+
+bcPCFG (drift: 0)
+  Homepage Images
+  → Homepage Images
+
+bQSmXs (drift: 0)
+  630 Boy's Volleyball Club
+  → 630 Boy's Volleyball Club
+
+dkHxbR (drift: 14)
+  2023 Players Sports Winter Grass Luau
+  → Players Sports Winter Grass Luau - Jan 1
+
+prjR7M (drift: 0)
+  Milwaukee Dive Turf Tourney
+  → Milwaukee Dive Turf Tourney
+
+Xt7W42 (drift: 12)
+  Players Sports Spring Turf Luau 2023 - Team Sikora
+  → Players Sports Spring Turf Luau 20... - Jan 1
+
+c7zMTk (drift: 9)
+  Players Sports Spring Turf Luau 2023
+  → Players Sports Spring Turf Luau - Jan 1
+
+srkJm4 (drift: 9)
+  Players Sports Winter Turf Luau 2023
+  → Players Sports Winter Turf Luau - Jan 1
+
+HFFht7 (drift: 26)
+  VLA Cup – Video – 2025-05-10
+  → VLA Cup – Video - May 10
+
+LpPp9v (drift: 32)
+  VLA Cup – 2025-05-10
+  → VLA Cup - May 10
+
+F3DgcR (drift: 21)
+  VLA – Breeze vs Sweedies – Scrimmage – 2025-03-14
+  → VLA – Breeze vs Sweedies - Mar 14
+
+C6zJ3r (drift: 10)
+  VLA – Chicago Frost vs 630 Breeze – 2025-02-22
+  → VLA – Chicago Frost vs 630 Breeze - Feb 22
+
+BwJ5pX (drift: 53)
+  College VB – GCU vs UCLA – Video – 2025-04-04
+  → GCU vs UCLA - Apr 4
+
+f7kMhJ (drift: 42)
+  College VB – Lindenwood vs Loyola – 2025-03-28
+  → Lindenwood vs Loyola - Mar 28
+
+MjwFjP (drift: 42)
+  College VB – Lewis vs Ohio State – 2025-03-22
+  → Lewis vs Ohio State - Mar 22
+
+W8GDz5 (drift: 31)
+  HS VB – Plainfield North – Senior Night 2025
+  → Plainfield North – Senior Night - Jan 1
+
+rSgGjT (drift: 31)
+  HS VB - Plainfield South – Senior Night 2025
+  → Plainfield South – Senior Night - Jan 1
+
+VnpwZR (drift: 5)
+  Bolingbrook at Oswego East - Video - 2025
+  → Bolingbrook at Oswego East - Video - Jan 1
+
+ghTBdv (drift: 9)
+  WWS Spring Invite 2025 – Photos
+  → WWS Spring Invite 2025 – - Jan 1
+
+cwsfbf (drift: 13)
+  WWS Spring Invite 2025 – Video
+  → WWS Spring Invite 2025 – Video - Jan 1
+
+Nchw82 (drift: 0)
+  Lifezone Turf 4s – Video
+  → Lifezone Turf 4s – Video
+
+sCCMnX (drift: 17)
+  Stanford 2025 – Video
+  → Stanford 2025 – Video - Jan 1
+
+zFFF3t (drift: 13)
+  Stanford 2025 – Photos
+  → Stanford 2025 – - Jan 1
+
+fPV8Rd (drift: 15)
+  MPSF Rumble 2025 – Video
+  → MPSF Rumble 2025 – Video - Jan 1
+
+Mtrmdh (drift: 12)
+  MPSF Rumble 2025 – Photo
+  → MPSF Rumble 2025 – - Jan 1
+
+rcT8hR (drift: 6)
+  ACC College Athletics Signing - 2025
+  → ACC College Athletics Signing - Jan 1
+
+vhZ2v8 (drift: 31)
+  2023 ACC Fall Picture Day
+  → ACC Fall - Jan 1
+
+2dZjBm (drift: 36)
+  2023 ACC HoCo
+  → ACC HoCo - Jan 1
+
+s2D8NZ (drift: 23)
+  Matthew 2024
+  → Matthew - Jan 1
+
+3KpVvZ (drift: 15)
+  630 Boys Spring 2025
+  → 630 Boys Spring - Jan 1
+
+mT8fQs (drift: 16)
+  2025 PEHS Boys Baseball Senior Day
+  → PEHS Boys Baseball Senior Day - Jan 1
+
+CbsK7k (drift: 31)
+  2022 Bonnie Fest
+  → Bonnie Fest - Jan 1
+
+WMHqxB (drift: 32)
+  2023 Bonniefest
+  → Bonniefest - Jan 1
+
+X3mfHj (drift: 0)
+  Shuff'ling In Maui
+  → Shuff'ling In Maui
+
+7LgZfZ (drift: 13)
+  Aurora Central Catholic – Powderpuff Football 2023
+  → Aurora Central Catholic – Powderpu... - Jan 1
+
+gSd8PV (drift: 8)
+  Aurora Central Catholic – Graduation 2024
+  → Aurora Central Catholic – Graduation - Jan 1
+
+3ZCdQc (drift: 4)
+  Aurora Central Catholic Homecoming - 2021
+  → Aurora Central Catholic Homecoming - Jan 1
+
+JhbS79 (drift: 8)
+  Aurora Central Catholic – Graduation 2023
+  → Aurora Central Catholic – Graduation - Jan 1
+
+Bd4mNw (drift: 6)
+  ACC College Athletics Signing - 2023
+  → ACC College Athletics Signing - Jan 1
+
+FDLwnH (drift: 7)
+  2nd Annual Rae Strong Bump Bash – 2023
+  → 2nd Annual Rae Strong Bump Bash - Jan 1
+
+mPjXhj (drift: 9)
+  Posey Family - Baby Announcement 2022
+  → Posey Family - Baby Announcement - Jan 1
+
+tg2kqd (drift: 10)
+  Chloe R. - Senior Portraits 2023
+  → Chloe R. - Senior Portraits - Jan 1
+
+CN9SCh (drift: 8)
+  Karstens Family Portraits – Summer 2023
+  → Karstens Family Portraits – Summer - Jan 1
+
+gQ658D (drift: 10)
+  Isaac M. - Senior Portraits 2024
+  → Isaac M. - Senior Portraits - Jan 1
+
+gd8s5X (drift: 10)
+  Kevin S. - Senior Portraits 2024
+  → Kevin S. - Senior Portraits - Jan 1
+
+QxZFrN (drift: 9)
+  Posey Family Portraits - Spring 2024
+  → Posey Family Portraits - Spring - Jan 1
+
+kc3nPX (drift: 8)
+  Stanislo Family Portraits - Spring 2024
+  → Stanislo Family Portraits - Spring - Jan 1
+
+NqMmG4 (drift: 0)
+  Mabry Baby Gender Reveal
+  → Mabry Baby Gender Reveal
+
+zp72qv (drift: 0)
+  C. Anderson Senior Portraits
+  → C. Anderson Senior Portraits
+
+CfnJgc (drift: 16)
+  Maui Vacation 2024
+  → Maui Vacation - Jan 1
+
+wWZjfn (drift: 0)
+  Matthew Ruge Memorial
+  → Matthew Ruge Memorial
+
+vQztmV (drift: 13)
+  Dia De Los Muertos 2024
+  → Dia De Los Muertos - Jan 1
+
+hgwvHs (drift: 0)
+  Videos | 630 BVB - Windy City Grand Prix
+  → Videos | 630 BVB - Windy City Grand Prix
+
+pPXgjD (drift: 0)
+  Videos | SoCal Open - 630 Boys VB
+  → Videos | SoCal Open - 630 Boys VB
+
+cJgCwj (drift: 0)
+  Videos | VLA Frost v Breeze Scrimmage
+  → Videos | VLA Frost v Breeze Scrimmage
+
+LhNF79 (drift: 0)
+  Videos | VLA 630 Breeze (Men's)
+  → Videos | VLA 630 Breeze (Men's)
+
+58CV2w (drift: 0)
+  Videos | Pepperdine @ Stanford MVB
+  → Videos | Pepperdine @ Stanford MVB
+
+gtF9qz (drift: 0)
+  Videos | Lewis Men's Volleyball
+  → Videos | Lewis Men's Volleyball
+
+TMkBCr (drift: 0)
+  Videos | BVB PSHS at OEHS
+  → Videos | BVB PSHS at OEHS
+
+5BTXF6 (drift: 0)
+  Videos | BVB Benet vs DGN
+  → Videos | BVB Benet vs DGN
+
+cCwwSR (drift: 0)
+  Videos | BVB OPRF at Lyons Township
+  → Videos | BVB OPRF at Lyons Township
+
+2D8md3 (drift: 0)
+  Videos | Friday Night 4's
+  → Videos | Friday Night 4's
+
+9dJqVf (drift: 15)
+  Videos | 2024 Chicago AVP
+  → Videos | 2024 Chicago AVP - Jan 1
+
+Pg7dXD (drift: 0)
+  Videos | Indianapolis Brickyard Battle
+  → Videos | Indianapolis Brickyard Battle
+
+VJPR4f (drift: 10)
+  Videos | 2024 Chitown Boys Volleyball Challenge
+  → Videos | 2024 Chitown Boys Volleyb... - Jan 1
+
+cJqMn5 (drift: 16)
+  2023 DU Stars Men's Soccer Sep 16
+  → DU Stars Men's Soccer Sep 16 - Jan 1
+
+g2kBzs (drift: 7)
+  2023 DU Women's Soccer vs UIC
+  → 2023 DU Women's vs UIC - Jan 1
+
+XTM6K3 (drift: 15)
+  2023 DU Women's Soccer 14-Oct-2023
+  → DU Women's Soccer 14-Oct - Jan 1
+
+BGz7XB (drift: 3)
+  2023 Stars vs Dubuque Spartans
+  → 2023 Stars vs Dubuque Spartans - Jan 1
+
+9VZLWF (drift: 7)
+  2023 DU Women's Volleyball vs Marian 07-Oct-2023
+  → 2023 DU Women's vs Marian 07-Oct-2023 - Jan 1
+
+xdNLWV (drift: 19)
+  2023 ACC Girls Softball 04-22-2023
+  → ACC Girls Softball - Apr 22
+
+Qg3SvJ (drift: 21)
+  2023 ACC Boys Baseball 04-15-2023
+  → ACC Boys Baseball - Apr 15
+
+DnK4Cj (drift: 21)
+  2023 ACC Girls Softball 03-14-2023
+  → ACC Girls Softball - Mar 14
+
+DtF7F2 (drift: 9)
+  2023 ACC Softball vs RBHS 05-03-2023
+  → 2023 ACC vs RBHS 05-03-2023 - May 3
+
+FXVH5r (drift: 20)
+  2023 ACC Boys Baseball 04-22-2023
+  → ACC Boys Baseball - Apr 22
+
+FCH4X6 (drift: 6)
+  2023 ACC Baseball vs Elmwood Park 05-03-2023
+  → 2023 ACC vs Elmwood Park 05-03-2023 - May 3
+
+SH9PBp (drift: 9)
+  2023 ACC Softball vs Rosary 04-28-2023
+  → 2023 ACC vs Rosary 04-28-2023 - Apr 28
+
+gBpKWP (drift: 11)
+  TeamOne 17 Onyx 2023 Iowa Tournament
+  → TeamOne 17 Onyx 2023 Iowa Tourney - Jan 1
+
+XST3gf (drift: 14)
+  TeamOne 17 Onyx 02-25-2023
+  → TeamOne 17 Onyx - Feb 25
+
+Pv29mp (drift: 16)
+  TeamOne 16 Onyx 02-05-2023
+  → TeamOne 16 Onyx - Feb 5
+
+CrVT3q (drift: 17)
+  TeamOne 16 Zen 02-05-2023
+  → TeamOne 16 Zen - Feb 5
+
+RKTfMc (drift: 11)
+  Halton Hurricanes - 2024 SoCal Cup
+  → Halton Hurricanes - 2024 SoCal Cup - Jan 1
+
+mRW4sK (drift: 9)
+  630 Boys Volleyball Club 22-Dec-2023
+  → 630 Boys Volleyball Club 22-Dec - Jan 1
+
+6vxMqC (drift: 16)
+  2024 630 Girls at Sky High Cosmos
+  → 630 Girls at Sky High Cosmos - Jan 1
+
+Z5XStD (drift: 15)
+  630 BVB TPS 11/09/2024
+  → 630 BVB TPS 11/09/ - Jan 1
+
+t7NxSQ (drift: 11)
+  TeamOne 16 Pearl 2023 Iowa Tournament
+  → TeamOne 16 Pearl 2023 Iowa Tourney - Jan 1
+
+FvVCd5 (drift: 18)
+  Best of 630 2024
+  → Best of 630 - Jan 1
+
+gWSzzb (drift: 0)
+  630 BVB Windy City Round-Up
+  → 630 BVB Windy City Round-Up
+
+dvfdd5 (drift: 17)
+  TeamOne 15 Zen 01-06-2024
+  → TeamOne 15 Zen - Jan 6
+
+zcgFDp (drift: 11)
+  TeamOne 15 Onyx 2023 Iowa Tournament
+  → TeamOne 15 Onyx 2023 Iowa Tourney - Jan 1
+
+4JBJSm (drift: 0)
+  630 BVB - Windy City Grand Prix
+  → 630 BVB - Windy City Grand Prix
+
+mrbDR2 (drift: 0)
+  630 BVB - Summer Bash
+  → 630 BVB - Summer Bash
+
+LB93g2 (drift: 11)
+  TeamOne 16 Onyx 2023 Iowa Tournament
+  → TeamOne 16 Onyx 2023 Iowa Tourney - Jan 1
+
+v5SL2j (drift: 0)
+  630 BVB TPS 10/20/24
+  → 630 BVB TPS 10/20/24
+
+2RF4Tz (drift: 0)
+  630 BVB Pre-Nationals
+  → 630 BVB Pre-Nationals
+
+NPbpbq (drift: 0)
+  Power League - Chi City LOVB
+  → Power League - Chi City LOVB
+
+T2FSSQ (drift: 0)
+  Power League - Team One
+  → Power League - Team One
+
+tH3Pws (drift: 18)
+  2025 BVB PNHS Spring Tournament
+  → BVB PNHS Spring Tourney - Jan 1
+
+rbxw3h (drift: 7)
+  2025 BVB PSHS vs OEHS
+  → 2025 BVB PSHS vs OEHS - Jan 1
+
+7prZcf (drift: 7)
+  2025 BVB Benet vs DGN
+  → 2025 BVB Benet vs DGN - Jan 1
+
+SqLLmZ (drift: 17)
+  2025 BVB OPRF at Lyons Township
+  → BVB OPRF at Lyons Township - Jan 1
+
+KPRf4t (drift: 0)
+  630 Breeze - Best of the Midwest
+  → 630 Breeze - Best of the Midwest
+
+xL6HbX (drift: 0)
+  Lewis Flyers vs CSUN
+  → Lewis Flyers vs CSUN
+
+hWh2X5 (drift: 0)
+  Pepperdine MVB @ Stanford
+  → Pepperdine MVB @ Stanford
+
+7QdJJj (drift: 11)
+  USC Men's Volleyball vs Emmanuel
+  → USC Men's vs Emmanuel
+
+tPWtVk (drift: 10)
+  2024 ACC Girls Basketball vs Rosary
+  → 2024 ACC Girls vs Rosary - Jan 1
+
+RvH563 (drift: 0)
+  630 Breeze - Women's Practice
+  → 630 Breeze - Women's Practice
+
+tSk5mG (drift: 0)
+  630 Breeze - Women's Tryouts
+  → 630 Breeze - Women's Tryouts
+
+JXTP2c (drift: 15)
+  2025 VLA Tournament - MOSH Performance Center
+  → VLA Tourney - MOSH Performance Center - Jan 1
+
+ZZhxJf (drift: 0)
+  Players Sports Friday Night 4s
+  → Players Sports Friday Night 4s
+
+d6gt72 (drift: 0)
+  VLA Icemen Chitown Boys Challenge
+  → VLA Icemen Chitown Boys Challenge
+
+pJswFS (drift: 19)
+  GCU Fall Invitational
+  → GCU Fall Invite
+
+qsxzWR (drift: 16)
+  630 Breeze 11/09/2024
+  → 630 Breeze 11/09/ - Jan 1
+
+zhnpxh (drift: 21)
+  2024 ACC VB Senior Night
+  → ACC VB Senior Night - Jan 1
+
+rnFLCs (drift: 0)
+  Orange County PopUp Volleyball
+  → Orange County PopUp Volleyball
+
+s5mrZR (drift: 0)
+  California Sand Volleyball
+  → California Sand Volleyball
+
+L4cF4b (drift: 0)
+  PEHS GVB Senior Night
+  → PEHS GVB Senior Night
+
+MDvTGx (drift: 0)
+  PEHS Girls VB - Dig Pink
+  → PEHS Girls VB - Dig Pink
+
+wrddpB (drift: 10)
+  ACC at Yorkville Christian Invitational
+  → ACC at Yorkville Christian Invite
+
+WqPG4S (drift: 13)
+  2024 Millikin Women's Volleyball Senior Day
+  → Millikin Women's Volleyball Senior... - Jan 1
+
+d3z5Bk (drift: 11)
+  2024 ACC VB vs Newark
+  → 2024 ACC vs Newark - Jan 1
+
+g3zWxF (drift: 24)
+  2024 AVP Chicago Open
+  → AVP Chicago Open - Jan 1
+
+CcPVbp (drift: 0)
+  NIU Grass Volleyball Fundraiser
+  → NIU Grass Volleyball Fundraiser
+
+76SnqS (drift: 0)
+  630 Camp V - Pittsburgh
+  → 630 Camp V - Pittsburgh
+
+KzSFcH (drift: 0)
+  Future VBC 1st Annual Cookout
+  → Future VBC 1st Annual Cookout
+
+Sf5WTv (drift: 1)
+  2024 Men's VB - Lewis vs Lindenwood
+  → 2024 Men's VB - Lewis vs Lindenwood - Jan 1
+
+9bbNdR (drift: 19)
+  2024 VLA Cenrtral - Event #1
+  → VLA Cenrtral - Event #1 - Jan 1
+
+5gbdjs (drift: 1)
+  2024 Men's VB - Lewis vs Merrimack
+  → 2024 Men's VB - Lewis vs Merrimack - Jan 1
+
+mFz8DT (drift: 1)
+  2024 Men's VB - Lewis vs UCLA 11-Jan
+  → 2024 Men's VB - Lewis vs UCLA 11-Jan - Jan 1
+
+Vpr4RP (drift: 0)
+  Ash & Athena - Morning Sun
+  → Ash & Athena - Morning Sun
+
+6HBTKG (drift: 8)
+  AU Spartans Women's Volleyball 02-Nov-2023
+  → AU Spartans Women's Volleyball 02-Nov - Jan 1
+
+F2m3D5 (drift: 14)
+  2023 ACC VB IHSA Regional Final 26-Oct
+  → ACC VB IHSA Regional Final 26-Oct - Jan 1
+
+RcT9wB (drift: 12)
+  Millikin Volleyball at North Central 25-Oct-2023
+  → Millikin Volleyball at North Centr... - Jan 1
+
+9CZLzc (drift: 3)
+  2023 ACC VB vs Regina Dominican 24-Oct
+  → 2023 ACC vs Regina Dominican 24-Oct - Jan 1
+
+J6rmLK (drift: 17)
+  2023 ACC VB Senior Night 19-Oct
+  → ACC VB Senior Night 19-Oct - Jan 1
+
+K8WWK4 (drift: 9)
+  2023 ACC Volleyball vs Rockford 16-Oct-2023
+  → 2023 ACC vs Rockford 16-Oct-2023 - Jan 1
+
+GHmbXw (drift: 3)
+  2023 NNHS vs NCHS 11-Oct-2023
+  → 2023 NNHS vs NCHS 11-Oct-2023 - Jan 1
+
+2jQ97B (drift: 12)
+  2023 ACC Volleyball at Providence 10-Oct-2023
+  → ACC Volleyball at Providence 10-Oct - Jan 1
+
+mHXSdx (drift: 14)
+  2023 ACC Volleyball at Kaneland Invite
+  → ACC Volleyball at Kaneland Invite - Jan 1
+
+nqvqSM (drift: 18)
+  2023 ACC Volleyball at Newark
+  → ACC Volleyball at Newark - Jan 1
+
+X4vbfF (drift: 13)
+  2023 ACC Volleyball at Hinckley-Big Rock
+  → ACC Volleyball at Hinckley-Big Rock - Jan 1
+
+s4FJJC (drift: 15)
+  2023 ACC Volleyball at West Chicago
+  → ACC Volleyball at West Chicago - Jan 1
+
+JKzdNR (drift: 4)
+  2023 ACC Vollleyball vs ACS
+  → 2023 ACC Vollleyball vs ACS - Jan 1
+
+Cwgm3R (drift: 20)
+  2023 ACC at East Aurora HS
+  → ACC at East Aurora HS - Jan 1
+
+RFsHZ8 (drift: 7)
+  2022 ACC vs Sandwhich
+  → 2022 ACC vs Sandwhich - Jan 1
+
+B9SJSn (drift: 17)
+  2022 Chicago Christian Invitational
+  → Chicago Christian Invite - Jan 1
+
+qwKLRQ (drift: 5)
+  2022 ACC vs St. Edwards
+  → 2022 ACC vs St. Edwards - Jan 1
+
+bczxkj (drift: 19)
+  2022 Joliet Central Tournament
+  → Joliet Central Tourney - Jan 1
+
+VBXs7M (drift: 4)
+  2022 Naperville North vs Wheaton-Warrenville South
+  → 2022 Naperville North vs Wheaton-W... - Jan 1
+
+SkDc3D (drift: 3)
+  2022 ACC vs Timothy Christian
+  → 2022 ACC vs Timothy Christian - Jan 1
+
+Gp5jz4 (drift: 2)
+  2022 ACC vs Riverside-Brookfield
+  → 2022 ACC vs Riverside-Brookfield - Jan 1
+
+NrhpFq (drift: 7)
+  2022 ACC vs Westmont
+  → 2022 ACC vs Westmont - Jan 1
+
+H6t5Qx (drift: 1)
+  2022 West Chicago vs Wheaton North
+  → 2022 West Chicago vs Wheaton North - Jan 1
+
+BR7NgL (drift: 4)
+  2022 ACC vs Wheaton Academy
+  → 2022 ACC vs Wheaton Academy - Jan 1
+
+hXV3Pc (drift: 7)
+  2022 ACC vs Ridgewood
+  → 2022 ACC vs Ridgewood - Jan 1
+
+Xm3Dmp (drift: 3)
+  2022 ACC vs Lisle (Regional)
+  → 2022 ACC vs Lisle (Regional) - Jan 1
+
+9d97Mg (drift: 3)
+  2022 ACC vs Marengo (Regional)
+  → 2022 ACC vs Marengo (Regional) - Jan 1
+
+fWTrx7 (drift: 23)
+  2023 NJCAA OWT (Day 2)
+  → NJCAA OWT (Day 2) - Jan 1
+
+7BrJ96 (drift: 0)
+  Downtown Aurora
+  → Downtown Aurora
+
+Bnghgz (drift: 0)
+  Grass Triples & Cookout
+  → Grass Triples & Cookout
+
+7tQgpT (drift: 9)
+  Prairie Point Softball League 05-24-2023
+  → Prairie Point Softball League - May 24
+
+fQZ9Z2 (drift: 2)
+  2023 Boys PNHS vs Glenbard East
+  → 2023 Boys PNHS vs Glenbard East - Jan 1
+
+Mwb4sK (drift: 15)
+  2023 Willowbrook HS Boys Volleyball
+  → Willowbrook HS Boys Volleyball - Jan 1
+
+Jr8qCx (drift: 3)
+  2023 Boys PNHS vs NCHS 05-22-2023
+  → 2023 Boys PNHS vs NCHS 05-22-2023 - May 22
+
+Hf2bfn (drift: 25)
+  2023 VLA Cup (Day 2)
+  → VLA Cup (Day 2) - Jan 1
+
+6B5M4J (drift: 4)
+  2023 VLA Cup - Sweed vs LVC
+  → 2023 VLA Cup - Sweed vs LVC - Jan 1
+
+sHWvfc (drift: 10)
+  Prairie Point Softball League 05-10-2023
+  → Prairie Point Softball League - May 10
+
+mjcRF3 (drift: 0)
+  Lauridsen Skatepark - Downtown Iowa
+  → Lauridsen Skatepark - Downtown Iowa
+
+GcLQHp (drift: 18)
+  2023 ACC Girls Track & Field 05-05-2023
+  → ACC Girls Track & Field - May 5
+
+d2p3WF (drift: 17)
+  2023 ACC Boys Track & Field 04-28-2023
+  → ACC Boys Track & Field - Apr 28
+
+JqZMgg (drift: 3)
+  2023 Boys PNHS vs OHS 04-27-2023
+  → 2023 Boys PNHS vs OHS 04-27-2023 - Apr 27
+
+MkTh5m (drift: 23)
+  2023 ACC Boys Tennis 04-15-2023
+  → ACC Boys Tennis - Apr 15
+
+34JwTK (drift: 7)
+  2023 ACC Girls Soccer vs Providence
+  → 2023 ACC Girls vs Providence - Jan 1
+
+mj53jG (drift: 0)
+  VLA Chicago Icemen vs Milwaukee Dive
+  → VLA Chicago Icemen vs Milwaukee Dive
+
+ffZ2Qq (drift: 16)
+  2023 VLA Central Cup - Buddy Bear
+  → VLA Central Cup - Buddy Bear - Jan 1
+
+FzTVTq (drift: 14)
+  2023 VLA Central Cup - Team Pineapple
+  → VLA Central Cup - Team Pineapple - Jan 1
+
+NBzxxW (drift: 14)
+  2023 VLA Central Cup - Milwaukee Dive
+  → VLA Central Cup - Milwaukee Dive - Jan 1
+
+qjSqbQ (drift: 26)
+  Men's VB Lewis vs Loyola 02-22-2023
+  → Lewis vs Loyola 02-22-2023 - Feb 22
+
+QXcXGv (drift: 9)
+  ACC Boys Basketball Senior Night 02-10-2023
+  → ACC Boys Basketball Senior Night - Feb 10
+
+JWB3JC (drift: 7)
+  ACC Girls Basketball vs Bishop McNamara
+  → ACC Girls vs Bishop McNamara
+
+32BF9K (drift: 0)
+  Northwestern vs Nebraska
+  → Northwestern vs Nebraska
+
+XPvg9W (drift: 19)
+  2023 Middle School Championship
+  → Middle School Champ - Jan 1
+
+6VmL7f (drift: 0)
+  ACC (Homecoming) vs Ridgewood
+  → ACC (Homecoming) vs Ridgewood
+
+zPvGkk (drift: 0)
+  Illinois Institute of Technology
+  → Illinois Institute of Technology
+
+bQS6m5 (drift: 5)
+  2022 ACC vs ICCP (Girls)
+  → 2022 ACC vs ICCP (Girls) - Jan 1
+
+nn4wQG (drift: 4)
+  2022 ACC vs Rosary (Girls)
+  → 2022 ACC vs Rosary (Girls) - Jan 1
+
+chqVV4 (drift: 0)
+  Project Logan
+  → Project Logan
+
+5MxsXT (drift: 0)
+  ACC Football Practice
+  → ACC Football Practice
+
+
+✅ Script completed successfully

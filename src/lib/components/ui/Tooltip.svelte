@@ -21,12 +21,13 @@
 	import { Motion } from 'svelte-motion';
 	import { MOTION } from '$lib/motion-tokens';
 	import { onMount } from 'svelte';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		position?: 'center' | 'top' | 'bottom' | 'left' | 'right';
 		onClose?: () => void;
 		autoDismiss?: number; // milliseconds
-		children?: any;
+		children?: Snippet;
 	}
 
 	let { position = 'center', onClose, autoDismiss, children }: Props = $props();

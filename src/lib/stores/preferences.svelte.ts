@@ -12,10 +12,33 @@
 export type SortOption = 'newest' | 'oldest' | 'highest_quality' | 'lowest_quality';
 export type ViewMode = 'grid' | 'list';
 
+export interface FilterPreset {
+	id: string;
+	name: string;
+	filters: {
+		sport?: string;
+		category?: string;
+		playType?: string;
+		intensity?: string;
+		lighting?: string[];
+		colorTemp?: string;
+		timeOfDay?: string;
+		composition?: string;
+	};
+	createdAt: number;
+}
+
+export interface RecentFilter {
+	filters: FilterPreset['filters'];
+	timestamp: number;
+}
+
 interface GalleryPreferences {
 	sortBy: SortOption;
 	viewMode: ViewMode;
 	showAdvancedFilters: boolean;
+	savedPresets: FilterPreset[];
+	recentFilters: RecentFilter[];
 }
 
 const STORAGE_KEY = 'gallery_preferences';
@@ -24,6 +47,8 @@ const DEFAULT_PREFERENCES: GalleryPreferences = {
 	sortBy: 'newest',
 	viewMode: 'grid',
 	showAdvancedFilters: false,
+	savedPresets: [],
+	recentFilters: [],
 };
 
 /**
@@ -95,6 +120,14 @@ class GalleryPreferencesStore {
 		return this.prefs.showAdvancedFilters;
 	}
 
+	get savedPresets(): FilterPreset[] {
+		return this.prefs.savedPresets;
+	}
+
+	get recentFilters(): RecentFilter[] {
+		return this.prefs.recentFilters;
+	}
+
 	// Setters with persistence
 	setSortBy(value: SortOption): void {
 		this.prefs.sortBy = value;
@@ -108,6 +141,49 @@ class GalleryPreferencesStore {
 
 	setShowAdvancedFilters(value: boolean): void {
 		this.prefs.showAdvancedFilters = value;
+		savePreferences(this.prefs);
+	}
+
+	// Saved Presets Management
+	saveFilterPreset(name: string, filters: FilterPreset['filters']): void {
+		const preset: FilterPreset = {
+			id: `preset-${Date.now()}`,
+			name,
+			filters,
+			createdAt: Date.now(),
+		};
+
+		this.prefs.savedPresets = [...this.prefs.savedPresets, preset];
+		savePreferences(this.prefs);
+	}
+
+	deleteFilterPreset(id: string): void {
+		this.prefs.savedPresets = this.prefs.savedPresets.filter((p) => p.id !== id);
+		savePreferences(this.prefs);
+	}
+
+	// Recent Filters Management (max 5)
+	addRecentFilter(filters: FilterPreset['filters']): void {
+		// Skip if filters are empty
+		const hasFilters = Object.values(filters).some((v) => v !== undefined && v !== null);
+		if (!hasFilters) return;
+
+		// Remove duplicate if exists
+		const filtered = this.prefs.recentFilters.filter((rf) =>
+			JSON.stringify(rf.filters) !== JSON.stringify(filters)
+		);
+
+		// Add to front and keep max 5
+		this.prefs.recentFilters = [
+			{ filters, timestamp: Date.now() },
+			...filtered
+		].slice(0, 5);
+
+		savePreferences(this.prefs);
+	}
+
+	clearRecentFilters(): void {
+		this.prefs.recentFilters = [];
 		savePreferences(this.prefs);
 	}
 

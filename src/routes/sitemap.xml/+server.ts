@@ -13,6 +13,13 @@
 import { supabaseServer } from '$lib/supabase/server';
 import type { RequestHandler } from './$types';
 
+interface SitemapUrl {
+	loc: string;
+	priority: number;
+	changefreq: 'daily' | 'weekly' | 'monthly';
+	lastmod?: string;
+}
+
 export const GET: RequestHandler = async () => {
 	const baseUrl = 'https://photography.ninochavez.co';
 
@@ -20,7 +27,7 @@ export const GET: RequestHandler = async () => {
 		// Fetch all photos with relevant metadata
 		const { data: photos, error: photosError } = await supabaseServer
 			.from('photo_metadata')
-			.select('image_key, photo_date, enriched_at, portfolio_worthy, sport_type')
+			.select('image_key, photo_date, enriched_at, sport_type')
 			.order('photo_date', { ascending: false });
 
 		if (photosError) {
@@ -44,7 +51,7 @@ export const GET: RequestHandler = async () => {
 		const uniqueSports = Array.from(new Set(photos?.map((p) => p.sport_type).filter(Boolean) || []));
 
 		// Build URL list
-		const urls = [
+		const urls: SitemapUrl[] = [
 			// Static pages
 			{
 				loc: baseUrl,
@@ -89,8 +96,8 @@ export const GET: RequestHandler = async () => {
 			// Individual photo URLs (THE MONEY MAKER - 20K+ URLs!)
 			...(photos?.map((photo) => ({
 				loc: `${baseUrl}/photo/${photo.image_key}`,
-				lastmod: photo.photo_date || photo.enriched_at,
-				priority: photo.portfolio_worthy ? 0.9 : 0.7,
+				lastmod: photo.photo_date || photo.enriched_at || undefined,
+				priority: 0.7, // All photos are portfolio-worthy in Schema v2
 				changefreq: 'monthly' as const
 			})) || [])
 		];

@@ -13,6 +13,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { Photo, PhotoFilterState } from '$types/photo';
+import type { PhotoMetadataRow, SportDistributionRow, CategoryDistributionRow } from '$types/database';
 
 // Server-side environment variables (NOT exposed to browser)
 // In SvelteKit, we need to use import.meta.env even server-side
@@ -143,10 +144,19 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
   }
 
   // Map photo_metadata to Photo type (two-bucket model)
-  const photos: Photo[] = (data || []).map((row: any) => {
-    const imageUrl = row.ImageUrl || row.OriginalUrl || `/api/smugmug/images/${row.image_key}`;
-    const thumbnailUrl = row.ThumbnailUrl || null;
-    const originalUrl = row.OriginalUrl || null;
+  // Filter out photos with missing/invalid image URLs
+  const photos: Photo[] = (data || [])
+    .filter((row: PhotoMetadataRow) => {
+      const hasValidUrl = !!(row.ImageUrl || row.OriginalUrl);
+      if (!hasValidUrl) {
+        console.warn('[fetchPhotos] Skipping photo with no valid URL:', row.image_key);
+      }
+      return hasValidUrl;
+    })
+    .map((row: PhotoMetadataRow) => {
+    const imageUrl = row.ImageUrl || row.OriginalUrl || '';
+    const thumbnailUrl = row.ThumbnailUrl || undefined;
+    const originalUrl = row.OriginalUrl || undefined;
 
     return {
       id: row.photo_id,
@@ -157,32 +167,32 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
       title: row.image_key, // Placeholder
       caption: '',
       keywords: [],
-      created_at: row.photo_date || row.enriched_at,
+      created_at: row.photo_date || row.enriched_at || row.upload_date,
       metadata: {
         // BUCKET 1: Concrete & Filterable (user-facing)
-        play_type: row.play_type,
-        action_intensity: row.action_intensity || 'medium',
+        play_type: (row.play_type || null) as Photo['metadata']['play_type'],
+        action_intensity: (row.action_intensity || 'medium') as Photo['metadata']['action_intensity'],
         sport_type: row.sport_type,
         photo_category: row.photo_category,
-        composition: row.composition || '',
-        time_of_day: row.time_of_day || '',
-        lighting: row.lighting,
-        color_temperature: row.color_temperature,
+        composition: (row.composition || '') as Photo['metadata']['composition'],
+        time_of_day: (row.time_of_day || '') as Photo['metadata']['time_of_day'],
+        lighting: (row.lighting || undefined) as Photo['metadata']['lighting'],
+        color_temperature: (row.color_temperature || undefined) as Photo['metadata']['color_temperature'],
 
         // BUCKET 2: Abstract & Internal (AI-only)
-        emotion: row.emotion || 'focus',
-        sharpness: parseFloat(row.sharpness) || 0,
-        composition_score: parseFloat(row.composition_score) || 0,
-        exposure_accuracy: parseFloat(row.exposure_accuracy) || 0,
-        emotional_impact: parseFloat(row.emotional_impact) || 0,
-        time_in_game: row.time_in_game,
-        athlete_id: row.athlete_id,
-        event_id: row.event_id,
+        emotion: (row.emotion || 'focus') as Photo['metadata']['emotion'],
+        sharpness: row.sharpness ?? 0,
+        composition_score: row.composition_score ?? 0,
+        exposure_accuracy: row.exposure_accuracy ?? 0,
+        emotional_impact: row.emotional_impact ?? 0,
+        time_in_game: (row.time_in_game || undefined) as Photo['metadata']['time_in_game'],
+        athlete_id: row.athlete_id || undefined,
+        event_id: row.event_id || undefined,
 
         // AI metadata
-        ai_provider: row.ai_provider || 'gemini',
-        ai_cost: parseFloat(row.ai_cost) || 0,
-        ai_confidence: parseFloat(row.ai_confidence) || 0,
+        ai_provider: (row.ai_provider || 'gemini') as Photo['metadata']['ai_provider'],
+        ai_cost: row.ai_cost ?? 0,
+        ai_confidence: row.ai_confidence ?? 0,
         enriched_at: row.enriched_at || new Date().toISOString(),
       },
     };
@@ -272,10 +282,10 @@ export async function getSportDistribution(): Promise<Array<{ name: string; coun
     }
 
     // Process SQL results
-    return (data || []).map((row: any) => ({
+    return (data || []).map((row: SportDistributionRow) => ({
       name: row.name,
-      count: parseInt(row.count),
-      percentage: parseFloat(row.percentage)
+      count: parseInt(row.count.toString()),
+      percentage: parseFloat(row.percentage.toString())
     }));
   } catch (error) {
     // Fallback: If custom RPC doesn't exist, use Supabase's native aggregation
@@ -333,6 +343,226 @@ export async function getSportDistribution(): Promise<Array<{ name: string; coun
 }
 
 /**
+ * Get filter counts for all filter options (SERVER-SIDE)
+ * Returns counts for each filter option while respecting currently active filters
+ * This enables "smart" filtering where users can see how many results each option will return
+ */
+export interface FilterCounts {
+  sports: Array<{ name: string; count: number }>;
+  categories: Array<{ name: string; count: number }>;
+  playTypes: Array<{ name: string; count: number }>;
+  intensities: Array<{ name: string; count: number }>;
+  lighting: Array<{ name: string; count: number }>;
+  colorTemperatures: Array<{ name: string; count: number }>;
+  timesOfDay: Array<{ name: string; count: number }>;
+  compositions: Array<{ name: string; count: number }>;
+}
+
+/**
+ * OPTIMIZED: Get filter counts using aggregation queries (GROUP BY)
+ * Reduces database queries from ~50-80 to ~8 (one per filter dimension)
+ *
+ * Performance improvements:
+ * - Uses COUNT() with GROUP BY instead of individual queries
+ * - Single query per dimension (8 queries total vs 50-80)
+ * - Respects current filters to show compatible counts
+ * - No hardcoded filter values (uses actual data)
+ *
+ * Phase 1 of Intelligent Filter System (27-40h total)
+ * This function is the foundation - estimate 8-12h
+ */
+export async function getFilterCounts(currentFilters?: PhotoFilterState): Promise<FilterCounts> {
+  // Helper to build WHERE clause from current filters (excluding the dimension being counted)
+  const buildFilterConditions = (excludeField: string): string => {
+    const conditions: string[] = ['sharpness IS NOT NULL']; // Base condition
+
+    if (currentFilters?.sportType && excludeField !== 'sport_type') {
+      conditions.push(`sport_type = '${currentFilters.sportType}'`);
+    }
+    if (currentFilters?.photoCategory && excludeField !== 'photo_category') {
+      conditions.push(`photo_category = '${currentFilters.photoCategory}'`);
+    }
+    if (currentFilters?.playTypes && currentFilters.playTypes.length > 0 && excludeField !== 'play_type') {
+      const playTypesList = currentFilters.playTypes.map(pt => `'${pt}'`).join(', ');
+      conditions.push(`play_type IN (${playTypesList})`);
+    }
+    if (currentFilters?.actionIntensity && currentFilters.actionIntensity.length > 0 && excludeField !== 'action_intensity') {
+      const intensityList = currentFilters.actionIntensity.map(ai => `'${ai}'`).join(', ');
+      conditions.push(`action_intensity IN (${intensityList})`);
+    }
+    if (currentFilters?.lighting && currentFilters.lighting.length > 0 && excludeField !== 'lighting') {
+      const lightingList = currentFilters.lighting.map(l => `'${l}'`).join(', ');
+      conditions.push(`lighting IN (${lightingList})`);
+    }
+    if (currentFilters?.colorTemperature && currentFilters.colorTemperature.length > 0 && excludeField !== 'color_temperature') {
+      const tempList = currentFilters.colorTemperature.map(ct => `'${ct}'`).join(', ');
+      conditions.push(`color_temperature IN (${tempList})`);
+    }
+    if (currentFilters?.timeOfDay && currentFilters.timeOfDay.length > 0 && excludeField !== 'time_of_day') {
+      const timeList = currentFilters.timeOfDay.map(tod => `'${tod}'`).join(', ');
+      conditions.push(`time_of_day IN (${timeList})`);
+    }
+    if (currentFilters?.compositions && currentFilters.compositions.length > 0 && excludeField !== 'composition') {
+      const compList = currentFilters.compositions.map(c => `'${c}'`).join(', ');
+      conditions.push(`composition IN (${compList})`);
+    }
+
+    return conditions.join(' AND ');
+  };
+
+  // Aggregation query generator
+  const getAggregatedCounts = async (
+    fieldName: string,
+    displayName: string
+  ): Promise<Array<{ name: string; count: number }>> => {
+    const conditions = buildFilterConditions(fieldName);
+
+    try {
+      // Try using RPC for GROUP BY aggregation (most efficient)
+      const { data, error } = await supabaseServer.rpc('exec_sql', {
+        sql: `
+          SELECT
+            ${fieldName} as name,
+            COUNT(*) as count
+          FROM photo_metadata
+          WHERE ${conditions}
+            AND ${fieldName} IS NOT NULL
+          GROUP BY ${fieldName}
+          ORDER BY count DESC
+        `
+      });
+
+      if (error) throw error;
+
+      return (data || []).map((row: any) => ({
+        name: row.name,
+        count: parseInt(row.count.toString())
+      }));
+    } catch (error) {
+      // Fallback: fetch distinct values then count each (less efficient but works)
+      console.warn(`[getFilterCounts] RPC failed for ${fieldName}, using fallback:`, error);
+
+      // Build query to get distinct values for this field
+      let query = supabaseServer
+        .from('photo_metadata')
+        .select(fieldName)
+        .not('sharpness', 'is', null)
+        .not(fieldName, 'is', null);
+
+      // Apply current filters (excluding this field)
+      if (currentFilters?.sportType && fieldName !== 'sport_type') {
+        query = query.eq('sport_type', currentFilters.sportType);
+      }
+      if (currentFilters?.photoCategory && fieldName !== 'photo_category') {
+        query = query.eq('photo_category', currentFilters.photoCategory);
+      }
+      if (currentFilters?.playTypes && currentFilters.playTypes.length > 0 && fieldName !== 'play_type') {
+        query = query.in('play_type', currentFilters.playTypes);
+      }
+      if (currentFilters?.actionIntensity && currentFilters.actionIntensity.length > 0 && fieldName !== 'action_intensity') {
+        query = query.in('action_intensity', currentFilters.actionIntensity);
+      }
+      if (currentFilters?.lighting && currentFilters.lighting.length > 0 && fieldName !== 'lighting') {
+        query = query.in('lighting', currentFilters.lighting);
+      }
+      if (currentFilters?.colorTemperature && currentFilters.colorTemperature.length > 0 && fieldName !== 'color_temperature') {
+        query = query.in('color_temperature', currentFilters.colorTemperature);
+      }
+      if (currentFilters?.timeOfDay && currentFilters.timeOfDay.length > 0 && fieldName !== 'time_of_day') {
+        query = query.in('time_of_day', currentFilters.timeOfDay);
+      }
+      if (currentFilters?.compositions && currentFilters.compositions.length > 0 && fieldName !== 'composition') {
+        query = query.in('composition', currentFilters.compositions);
+      }
+
+      const { data: distinctData, error: distinctError } = await query;
+
+      if (distinctError) {
+        console.error(`[getFilterCounts] Error fetching distinct values for ${fieldName}:`, distinctError);
+        return [];
+      }
+
+      // Get unique values
+      const uniqueValues = Array.from(new Set((distinctData || []).map((row: any) => row[fieldName]))).filter(Boolean);
+
+      // Count each value
+      const counts = await Promise.all(
+        uniqueValues.map(async (value) => {
+          let countQuery = supabaseServer
+            .from('photo_metadata')
+            .select('*', { count: 'exact', head: true })
+            .not('sharpness', 'is', null)
+            .eq(fieldName, value);
+
+          // Apply same filters
+          if (currentFilters?.sportType && fieldName !== 'sport_type') {
+            countQuery = countQuery.eq('sport_type', currentFilters.sportType);
+          }
+          if (currentFilters?.photoCategory && fieldName !== 'photo_category') {
+            countQuery = countQuery.eq('photo_category', currentFilters.photoCategory);
+          }
+          if (currentFilters?.playTypes && currentFilters.playTypes.length > 0 && fieldName !== 'play_type') {
+            countQuery = countQuery.in('play_type', currentFilters.playTypes);
+          }
+          if (currentFilters?.actionIntensity && currentFilters.actionIntensity.length > 0 && fieldName !== 'action_intensity') {
+            countQuery = countQuery.in('action_intensity', currentFilters.actionIntensity);
+          }
+          if (currentFilters?.lighting && currentFilters.lighting.length > 0 && fieldName !== 'lighting') {
+            countQuery = countQuery.in('lighting', currentFilters.lighting);
+          }
+          if (currentFilters?.colorTemperature && currentFilters.colorTemperature.length > 0 && fieldName !== 'color_temperature') {
+            countQuery = countQuery.in('color_temperature', currentFilters.colorTemperature);
+          }
+          if (currentFilters?.timeOfDay && currentFilters.timeOfDay.length > 0 && fieldName !== 'time_of_day') {
+            countQuery = countQuery.in('time_of_day', currentFilters.timeOfDay);
+          }
+          if (currentFilters?.compositions && currentFilters.compositions.length > 0 && fieldName !== 'composition') {
+            countQuery = countQuery.in('composition', currentFilters.compositions);
+          }
+
+          const { count } = await countQuery;
+          return { name: value as string, count: count || 0 };
+        })
+      );
+
+      return counts.sort((a, b) => b.count - a.count);
+    }
+  };
+
+  // Execute all 8 aggregation queries in parallel
+  const [
+    sportCounts,
+    categoryCounts,
+    playTypeCounts,
+    intensityCounts,
+    lightingCounts,
+    colorTempCounts,
+    timeOfDayCounts,
+    compositionCounts,
+  ] = await Promise.all([
+    getAggregatedCounts('sport_type', 'Sport'),
+    getAggregatedCounts('photo_category', 'Category'),
+    getAggregatedCounts('play_type', 'Play Type'),
+    getAggregatedCounts('action_intensity', 'Intensity'),
+    getAggregatedCounts('lighting', 'Lighting'),
+    getAggregatedCounts('color_temperature', 'Color Temperature'),
+    getAggregatedCounts('time_of_day', 'Time of Day'),
+    getAggregatedCounts('composition', 'Composition'),
+  ]);
+
+  return {
+    sports: sportCounts.filter(s => s.count > 0),
+    categories: categoryCounts.filter(c => c.count > 0),
+    playTypes: playTypeCounts.filter(p => p.count > 0),
+    intensities: intensityCounts.filter(i => i.count > 0),
+    lighting: lightingCounts.filter(l => l.count > 0),
+    colorTemperatures: colorTempCounts.filter(t => t.count > 0),
+    timesOfDay: timeOfDayCounts.filter(t => t.count > 0),
+    compositions: compositionCounts.filter(c => c.count > 0),
+  };
+}
+
+/**
  * Get photo category distribution statistics (SERVER-SIDE)
  * Returns count and percentage for each category type
  * Uses SQL aggregation for efficiency (no row limit issues)
@@ -359,10 +589,10 @@ export async function getCategoryDistribution(): Promise<Array<{ name: string; c
     }
 
     // Process SQL results
-    return (data || []).map((row: any) => ({
+    return (data || []).map((row: CategoryDistributionRow) => ({
       name: row.name,
-      count: parseInt(row.count),
-      percentage: parseFloat(row.percentage)
+      count: parseInt(row.count.toString()),
+      percentage: parseFloat(row.percentage.toString())
     }));
   } catch (error) {
     // Fallback: Use individual COUNT queries for each category

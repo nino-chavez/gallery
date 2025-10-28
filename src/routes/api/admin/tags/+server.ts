@@ -5,8 +5,8 @@
  *
  * Endpoints:
  * - GET /api/admin/tags - Get pending tags (admin only)
- * - POST /api/admin/tags/{id}/approve - Approve tag (admin only)
- * - POST /api/admin/tags/{id}/reject - Reject tag (admin only)
+ * - POST /api/admin/tags - Approve tag (admin only, tagId in request body)
+ * - DELETE /api/admin/tags - Reject/delete tag (admin only, tagId in request body)
  *
  * Authentication: Supabase Auth with admin role check
  */
@@ -129,10 +129,10 @@ export const GET: RequestHandler = async ({ request, url }) => {
 };
 
 // ============================================
-// POST /api/admin/tags/{id}/approve - Approve tag
+// POST /api/admin/tags - Approve tag
 // ============================================
 
-export const POST: RequestHandler = async ({ request, params }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	try {
 		// Verify admin
 		const adminUser = await verifyAdmin(request);
@@ -140,8 +140,8 @@ export const POST: RequestHandler = async ({ request, params }) => {
 		// Get admin client
 		const adminClient = getAdminClient();
 
-		// Get tag ID from URL params
-		const tagId = params.id;
+		// Get tag ID from request body
+		const { tagId } = await request.json();
 
 		if (!tagId) {
 			throw error(400, 'Tag ID is required');
@@ -199,10 +199,10 @@ export const POST: RequestHandler = async ({ request, params }) => {
 };
 
 // ============================================
-// DELETE /api/admin/tags/{id} - Reject/delete tag
+// DELETE /api/admin/tags - Reject/delete tag
 // ============================================
 
-export const DELETE: RequestHandler = async ({ request, params }) => {
+export const DELETE: RequestHandler = async ({ request }) => {
 	try {
 		// Verify admin
 		await verifyAdmin(request);
@@ -210,8 +210,8 @@ export const DELETE: RequestHandler = async ({ request, params }) => {
 		// Get admin client
 		const adminClient = getAdminClient();
 
-		// Get tag ID from URL params
-		const tagId = params.id;
+		// Get tag ID from request body
+		const { tagId } = await request.json();
 
 		if (!tagId) {
 			throw error(400, 'Tag ID is required');

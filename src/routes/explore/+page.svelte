@@ -3,10 +3,12 @@
 	import { page } from '$app/stores';
 	import { Camera, ChevronDown, X, Filter, SlidersHorizontal } from 'lucide-svelte';
 	import { preferences } from '$lib/stores/preferences.svelte';
+	import { filterNotifications } from '$lib/stores/filter-notifications.svelte';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import Lightbox from '$lib/components/gallery/Lightbox.svelte';
+	import VisualDataLegend from '$lib/components/ui/VisualDataLegend.svelte';
 	import SportFilter from '$lib/components/filters/SportFilter.svelte';
 	import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte';
 	import PlayTypeFilter from '$lib/components/filters/PlayTypeFilter.svelte';
@@ -16,10 +18,62 @@
 	import TimeOfDayFilter from '$lib/components/filters/TimeOfDayFilter.svelte';
 	import CompositionFilter from '$lib/components/filters/CompositionFilter.svelte';
 	import SearchAutocomplete from '$lib/components/search/SearchAutocomplete.svelte';
-	import VisualDataLegend from '$lib/components/ui/VisualDataLegend.svelte';
+	import FilterChip from '$lib/components/filters/FilterChip.svelte';
+	import Toast from '$lib/components/ui/Toast.svelte';
 	import { parseQuery, describeFilters } from '$lib/utils/nlp-query-parser';
+	import {
+		buildFilterState,
+		autoCleanIncompatibleFilters,
+		formatClearedFilters,
+		type FilterState
+	} from '$lib/utils/filter-compatibility';
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
+
+	// Label mappings for user-friendly display
+	const compositionLabels: Record<string, string> = {
+		rule_of_thirds: 'Rule of Thirds',
+		leading_lines: 'Leading Lines',
+		centered: 'Centered',
+		symmetry: 'Symmetry',
+		frame_within_frame: 'Framed',
+	};
+
+	const timeOfDayLabels: Record<string, string> = {
+		golden_hour: 'Golden Hour',
+		midday: 'Midday',
+		evening: 'Evening',
+		night: 'Night',
+	};
+
+	const playTypeLabels: Record<string, string> = {
+		attack: 'Attack',
+		block: 'Block',
+		dig: 'Dig',
+		set: 'Set',
+		serve: 'Serve',
+	};
+
+	const intensityLabels: Record<string, string> = {
+		low: 'Low',
+		medium: 'Medium',
+		high: 'High',
+		peak: 'Peak',
+	};
+
+	const lightingLabels: Record<string, string> = {
+		natural: 'Natural',
+		backlit: 'Backlit',
+		dramatic: 'Dramatic',
+		soft: 'Soft',
+		artificial: 'Artificial',
+	};
+
+	const colorTempLabels: Record<string, string> = {
+		warm: 'Warm',
+		neutral: 'Neutral',
+		cool: 'Cool',
+	};
 
 	let { data }: { data: PageData } = $props();
 
@@ -66,12 +120,70 @@
 	// Mobile filter drawer state
 	let mobileFiltersOpen = $state(false);
 
+	// Diagnostic: Check for duplicate or missing IDs
+	$effect(() => {
+		if (displayPhotos.length > 0) {
+			const ids = displayPhotos.map(p => p.id);
+			const imageKeys = displayPhotos.map(p => p.image_key);
+			const uniqueIds = new Set(ids);
+			const uniqueImageKeys = new Set(imageKeys);
+
+			if (uniqueIds.size !== displayPhotos.length) {
+				console.warn('[DIAGNOSTIC] Duplicate or missing photo IDs detected!', {
+					totalPhotos: displayPhotos.length,
+					uniqueIds: uniqueIds.size,
+					missingIds: ids.filter(id => !id).length,
+					duplicateIds: ids.filter((id, index) => ids.indexOf(id) !== index)
+				});
+			}
+
+			if (uniqueImageKeys.size !== displayPhotos.length) {
+				console.warn('[DIAGNOSTIC] Duplicate image_keys detected!', {
+					totalPhotos: displayPhotos.length,
+					uniqueImageKeys: uniqueImageKeys.size
+				});
+			}
+		}
+	});
+
+	// Zero results detection (Phase 4: Auto-Clear notification)
+	$effect(() => {
+		// Only show zero results warning if filters are active AND no photos
+		if (activeFilterCount > 0 && displayPhotos.length === 0) {
+			filterNotifications.notifyZeroResults();
+		}
+	});
+
+	// Auto-clear notification (Phase 4: Show notification when server cleared filters)
+	$effect(() => {
+		if (data.clearedFilters && data.clearedFilters.length > 0) {
+			filterNotifications.notifyAutoCleared(
+				data.clearedFilters,
+				'incompatible with current filters'
+			);
+		}
+	});
+
 	// Lightbox handlers
 	function handlePhotoClick(photo: Photo) {
-		const index = displayPhotos.findIndex((p) => p.id === photo.id);
+		console.log('[handlePhotoClick] Clicked photo:', {
+			id: photo.id,
+			image_key: photo.image_key
+		});
+
+		// Use image_key for matching (more reliable than id)
+		const index = displayPhotos.findIndex((p) => p.image_key === photo.image_key);
+		console.log('[handlePhotoClick] Found index:', index, 'of', displayPhotos.length);
+
 		if (index !== -1) {
 			selectedPhotoIndex = index;
 			lightboxOpen = true;
+			console.log('[handlePhotoClick] Opening lightbox at index', selectedPhotoIndex);
+		} else {
+			console.error('[handlePhotoClick] Photo not found in displayPhotos!', {
+				clickedImageKey: photo.image_key,
+				displayPhotoKeys: displayPhotos.map(p => p.image_key).slice(0, 5)
+			});
 		}
 	}
 
@@ -205,7 +317,8 @@
 		goto(url.toString());
 	}
 
-	function clearAllFilters() {
+	function clearAllFilters(event?: MouseEvent) {
+		event?.stopPropagation();
 		const url = new URL($page.url);
 		// Remove all filter params
 		url.searchParams.delete('sport');
@@ -259,11 +372,11 @@
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
 		<!-- Title + Count -->
 		<div class="flex items-center justify-between gap-4 mb-3">
-			<div class="flex items-center gap-2">
+			<div class="flex items-center gap-3">
 				<Typography variant="h1" class="text-xl lg:text-2xl">Gallery</Typography>
-				<Typography variant="caption" class="text-charcoal-400 text-xs">
-					{data.totalCount.toLocaleString()}
-				</Typography>
+				<span class="px-2.5 py-1 rounded-full bg-charcoal-800/60 border border-charcoal-700 text-charcoal-300 text-xs font-medium">
+					{data.totalCount.toLocaleString()} photos
+				</span>
 			</div>
 
 			<!-- Desktop Search -->
@@ -323,6 +436,74 @@
 			{/if}
 		</div>
 
+		<!-- Active Filter Chips (NEW: P0 Enhancement) -->
+		{#if activeFilterCount > 0}
+			<div class="flex flex-wrap items-center gap-2 mb-3 p-2 rounded-lg bg-charcoal-900/50 border border-charcoal-800/30">
+				<Typography variant="caption" class="text-charcoal-400 text-xs font-medium">Active:</Typography>
+
+				{#if data.selectedSport}
+					<FilterChip
+						label="Sport: {data.selectedSport}"
+						onRemove={() => handleSportSelect(null)}
+					/>
+				{/if}
+
+				{#if data.selectedCategory}
+					<FilterChip
+						label="Category: {data.selectedCategory}"
+						onRemove={() => handleCategorySelect(null)}
+					/>
+				{/if}
+
+				{#if data.selectedPlayType}
+					<FilterChip
+						label="Play: {playTypeLabels[data.selectedPlayType] || data.selectedPlayType}"
+						onRemove={() => handlePlayTypeSelect(null)}
+					/>
+				{/if}
+
+				{#if data.selectedIntensity}
+					<FilterChip
+						label="Intensity: {intensityLabels[data.selectedIntensity] || data.selectedIntensity}"
+						onRemove={() => handleIntensitySelect(null)}
+					/>
+				{/if}
+
+				{#if data.selectedLighting && data.selectedLighting.length > 0}
+					{#each data.selectedLighting as lighting}
+						<FilterChip
+							label="Lighting: {lightingLabels[lighting] || lighting}"
+							onRemove={() => {
+								const remaining = data.selectedLighting?.filter(l => l !== lighting) || [];
+								handleLightingSelect(remaining.length > 0 ? remaining : null);
+							}}
+						/>
+					{/each}
+				{/if}
+
+				{#if data.selectedColorTemp}
+					<FilterChip
+						label="Color: {colorTempLabels[data.selectedColorTemp] || data.selectedColorTemp}"
+						onRemove={() => handleColorTempSelect(null)}
+					/>
+				{/if}
+
+				{#if data.selectedTimeOfDay}
+					<FilterChip
+						label="Time: {timeOfDayLabels[data.selectedTimeOfDay] || data.selectedTimeOfDay}"
+						onRemove={() => handleTimeOfDaySelect(null)}
+					/>
+				{/if}
+
+				{#if data.selectedComposition}
+					<FilterChip
+						label="Composition: {compositionLabels[data.selectedComposition] || data.selectedComposition}"
+						onRemove={() => handleCompositionSelect(null)}
+					/>
+				{/if}
+			</div>
+		{/if}
+
 		<!-- Quick Filters (Sport/Category Pills) -->
 		<div class="flex flex-wrap items-center gap-2">
 			{#if data.sports && data.sports.length > 0}
@@ -330,6 +511,7 @@
 					sports={data.sports}
 					selectedSport={data.selectedSport}
 					onSelect={handleSportSelect}
+					filterCounts={data.filterCounts?.sports}
 				/>
 			{/if}
 
@@ -338,6 +520,7 @@
 					categories={data.categories}
 					selectedCategory={data.selectedCategory}
 					onSelect={handleCategorySelect}
+					filterCounts={data.filterCounts?.categories}
 				/>
 			{/if}
 		</div>
@@ -365,7 +548,11 @@
 
 		<!-- Bucket 1 Filters (Collapsible on All Breakpoints) -->
 		<div class="mt-4 space-y-2 {mobileFiltersOpen ? '' : 'hidden'}">
-			<PlayTypeFilter selectedPlayType={data.selectedPlayType} onSelect={handlePlayTypeSelect} />
+			<PlayTypeFilter
+				selectedPlayType={data.selectedPlayType}
+				selectedSport={data.selectedSport}
+				onSelect={handlePlayTypeSelect}
+			/>
 
 			<ActionIntensityFilter
 				selectedIntensity={data.selectedIntensity}
@@ -420,7 +607,7 @@
 	<!-- Photo Grid -->
 	{#if displayPhotos.length > 0}
 		<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-8">
-			{#each displayPhotos as photo, index (photo.id)}
+			{#each displayPhotos as photo, index (photo.image_key)}
 				<PhotoCard {photo} {index} onclick={handlePhotoClick} priority={index < 8} />
 			{/each}
 		</div>
@@ -465,6 +652,11 @@
 </div>
 
 <!-- Lightbox -->
+{#snippet debugLightbox()}
+	{@const currentPhoto = displayPhotos[selectedPhotoIndex] || null}
+	{@const _ = console.log('[explore] Lightbox props: open=', lightboxOpen, 'photo=', currentPhoto?.id, 'selectedPhotoIndex=', selectedPhotoIndex, 'displayPhotos.length=', displayPhotos.length)}
+{/snippet}
+{@render debugLightbox()}
 <Lightbox
 	bind:open={lightboxOpen}
 	photo={displayPhotos[selectedPhotoIndex] || null}
@@ -473,8 +665,21 @@
 	onNavigate={handleLightboxNavigate}
 />
 
-<!-- Visual Data Legend (fixed position, zero chrome impact) -->
+<!-- Visual Data Legend (explains hover badge system) -->
 <VisualDataLegend />
+
+<!-- Toast Notifications Container (Phase 4: Auto-Clear Notifications) -->
+<div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2" role="status" aria-live="polite" aria-atomic="true">
+	{#each filterNotifications.all as notification (notification.id)}
+		<Toast
+			variant={notification.variant}
+			duration={notification.duration}
+			onClose={() => filterNotifications.remove(notification.id)}
+		>
+			{notification.message}
+		</Toast>
+	{/each}
+</div>
 
 <style>
 	/* Performance: Use CSS transitions instead of JS animations */

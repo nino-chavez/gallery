@@ -10,6 +10,7 @@ import { supabaseServer } from '$lib/supabase/server';
 import { trackPhotoView } from '$lib/analytics/tracker';
 import type { PageServerLoad } from './$types';
 import type { Photo } from '$types/photo';
+import type { PhotoMetadataRow } from '$types/database';
 
 export const load: PageServerLoad = async ({ params, url }) => {
 	// Fetch photo from Supabase using image_key
@@ -36,30 +37,30 @@ export const load: PageServerLoad = async ({ params, url }) => {
 		created_at: photoData.photo_date || photoData.enriched_at || photoData.upload_date,
 		metadata: {
 			// BUCKET 1: Concrete & Filterable
-			play_type: photoData.play_type || null,
-			action_intensity: photoData.action_intensity || 'medium',
+			play_type: (photoData.play_type || null) as Photo['metadata']['play_type'],
+			action_intensity: (photoData.action_intensity || 'medium') as Photo['metadata']['action_intensity'],
 			sport_type: photoData.sport_type || 'volleyball',
 			photo_category: photoData.photo_category || 'action',
-			composition: photoData.composition || '',
-			time_of_day: photoData.time_of_day || '',
-			lighting: photoData.lighting,
-			color_temperature: photoData.color_temperature,
+			composition: (photoData.composition || '') as Photo['metadata']['composition'],
+			time_of_day: (photoData.time_of_day || '') as Photo['metadata']['time_of_day'],
+			lighting: (photoData.lighting || undefined) as Photo['metadata']['lighting'],
+			color_temperature: (photoData.color_temperature || undefined) as Photo['metadata']['color_temperature'],
 
 			// BUCKET 2: Abstract & Internal
-			emotion: photoData.emotion || 'focus',
+			emotion: (photoData.emotion || 'focus') as Photo['metadata']['emotion'],
 			sharpness: photoData.sharpness || 0,
 			composition_score: photoData.composition_score || 0,
 			exposure_accuracy: photoData.exposure_accuracy || 0,
 			emotional_impact: photoData.emotional_impact || 0,
-			time_in_game: photoData.time_in_game,
-			athlete_id: photoData.athlete_id,
-			event_id: photoData.event_id,
+			time_in_game: (photoData.time_in_game || undefined) as Photo['metadata']['time_in_game'],
+			athlete_id: photoData.athlete_id || undefined,
+			event_id: photoData.event_id || undefined,
 
 			// AI metadata
-			ai_provider: photoData.ai_provider || 'unknown',
+			ai_provider: (photoData.ai_provider || 'gemini') as Photo['metadata']['ai_provider'],
 			ai_cost: photoData.ai_cost || 0,
 			ai_confidence: photoData.ai_confidence || 0,
-			enriched_at: photoData.enriched_at || ''
+			enriched_at: photoData.enriched_at || new Date().toISOString()
 		}
 	};
 
@@ -190,42 +191,42 @@ async function fetchRelatedPhotos(currentPhoto: Photo, albumKey: string): Promis
 	}
 
 	// Transform to Photo type with two-bucket model
-	return (data || []).map((row: any) => ({
+	return (data || []).map((row: PhotoMetadataRow) => ({
 		id: row.image_key,
 		image_key: row.image_key,
 		image_url: row.ImageUrl,
-		thumbnail_url: row.ThumbnailUrl,
-		original_url: row.OriginalUrl,
+		thumbnail_url: row.ThumbnailUrl || undefined,
+		original_url: row.OriginalUrl || undefined,
 		title: row.album_name || 'Untitled Photo',
 		caption: row.composition || '',
 		keywords: [],
 		created_at: row.photo_date || row.enriched_at || row.upload_date,
 		metadata: {
 			// BUCKET 1
-			play_type: row.play_type || null,
-			action_intensity: row.action_intensity || 'medium',
+			play_type: (row.play_type || null) as Photo['metadata']['play_type'],
+			action_intensity: (row.action_intensity || 'medium') as Photo['metadata']['action_intensity'],
 			sport_type: row.sport_type || 'volleyball',
 			photo_category: row.photo_category || 'action',
-			composition: row.composition || '',
-			time_of_day: row.time_of_day || '',
-			lighting: row.lighting,
-			color_temperature: row.color_temperature,
+			composition: (row.composition || '') as Photo['metadata']['composition'],
+			time_of_day: (row.time_of_day || '') as Photo['metadata']['time_of_day'],
+			lighting: (row.lighting || undefined) as Photo['metadata']['lighting'],
+			color_temperature: (row.color_temperature || undefined) as Photo['metadata']['color_temperature'],
 
 			// BUCKET 2
-			emotion: row.emotion || 'focus',
+			emotion: (row.emotion || 'focus') as Photo['metadata']['emotion'],
 			sharpness: row.sharpness || 0,
 			composition_score: row.composition_score || 0,
 			exposure_accuracy: row.exposure_accuracy || 0,
 			emotional_impact: row.emotional_impact || 0,
-			time_in_game: row.time_in_game,
-			athlete_id: row.athlete_id,
-			event_id: row.event_id,
+			time_in_game: (row.time_in_game || undefined) as Photo['metadata']['time_in_game'],
+			athlete_id: row.athlete_id || undefined,
+			event_id: row.event_id || undefined,
 
 			// AI metadata
-			ai_provider: row.ai_provider || 'unknown',
+			ai_provider: (row.ai_provider || 'gemini') as Photo['metadata']['ai_provider'],
 			ai_cost: row.ai_cost || 0,
 			ai_confidence: row.ai_confidence || 0,
-			enriched_at: row.enriched_at || ''
+			enriched_at: row.enriched_at || new Date().toISOString()
 		}
 	}));
 }

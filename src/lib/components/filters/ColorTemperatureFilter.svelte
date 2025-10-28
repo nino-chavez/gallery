@@ -90,47 +90,61 @@
 
 		{#if isExpanded}
 			<div class="px-4 pb-4" transition:slide={{ duration: 200 }}>
-				<div class="flex flex-wrap gap-2">
-					<button
-						onclick={() => handleTempClick(null)}
-						class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 {selectedTemp ===
-						null
-							? 'bg-gold-500 text-charcoal-950 shadow-md'
-							: 'bg-charcoal-800/50 text-charcoal-300 hover:bg-charcoal-800 hover:text-charcoal-100'}"
-					>
-						<Typography variant="caption" class="font-medium">All Temperatures</Typography>
-					</button>
-
+				<!-- Enhanced: Grid layout with prominent visual gradients -->
+				<div class="grid grid-cols-3 gap-2 mb-3">
 					{#each temperatures as temp}
 						<button
 							onclick={() => handleTempClick(temp.value)}
-							class="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 overflow-hidden {selectedTemp ===
+							class="group relative flex flex-col items-center gap-2 px-3 py-3 rounded-lg border transition-all duration-200 overflow-hidden {selectedTemp ===
 							temp.value
-								? 'shadow-md'
-								: ''}"
+								? 'border-gold-500 shadow-md'
+								: 'border-charcoal-700/50 hover:border-charcoal-600'}"
 							title={temp.description}
+							aria-pressed={selectedTemp === temp.value}
 						>
+							<!-- Gradient background -->
 							<div
-								class="absolute inset-0 bg-gradient-to-r {selectedTemp === temp.value
+								class="absolute inset-0 bg-gradient-to-br {selectedTemp === temp.value
 									? temp.hoverGradient
 									: temp.gradient} {selectedTemp === temp.value
-									? 'opacity-100'
-									: 'opacity-30 group-hover:opacity-50'} transition-opacity duration-200"
+									? 'opacity-40'
+									: 'opacity-20 group-hover:opacity-30'} transition-opacity duration-200"
 							></div>
+
+							<!-- Icon -->
 							<Thermometer
-								class="w-3.5 h-3.5 relative z-10 {selectedTemp === temp.value
+								class="w-5 h-5 relative z-10 {selectedTemp === temp.value
 									? 'text-white'
-									: 'text-charcoal-300'}"
+									: 'text-charcoal-300 group-hover:text-charcoal-200'}"
 							/>
+
+							<!-- Label -->
 							<Typography
 								variant="caption"
-								class="font-medium relative z-10 {selectedTemp === temp.value
+								class="font-medium relative z-10 text-xs {selectedTemp === temp.value
 									? 'text-white'
-									: 'text-charcoal-300'}">{temp.label}</Typography
+									: 'text-charcoal-300 group-hover:text-charcoal-200'}"
 							>
+								{temp.label}
+							</Typography>
 						</button>
 					{/each}
 				</div>
+
+				<!-- Clear button if selected -->
+				{#if selectedTemp}
+					<div class="flex items-center justify-between text-xs">
+						<Typography variant="caption" class="text-charcoal-400">
+							{temperatures.find((t) => t.value === selectedTemp)?.description}
+						</Typography>
+						<button
+							onclick={() => handleTempClick(null)}
+							class="text-gold-500 hover:text-gold-400 transition-colors"
+						>
+							Clear
+						</button>
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>

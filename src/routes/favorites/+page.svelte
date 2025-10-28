@@ -38,7 +38,8 @@
 		selectedPhotoIndex = newIndex;
 	}
 
-	function handleClearAll() {
+	function handleClearAll(event?: MouseEvent) {
+		event?.stopPropagation();
 		const confirmed = confirm(
 			`Are you sure you want to remove all ${favoriteCount} favorite photos? This action cannot be undone.`
 		);
@@ -48,7 +49,8 @@
 		}
 	}
 
-	function handleExport() {
+	function handleExport(event?: MouseEvent) {
+		event?.stopPropagation();
 		const json = favorites.exportFavorites();
 		const blob = new Blob([json], { type: 'application/json' });
 		const url = window.URL.createObjectURL(blob);

@@ -344,18 +344,163 @@ npm run check:watch
 - Use Svelte 5 runes: `$state`, `$derived`, `$effect`, `$props`
 - Follow file organization pattern in CODING_STANDARDS.md
 
-## Related Documentation
+## Temporary File Management
 
-- `.agent-os/README.md` - Agent-OS overview
-- `.agent-os/config.yml` - Workflow configuration
-- `AGENTS.md` - Agent-specific guidance and examples
-- `database/performance-indexes.sql` - Database optimization
-- `docs/CODING_STANDARDS.md` - TypeScript and Svelte conventions
-- `docs/EVENT_HANDLING.md` - Event propagation patterns
-- `docs/COMPONENT_PATTERNS.md` - Reusable component patterns
-- `docs/PERFORMANCE_OPTIMIZATIONS.md` - Performance best practices
+**CRITICAL:** When creating audit files, reports, analysis, or debug output, use the `.temp/` directory structure. These files should NOT be committed to git.
+
+### .temp/ Directory Structure
+
+```
+.temp/
+├── audits/         # Audit results, comparison reports
+├── reports/        # Analysis reports, drift reports, statistics
+├── analysis/       # One-time analysis files, investigation results
+├── logs/           # Execution logs, debug output
+└── scratch/        # Quick tests, experiments, throwaway files
+```
+
+### File Naming Convention
+
+**Always use descriptive names with timestamps:**
+
+```typescript
+// ✅ GOOD
+const reportPath = `.temp/reports/album-drift-report-${dateStr}.csv`;
+const auditPath = `.temp/audits/sport-misclassifications-${dateStr}.json`;
+const logPath = `.temp/logs/enrichment-pipeline-${timestamp}.log`;
+
+// ❌ BAD
+const reportPath = `.temp/test.csv`;
+const auditPath = `.temp/output.json`;
+```
+
+### When to Use .temp/
+
+**DO store in .temp/:**
+- Audit output files (CSV, JSON reports)
+- Drift analysis results
+- Debug logs from scripts
+- One-time analysis results
+- Comparison reports
+- Test data files for debugging
+
+**DO NOT store in .temp/:**
+- Permanent documentation (use `.agent-os/`)
+- Source code (use `src/`, `scripts/`)
+- Configuration files
+- Test fixtures (use test directories)
+- Anything that should be committed
+
+### Agent Workflow
+
+When creating temporary files:
+
+1. **Choose appropriate subdirectory** based on purpose
+2. **Use descriptive filename** with date/timestamp
+3. **Log file location** for user reference
+4. **Note if file should be reviewed** before deletion
+
+**Example:**
+```typescript
+const outputPath = `.temp/reports/album-drift-report-${dateStr}.csv`;
+await writeCSV(outputPath, report);
+
+console.log(`✅ Drift report saved: ${outputPath}`);
+console.log('📋 Review results, then delete or archive this file.');
+```
+
+See `.temp/README.md` for full guidelines.
 
 ---
 
-**Version:** 3.1.0
-**Last Updated:** 2025-10-27
+## Agent Reference Guides
+
+**IMPORTANT:** Before implementing common patterns, consult these guides to avoid hallucinating new approaches. These are developer docs specifically for AI agents.
+
+### Available Guides
+
+Located in `.agent-os/guides/`:
+
+| Guide | Purpose | When to Use |
+|-------|---------|-------------|
+| **[supabase-integration.md](.agent-os/guides/supabase-integration.md)** | Supabase client patterns, query patterns, error handling | Any database operation |
+| **[smugmug-api.md](.agent-os/guides/smugmug-api.md)** | SmugMug OAuth 1.0a, EXIF extraction, rate limiting | SmugMug API integration |
+| **[typescript-patterns.md](.agent-os/guides/typescript-patterns.md)** | Project-specific TypeScript patterns, Svelte 5 runes | All TypeScript code |
+
+### Usage Guidelines
+
+**Before implementing:**
+1. **Check if guide exists** for the task (Supabase query, SmugMug API call, etc.)
+2. **Follow documented patterns** exactly - they are tested and proven
+3. **Do not invent new approaches** if pattern exists in guide
+4. **Refer to guide** for error handling, type safety, best practices
+
+**Example - Supabase Query:**
+```typescript
+// ❌ BAD: Inventing new pattern
+const response = await fetch('/api/photos');
+const data = await response.json();
+
+// ✅ GOOD: Following guide pattern
+import { fetchPhotos } from '$lib/supabase/server';
+
+const photos = await fetchPhotos({
+  sportType: 'volleyball',
+  limit: 24
+});
+```
+
+**Example - SmugMug API:**
+```typescript
+// ❌ BAD: Trying OAuth 2.0
+const headers = {
+  'Authorization': `Bearer ${token}`
+};
+
+// ✅ GOOD: Following guide (OAuth 1.0a)
+const oauth = OAuth({ /* OAuth 1.0a config from guide */ });
+const headers = oauth.toHeader(oauth.authorize(requestData, token));
+```
+
+### When to Create New Guides
+
+If you find yourself implementing the same pattern multiple times, or if a new integration is added (new API, new service), create a guide:
+
+1. Document the proven pattern
+2. Add common mistakes to avoid
+3. Include type-safe examples
+4. Place in `.agent-os/guides/`
+5. Update this section in CLAUDE.md
+
+---
+
+## Related Documentation
+
+### Core Documentation
+- `.agent-os/README.md` - Agent-OS overview
+- `.agent-os/config.yml` - Workflow configuration
+- `AGENTS.md` - Agent-specific guidance and examples
+
+### Agent Reference Guides
+- `.agent-os/guides/supabase-integration.md` - Supabase patterns
+- `.agent-os/guides/smugmug-api.md` - SmugMug API patterns
+- `.agent-os/guides/typescript-patterns.md` - TypeScript patterns
+
+### Coding Standards
+- `docs/CODING_STANDARDS.md` - TypeScript and Svelte conventions
+- `docs/EVENT_HANDLING.md` - Event propagation patterns
+- `docs/COMPONENT_PATTERNS.md` - Reusable component patterns
+
+### Implementation Plans
+- `.agent-os/implementation/` - Active implementation plans
+- `.agent-os/design/` - Design system documentation
+- `database/performance-indexes.sql` - Database optimization
+
+### Temporary Files
+- `.temp/README.md` - Temp file management guidelines
+- `.temp/` - Git-ignored temporary files
+
+---
+
+**Version:** 3.2.0
+**Last Updated:** 2025-10-28

@@ -147,7 +147,8 @@
 		}
 	}
 
-	function selectSuggestion(suggestion: SearchSuggestion) {
+	function selectSuggestion(suggestion: SearchSuggestion, event?: MouseEvent) {
+		event?.stopPropagation();
 		value = suggestion.text;
 		showSuggestions = false;
 		focusedIndex = -1;
@@ -159,7 +160,8 @@
 		onSearch?.(value);
 	}
 
-	function handleClear() {
+	function handleClear(event?: MouseEvent) {
+		event?.stopPropagation();
 		value = '';
 		showSuggestions = false;
 		focusedIndex = -1;
@@ -241,7 +243,7 @@
 						{#each suggestions as suggestion, index}
 							<li>
 								<button
-									onclick={() => selectSuggestion(suggestion)}
+									onclick={(e) => selectSuggestion(suggestion, e)}
 									class="w-full px-4 py-3 flex items-center gap-3 transition-colors {focusedIndex ===
 									index
 										? 'bg-gold-500/10 text-gold-500'

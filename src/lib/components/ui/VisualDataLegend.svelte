@@ -2,9 +2,10 @@
   Visual Data Legend Component
 
   Provides users with an on-demand explanation of visual data layers:
-  - Emotion halos (colored glows)
-  - Quality shimmer (gold glow for portfolio-worthy)
-  - Quality dimming (low-quality photos)
+  - Hover metadata badges (sport, category, intensity)
+  - Emotion halos (colored glows) - DEPRECATED/NOT USED
+  - Quality shimmer (gold glow for portfolio-worthy) - DEPRECATED/NOT USED
+  - Quality dimming (low-quality photos) - DEPRECATED/NOT USED
 
   Design Principle: Progressive Disclosure
   - Collapsed by default (no chrome impact)
@@ -29,7 +30,34 @@
 		isOpen = !isOpen;
 	}
 
-	const dataLayers = [
+	// Hover badge legend (active/current system)
+	const hoverBadges = [
+		{
+			id: 'sport-badge',
+			name: 'Sport Type',
+			example: 'volleyball',
+			description: 'Shows the sport captured in the photo',
+			badgeClass: 'bg-gold-500/20 text-gold-300'
+		},
+		{
+			id: 'category-badge',
+			name: 'Photo Category',
+			example: 'action',
+			description: 'Type of shot (action, celebration, portrait, etc.)',
+			badgeClass: 'bg-charcoal-700/80 text-charcoal-200'
+		},
+		{
+			id: 'intensity-badge',
+			name: 'Action Intensity',
+			example: 'high',
+			description: 'High or extreme action moments only',
+			badgeClass: 'bg-red-500/20 text-red-300'
+		}
+	];
+
+	// Legacy visual effects (deprecated - kept for reference)
+	// These were part of the original emotion halo system but are no longer used
+	const legacyDataLayers = [
 		{
 			id: 'shimmer',
 			name: 'Gold Shimmer',
@@ -126,40 +154,30 @@
 			>
 				<Card class="p-5 bg-charcoal-900/98 backdrop-blur-md border-charcoal-700 shadow-2xl">
 					<div class="mb-4">
-						<h3 class="text-base font-semibold text-white mb-1">Visual Data Layers</h3>
+						<h3 class="text-base font-semibold text-white mb-1">Photo Hover Guide</h3>
 						<p class="text-xs text-charcoal-400 leading-relaxed">
-							Photos use visual effects to encode metadata. Hover over photos to see details,
-							click to filter.
+							Hover over any photo to see colored metadata badges
 						</p>
 					</div>
 
-					<div class="space-y-3 max-h-96 overflow-y-auto pr-2">
-						{#each dataLayers as layer}
-							<div class="flex items-start gap-3 group">
-								<!-- Visual example -->
+					<div class="space-y-3">
+						{#each hoverBadges as badge}
+							<div class="flex items-start gap-3">
+								<!-- Badge example -->
 								<div class="shrink-0">
-									<div
-										class="w-12 h-12 rounded-lg border border-charcoal-700 {layer.className}
-                                               flex items-center justify-center bg-charcoal-800"
-									>
-										<div class="w-3 h-3 bg-charcoal-600 rounded"></div>
-									</div>
+									<span class="text-xs px-1.5 py-0.5 rounded {badge.badgeClass} font-medium whitespace-nowrap">
+										{badge.example}
+									</span>
 								</div>
 
 								<!-- Description -->
 								<div class="flex-1 min-w-0">
 									<h4 class="text-sm font-medium text-white mb-0.5">
-										{layer.name}
+										{badge.name}
 									</h4>
-									<p class="text-xs text-charcoal-400 leading-relaxed mb-1">
-										{layer.description}
+									<p class="text-xs text-charcoal-400 leading-relaxed">
+										{badge.description}
 									</p>
-									{#if layer.interactive}
-										<p class="text-xs text-gold-400/80 flex items-center gap-1">
-											<span class="inline-block w-1 h-1 rounded-full bg-gold-400"></span>
-											{layer.interactive}
-										</p>
-									{/if}
 								</div>
 							</div>
 						{/each}
@@ -168,8 +186,7 @@
 					<!-- Footer tip -->
 					<div class="mt-4 pt-4 border-t border-charcoal-800">
 						<p class="text-xs text-charcoal-500 leading-relaxed">
-							<strong class="text-charcoal-400">Tip:</strong> Hover over any photo to reveal its
-							emotion badge and composition overlay. Click the badge to filter by that emotion.
+							<strong class="text-charcoal-400">Tip:</strong> Click any photo to view full details and larger image
 						</p>
 					</div>
 				</Card>

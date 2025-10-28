@@ -4,6 +4,7 @@
 	import { ChevronDown, Sparkles, Zap, PartyPopper, Camera, UserCircle, Activity, Award } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
+	import FilterPill from '$lib/components/ui/FilterPill.svelte';
 
 	interface Category {
 		name: string;
@@ -15,19 +16,52 @@
 		categories: Category[];
 		selectedCategory?: string | null;
 		onSelect?: (category: string | null) => void;
+		filterCounts?: Array<{ name: string; count: number }>;
 	}
 
-	let { categories, selectedCategory = null, onSelect }: Props = $props();
+	let { categories, selectedCategory = null, onSelect, filterCounts }: Props = $props();
+
+	// Merge filterCounts with categories data for context-aware counts
+	let categoriesWithCounts = $derived(
+		categories.map((category) => {
+			const contextCount = filterCounts?.find((fc) => fc.name === category.name)?.count;
+			return {
+				...category,
+				displayCount: contextCount !== undefined ? contextCount : category.count,
+			};
+		})
+	);
 
 	// P0-2: Progressive disclosure - Show top 4 by default
 	let showAllCategories = $state(false);
 
 	// P0-1: Collapsed by default on ALL breakpoints (mobile + desktop)
 	let isExpanded = $state(false);
+	let dropdownRef: HTMLDivElement | undefined = $state();
 
 	function handleCategoryClick(categoryName: string | null) {
 		onSelect?.(categoryName);
+		isExpanded = false; // Auto-close on selection
 	}
+
+	// Click-outside detection to auto-close dropdown
+	function handleClickOutside(event: MouseEvent) {
+		if (dropdownRef && !dropdownRef.contains(event.target as Node)) {
+			isExpanded = false;
+		}
+	}
+
+	$effect(() => {
+		if (isExpanded) {
+			document.addEventListener('click', handleClickOutside);
+		} else {
+			document.removeEventListener('click', handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener('click', handleClickOutside);
+		};
+	});
 
 	// P1-3: Use Lucide icon components instead of emojis
 	const categoryIcons: Record<string, any> = {
@@ -49,54 +83,64 @@
 		ceremony: 'Awards and ceremonies'
 	};
 
-	const totalPhotos = $derived(categories.reduce((sum, c) => sum + c.count, 0));
-	const displayedCategories = $derived(showAllCategories ? categories : categories.slice(0, 4));
-	const hasMoreCategories = $derived(categories.length > 4);
+	const totalPhotos = $derived(categoriesWithCounts.reduce((sum, c) => sum + c.displayCount, 0));
+	const displayedCategories = $derived(showAllCategories ? categoriesWithCounts : categoriesWithCounts.slice(0, 4));
+	const hasMoreCategories = $derived(categoriesWithCounts.length > 4);
 </script>
 
 <!-- Minimal inline collapsed pill (all breakpoints) -->
-<div class="relative inline-block">
+<div class="relative inline-block" bind:this={dropdownRef}>
 	<button
-		onclick={() => isExpanded = !isExpanded}
-		class="px-3 py-1.5 text-xs rounded-full bg-charcoal-800/50 border border-charcoal-700 hover:border-gold-500/30 transition-all flex items-center gap-1.5"
+		onclick={(e) => {
+			e.stopPropagation();
+			isExpanded = !isExpanded;
+		}}
+		class="px-3 py-1.5 text-xs rounded-full border transition-all flex items-center gap-1.5 {selectedCategory
+			? 'bg-gold-500/20 border-gold-500/50 text-gold-300'
+			: 'bg-charcoal-800/50 border-charcoal-700 hover:border-gold-500/30'}"
 		aria-expanded={isExpanded}
 		aria-label={isExpanded ? 'Collapse category filters' : 'Expand category filters'}
 	>
 		<Award class="w-3 h-3" />
 		<span>{selectedCategory ? selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1) : 'Category'}</span>
+		{#if selectedCategory}
+			<span class="px-1.5 py-0.5 rounded-full bg-gold-500/30 text-gold-200 text-xs font-medium">1</span>
+		{/if}
 		<ChevronDown class="w-3 h-3 transition-transform {isExpanded ? 'rotate-180' : ''}" />
 	</button>
 
 	{#if isExpanded}
 		<div
 			transition:slide
-			class="absolute top-full left-0 mt-2 p-3 bg-charcoal-900 border border-charcoal-800 rounded-lg shadow-xl z-30 min-w-[240px]"
+			class="absolute top-full left-0 mt-2 p-3 bg-charcoal-900 border border-charcoal-800 rounded-lg shadow-xl z-40 min-w-[240px]"
+			onclick={(e) => e.stopPropagation()}
 		>
-			<!-- Filter Pills -->
+			<!-- Filter Pills - Phase 2: Intelligent Filter System -->
 			<div class="flex flex-wrap gap-2">
 				<!-- All Categories Pill -->
-				<button
+				<FilterPill
+					label="All"
+					count={totalPhotos}
+					state={selectedCategory === null ? 'active' : 'available'}
+					description="Show all categories"
+					size="sm"
 					onclick={() => handleCategoryClick(null)}
-					class="px-3 py-1.5 text-xs rounded-full transition-all {selectedCategory === null
-						? 'bg-gold-500 text-charcoal-950'
-						: 'bg-charcoal-800 text-charcoal-100 hover:bg-charcoal-700'}"
-					aria-pressed={selectedCategory === null}
-				>
-					All
-				</button>
+				/>
 
 				<!-- Individual Category Pills -->
 				{#each displayedCategories as category (category.name)}
-					<button
+					{@const pillIcon = categoryIcons[category.name] || Sparkles}
+					{@const pillState = selectedCategory === category.name ? 'active' : category.displayCount === 0 ? 'disabled' : 'available'}
+
+					<FilterPill
+						label={category.name.charAt(0).toUpperCase() + category.name.slice(1)}
+						count={category.displayCount}
+						state={pillState}
+						description={categoryDescriptions[category.name.toLowerCase()] || category.name}
+						icon={pillIcon}
+						size="sm"
 						onclick={() => handleCategoryClick(category.name)}
-						class="px-3 py-1.5 text-xs rounded-full transition-all capitalize {selectedCategory === category.name
-							? 'bg-gold-500 text-charcoal-950'
-							: 'bg-charcoal-800 text-charcoal-100 hover:bg-charcoal-700'}"
-						aria-pressed={selectedCategory === category.name}
-						title={categoryDescriptions[category.name.toLowerCase()] || category.name}
-					>
-						{category.name}
-					</button>
+					/>
 				{/each}
 
 				<!-- Show More/Less -->

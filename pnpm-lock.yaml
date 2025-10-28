@@ -29,6 +29,9 @@ importers:
       lucide-svelte:
         specifier: ^0.546.0
         version: 0.546.0(svelte@5.41.0)
+      oauth-1.0a:
+        specifier: ^2.2.6
+        version: 2.2.6
       svelte-motion:
         specifier: ^0.12.2
         version: 0.12.2(svelte@5.41.0)
@@ -991,6 +994,9 @@ packages:
   normalize-range@0.1.2:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
+
+  oauth-1.0a@2.2.6:
+    resolution: {integrity: sha512-6bkxv3N4Gu5lty4viIcIAnq5GbxECviMBeKR3WX/q87SPQ8E8aursPZUtsXDnxCs787af09WPRBLqYrf/lwoYQ==}
 
   package-json-from-dist@1.0.1:
     resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
@@ -2005,6 +2011,8 @@ snapshots:
       abbrev: 3.0.1
 
   normalize-range@0.1.2: {}
+
+  oauth-1.0a@2.2.6: {}
 
   package-json-from-dist@1.0.1: {}
 

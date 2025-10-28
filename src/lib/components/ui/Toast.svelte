@@ -24,14 +24,14 @@
 	import { Motion } from 'svelte-motion';
 	import { MOTION } from '$lib/motion-tokens';
 	import { onMount } from 'svelte';
-	import type { ComponentType } from 'svelte';
+	import type { ComponentType, Snippet } from 'svelte';
 
 	interface Props {
 		variant?: 'success' | 'error' | 'info' | 'warning';
 		icon?: ComponentType;
 		duration?: number; // milliseconds, 0 = no auto-dismiss
 		onClose?: () => void;
-		children?: any;
+		children?: Snippet;
 	}
 
 	let { variant = 'info', icon, duration = 3000, onClose, children }: Props = $props();

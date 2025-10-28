@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Motion, AnimatePresence } from 'svelte-motion';
 	import {
 		X,
 		ChevronLeft,
@@ -10,7 +9,6 @@
 		Share2,
 		Sparkles
 	} from 'lucide-svelte';
-	import { MOTION } from '$lib/motion-tokens';
 	import { getEmotionColor } from '$lib/photo-utils';
 	import { swipe, type SwipeEvent, isTouchDevice } from '$lib/utils/gestures';
 	import Typography from '$lib/components/ui/Typography.svelte';
@@ -34,6 +32,12 @@
 		onClose,
 		onNavigate
 	}: Props = $props();
+
+	// Debug: Log when props change
+	$effect(() => {
+		console.log('[Lightbox $effect] Props changed: open=', open, 'photo=', photo?.id);
+		console.log('[Lightbox $effect] Condition check: open && photo =', open && photo);
+	});
 
 	let zoomLevel = $state(1);
 	let isDragging = $state(false);
@@ -68,7 +72,8 @@
 		onClose?.();
 	}
 
-	function handleNext() {
+	function handleNext(event?: MouseEvent) {
+		event?.stopPropagation();
 		if (canGoNext) {
 			zoomLevel = 1;
 			imagePosition = { x: 0, y: 0 };
@@ -76,7 +81,8 @@
 		}
 	}
 
-	function handlePrev() {
+	function handlePrev(event?: MouseEvent) {
+		event?.stopPropagation();
 		if (canGoPrev) {
 			zoomLevel = 1;
 			imagePosition = { x: 0, y: 0 };
@@ -84,11 +90,13 @@
 		}
 	}
 
-	function handleZoomIn() {
+	function handleZoomIn(event?: MouseEvent) {
+		event?.stopPropagation();
 		zoomLevel = Math.min(zoomLevel + 0.5, 3);
 	}
 
-	function handleZoomOut() {
+	function handleZoomOut(event?: MouseEvent) {
+		event?.stopPropagation();
 		zoomLevel = Math.max(zoomLevel - 0.5, 1);
 		if (zoomLevel === 1) {
 			imagePosition = { x: 0, y: 0 };
@@ -244,26 +252,22 @@
 	onmouseup={handleMouseUp}
 />
 
-<AnimatePresence>
-	{#if open && photo}
-		<!-- Backdrop -->
-		<Motion
-			let:motion
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			transition={MOTION.spring.gentle}
-		>
-			<div
-				use:motion
-				class="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center"
-				onclick={handleBackdropClick}
-				onkeydown={(e) => e.key === 'Enter' && handleBackdropClick(e as any)}
-				role="dialog"
-				aria-modal="true"
-				aria-label="Photo lightbox"
-				tabindex="0"
-			>
+{#if open && photo}
+	{#snippet renderLog()}
+		{@const __ = console.log('[Lightbox] Inside {#if open && photo} - RENDERING LIGHTBOX!')}
+	{/snippet}
+	{@render renderLog()}
+	<!-- Backdrop -->
+	<div
+		class="fixed inset-0 bg-black/95 flex items-center justify-center"
+		style="z-index: 9999;"
+		onclick={handleBackdropClick}
+		onkeydown={(e) => e.key === 'Enter' && handleBackdropClick(e as any)}
+		role="dialog"
+		aria-modal="true"
+		aria-label="Photo lightbox"
+		tabindex="0"
+	>
 				<!-- Top Controls -->
 				<div class="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/50 to-transparent">
 					<div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -322,34 +326,25 @@
 				</div>
 
 				<!-- Main Image Container -->
-				<Motion
-					let:motion
-					initial={{ opacity: 0, scale: 0.9 }}
-					animate={{ opacity: 1, scale: 1 }}
-					exit={{ opacity: 0, scale: 0.9 }}
-					transition={MOTION.spring.snappy}
+				<div
+					use:swipe={{ onSwipe: handleSwipe }}
+					class="relative w-full h-full flex items-center justify-center p-4 md:p-20"
+					onmousedown={handleMouseDown}
+					ontouchstart={handleTouchStart}
+					ontouchmove={handleTouchMove}
+					ontouchend={handleDoubleTap}
+					role="presentation"
+					style="cursor: {zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'}"
 				>
-					<div
-						use:motion
-						use:swipe={{ onSwipe: handleSwipe }}
-						class="relative w-full h-full flex items-center justify-center p-4 md:p-20"
-						onmousedown={handleMouseDown}
-						ontouchstart={handleTouchStart}
-						ontouchmove={handleTouchMove}
-						ontouchend={handleDoubleTap}
-						role="presentation"
-						style="cursor: {zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'}"
-					>
-						<img
-							src={photo.original_url || photo.image_url}
-							alt={photo.title || 'Photo'}
-							class="max-w-full max-h-full object-contain select-none transition-transform duration-200 touch-none"
-							style="transform: scale({zoomLevel}) translate({imagePosition.x /
-								zoomLevel}px, {imagePosition.y / zoomLevel}px)"
-							draggable="false"
-						/>
-					</div>
-				</Motion>
+					<img
+						src={photo.original_url || photo.image_url}
+						alt={photo.title || 'Photo'}
+						class="max-w-full max-h-full object-contain select-none transition-transform duration-200 touch-none"
+						style="transform: scale({zoomLevel}) translate({imagePosition.x /
+							zoomLevel}px, {imagePosition.y / zoomLevel}px)"
+						draggable="false"
+					/>
+				</div>
 
 				<!-- Navigation Arrows -->
 				{#if photos.length > 1}
@@ -433,6 +428,4 @@
 					</div>
 				</div>
 			</div>
-		</Motion>
 	{/if}
-</AnimatePresence>

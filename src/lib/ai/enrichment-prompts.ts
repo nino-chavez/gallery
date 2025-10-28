@@ -17,15 +17,35 @@ BE OBJECTIVE. BE CONCRETE. These fields will be exposed as user search filters.
 
 Required Fields:
 
-1. **play_type** (string): The specific volleyball action shown
-   Options: "attack", "block", "dig", "set", "serve", "celebration", "transition"
-   - "attack": Player hitting/spiking the ball
-   - "block": Player blocking at the net
+1. **play_type** (string | null): The specific sports action shown
+
+   VOLLEYBALL: "spike", "block", "dig", "set", "serve", "pass"
+   - "spike": Player attacking/hitting the ball over the net
+   - "block": Player jumping to block at the net
    - "dig": Defensive save, usually low to ground
    - "set": Setting the ball for an attack
    - "serve": Serving the ball
-   - "celebration": Team celebrating a point
-   - "transition": Movement between plays
+   - "pass": Passing/bumping the ball to teammate
+
+   BASKETBALL: "dunk", "layup", "jump_shot", "rebound", "block", "pass", "dribble"
+   - "dunk": Player dunking the ball
+   - "layup": Close-range shot at basket
+   - "jump_shot": Mid-range or three-point shot
+   - "rebound": Grabbing a missed shot
+   - "block": Blocking opponent's shot
+   - "pass": Passing to teammate
+   - "dribble": Ball handling/driving
+
+   SOCCER: "kick", "header", "tackle", "save", "dribble", "pass"
+   SOFTBALL/BASEBALL: "pitch", "hit", "catch", "throw", "slide", "run"
+   FOOTBALL: "throw", "catch", "run", "tackle", "block", "kick"
+   TRACK: "sprint", "hurdle", "relay", "jump", "throw"
+
+   CRITICAL RULES:
+   - Return NULL if photo_category is "candid", "portrait", "warmup", or "ceremony"
+   - ONLY "action" category photos should have a play_type value
+   - Choose the PRIMARY action if multiple actions visible
+   - Use underscores not hyphens (jump_shot NOT jump-shot)
 
 2. **action_intensity** (string): The intensity level of the action
    Options: "low", "medium", "high", "peak"
@@ -40,9 +60,19 @@ Required Fields:
 4. **photo_category** (string): The type of photo
    Options: "action", "celebration", "candid", "portrait", "warmup", "ceremony"
 
-5. **composition** (string): The composition pattern used
-   Options: "rule_of_thirds", "leading_lines", "framing", "symmetry", "depth", "negative_space"
-   - Look for subject placement, visual flow, framing elements
+5. **composition** (string): The PRIMARY composition pattern used (SINGLE VALUE ONLY)
+   Options: "rule_of_thirds", "leading_lines", "centered", "symmetry", "frame_within_frame"
+   - "rule_of_thirds": Subject positioned at intersection points of rule-of-thirds grid
+   - "leading_lines": Strong lines (court lines, net, body lines) leading to subject
+   - "centered": Subject positioned in center of frame
+   - "symmetry": Balanced, mirror-like composition
+   - "frame_within_frame": Subject framed by foreground elements (net, people, architecture)
+
+   CRITICAL RULES:
+   - Return ONLY ONE value (the most dominant composition pattern)
+   - Use UNDERSCORES not hyphens (rule_of_thirds NOT rule-of-thirds)
+   - NO multi-value strings (NO "close-up|dramatic-angle")
+   - If multiple patterns present, choose the PRIMARY one
 
 6. **time_of_day** (string): When the photo was taken (based on lighting)
    Options: "golden_hour", "midday", "evening", "blue_hour", "night", "dawn"
@@ -62,7 +92,7 @@ Required Fields:
    - "cool": Blue, teal, dawn tones
    - "neutral": Balanced, no strong color cast
 
-Return ONLY JSON in this exact format:
+Return ONLY JSON in this exact format (SINGLE composition value with underscores):
 {
   "play_type": "block",
   "action_intensity": "peak",

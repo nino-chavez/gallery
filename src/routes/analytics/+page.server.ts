@@ -14,7 +14,7 @@ export const load: PageServerLoad = async () => {
 
 	// Fetch full photo data for popular photos
 	const photoIds = popularPhotoIds.map((p) => p.photo_id);
-	let popularPhotos: any[] = [];
+	let popularPhotos: Array<{ photo_id: string; view_count: number; image_key: string; ImageUrl: string; ThumbnailUrl: string | null; photo_category: string }> = [];
 
 	if (photoIds.length > 0) {
 		const { data } = await supabaseServer

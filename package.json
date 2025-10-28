@@ -41,6 +41,7 @@
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
 		"lucide-svelte": "^0.546.0",
+		"oauth-1.0a": "^2.2.6",
 		"svelte-motion": "^0.12.2",
 		"tailwind-merge": "^3.3.1"
 	}

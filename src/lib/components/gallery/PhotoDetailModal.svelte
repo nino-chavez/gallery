@@ -44,7 +44,8 @@
 	// AI Insights collapsed by default (progressive disclosure)
 	let showAIInsights = $state(false);
 
-	function handleClose() {
+	function handleClose(event?: MouseEvent) {
+		event?.stopPropagation();
 		open = false;
 		onclose?.();
 	}
@@ -69,7 +70,8 @@
 		}
 	}
 
-	function toggleAIInsights() {
+	function toggleAIInsights(event?: MouseEvent) {
+		event?.stopPropagation();
 		showAIInsights = !showAIInsights;
 	}
 
