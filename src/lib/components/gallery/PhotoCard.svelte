@@ -43,9 +43,10 @@
 	let accessibleAltText = $derived(generatePhotoAltText(photo));
 
 	function handleClick(event: MouseEvent) {
-		// Backward compatibility: If onclick provided, use it (but prefer href navigation)
+		// If onclick callback provided, prevent default navigation and use callback instead
 		if (onclick) {
 			event.preventDefault();
+			event.stopPropagation();
 			onclick(photo);
 		}
 		// Otherwise, let the anchor tag navigate naturally to /photo/[id]
@@ -75,19 +76,37 @@
 		<FavoriteButton {photo} variant="icon-only" />
 	</div>
 
-	<!-- Title - Bottom (Hover Only) -->
-	{#if photo.title}
-		<div
-			class="absolute bottom-0 left-0 right-0 p-3
-			       bg-gradient-to-t from-black/80 via-black/40 to-transparent
-			       opacity-0 group-hover:opacity-100 group-focus-within:opacity-100
-			       transition-opacity"
-		>
-			<Typography variant="caption" class="font-medium text-white line-clamp-2">
-				{photo.title}
-			</Typography>
+	<!-- Metadata Overlay - Bottom (Hover Only) -->
+	<div
+		class="absolute bottom-0 left-0 right-0 p-3
+		       bg-gradient-to-t from-black/90 via-black/60 to-transparent
+		       opacity-0 group-hover:opacity-100 group-focus-within:opacity-100
+		       transition-opacity"
+	>
+		<!-- Key Metadata Tags (No Title/Photo ID - just useful filter info) -->
+		<div class="flex flex-wrap gap-1.5">
+			<!-- Sport Type -->
+			{#if photo.metadata?.sport_type}
+				<span class="text-xs px-1.5 py-0.5 rounded bg-gold-500/20 text-gold-300 font-medium">
+					{photo.metadata.sport_type}
+				</span>
+			{/if}
+
+			<!-- Category -->
+			{#if photo.metadata?.photo_category}
+				<span class="text-xs px-1.5 py-0.5 rounded bg-charcoal-700/80 text-charcoal-200">
+					{photo.metadata.photo_category}
+				</span>
+			{/if}
+
+			<!-- Action Intensity (if high/extreme) -->
+			{#if photo.metadata?.action_intensity === 'high' || photo.metadata?.action_intensity === 'extreme'}
+				<span class="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-300">
+					{photo.metadata.action_intensity}
+				</span>
+			{/if}
 		</div>
-	{/if}
+	</div>
 </a>
 
 <style>

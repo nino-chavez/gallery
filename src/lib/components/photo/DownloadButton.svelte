@@ -40,7 +40,8 @@
 		}
 	]);
 
-	async function handleDownload(url: string, filename: string) {
+	async function handleDownload(url: string, filename: string, event?: MouseEvent) {
+		event?.stopPropagation();
 		downloading = true;
 		downloadSuccess = false;
 
@@ -77,7 +78,8 @@
 		}
 	}
 
-	function toggleMenu() {
+	function toggleMenu(event: MouseEvent) {
+		event.stopPropagation();
 		showMenu = !showMenu;
 	}
 
@@ -150,7 +152,7 @@
 				<div class="py-2">
 					{#each downloadOptions as option}
 						<button
-							onclick={() => handleDownload(option.url, option.filename)}
+							onclick={(e) => handleDownload(option.url, option.filename, e)}
 							disabled={downloading}
 							class="w-full px-4 py-3 hover:bg-charcoal-800 transition-colors text-left group disabled:opacity-50 disabled:cursor-not-allowed"
 						>

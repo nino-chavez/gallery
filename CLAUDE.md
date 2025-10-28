@@ -318,14 +318,44 @@ npm run check:watch
 - Largest Contentful Paint: <2.5s
 - Image optimization: WebP/AVIF with Supabase transforms
 
+## Coding Standards & Best Practices
+
+**IMPORTANT:** This project has comprehensive coding standards documentation. Always follow these conventions:
+
+### Core Standards
+- **[docs/CODING_STANDARDS.md](./docs/CODING_STANDARDS.md)** - TypeScript, Svelte 5, styling, accessibility standards
+- **[docs/EVENT_HANDLING.md](./docs/EVENT_HANDLING.md)** - Event propagation patterns (critical for nested interactive elements)
+- **[docs/COMPONENT_PATTERNS.md](./docs/COMPONENT_PATTERNS.md)** - Reusable component patterns and templates
+
+### Key Conventions
+
+**Event Handling:**
+- Use `event.stopPropagation()` for nested interactive elements (buttons in cards, elements in modals)
+- Always type event parameters: `function handleClick(event: MouseEvent)`
+- Svelte 5 syntax: `onclick={handler}` not `on:click={handler}`
+
+**TypeScript:**
+- Strict mode enabled, no `any` types
+- Explicit types for all function parameters and return values
+- Use `interface` for object shapes, `type` for unions
+
+**Component Structure:**
+- Props interface at top of script block
+- Use Svelte 5 runes: `$state`, `$derived`, `$effect`, `$props`
+- Follow file organization pattern in CODING_STANDARDS.md
+
 ## Related Documentation
 
 - `.agent-os/README.md` - Agent-OS overview
 - `.agent-os/config.yml` - Workflow configuration
 - `AGENTS.md` - Agent-specific guidance and examples
 - `database/performance-indexes.sql` - Database optimization
+- `docs/CODING_STANDARDS.md` - TypeScript and Svelte conventions
+- `docs/EVENT_HANDLING.md` - Event propagation patterns
+- `docs/COMPONENT_PATTERNS.md` - Reusable component patterns
+- `docs/PERFORMANCE_OPTIMIZATIONS.md` - Performance best practices
 
 ---
 
-**Version:** 3.0.1
-**Last Updated:** 2025-10-26
+**Version:** 3.1.0
+**Last Updated:** 2025-10-27
