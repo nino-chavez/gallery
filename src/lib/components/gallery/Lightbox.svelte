@@ -12,6 +12,7 @@
 	} from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import { getEmotionColor } from '$lib/photo-utils';
+	import { swipe, type SwipeEvent, isTouchDevice } from '$lib/utils/gestures';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import DownloadButton from '$lib/components/photo/DownloadButton.svelte';
 	import type { Photo } from '$types/photo';
@@ -39,9 +40,20 @@
 	let dragStart = $state({ x: 0, y: 0 });
 	let imagePosition = $state({ x: 0, y: 0 });
 
+	// Touch gesture state
+	let isTouch = $state(false);
+	let initialDistance = $state(0);
+	let initialScale = $state(1);
+	let lastTapTime = $state(0);
+
 	// Navigation availability
 	const canGoNext = $derived(photos.length > 0 && currentIndex < photos.length - 1);
 	const canGoPrev = $derived(photos.length > 0 && currentIndex > 0);
+
+	// Detect touch device
+	$effect(() => {
+		isTouch = isTouchDevice();
+	});
 
 	// "Find Similar" functionality
 	const emotionColor = $derived(photo ? getEmotionColor(photo.metadata.emotion) : null);
@@ -81,6 +93,84 @@
 		if (zoomLevel === 1) {
 			imagePosition = { x: 0, y: 0 };
 		}
+	}
+
+	// Touch gesture handlers
+	function handleSwipe(event: SwipeEvent) {
+		// Only allow navigation when not zoomed
+		if (zoomLevel === 1) {
+			if (event.direction === 'left' && canGoNext) {
+				handleNext();
+			} else if (event.direction === 'right' && canGoPrev) {
+				handlePrev();
+			} else if (event.direction === 'down' && Math.abs(event.distance) > 100) {
+				// Pull down to close
+				handleClose();
+			}
+		}
+	}
+
+	function handleDoubleTap(e: TouchEvent) {
+		const now = Date.now();
+		const timeSinceLastTap = now - lastTapTime;
+
+		if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
+			// Double tap detected - toggle zoom
+			if (zoomLevel === 1) {
+				zoomLevel = 2.5;
+				// Center on tap point
+				const touch = e.touches?.[0] || e.changedTouches?.[0];
+				if (touch) {
+					const target = e.currentTarget as HTMLElement;
+					const rect = target.getBoundingClientRect();
+					const x = touch.clientX - rect.left;
+					const y = touch.clientY - rect.top;
+					const centerX = rect.width / 2;
+					const centerY = rect.height / 2;
+
+					imagePosition = {
+						x: -(x - centerX) * 1.5,
+						y: -(y - centerY) * 1.5
+					};
+				}
+			} else {
+				// Reset zoom
+				zoomLevel = 1;
+				imagePosition = { x: 0, y: 0 };
+			}
+		}
+
+		lastTapTime = now;
+	}
+
+	function handleTouchStart(e: TouchEvent) {
+		if (e.touches.length === 2) {
+			// Pinch gesture starting
+			const touch1 = e.touches[0];
+			const touch2 = e.touches[1];
+			initialDistance = getDistance(touch1, touch2);
+			initialScale = zoomLevel;
+		}
+	}
+
+	function handleTouchMove(e: TouchEvent) {
+		if (e.touches.length === 2) {
+			e.preventDefault();
+			const touch1 = e.touches[0];
+			const touch2 = e.touches[1];
+			const currentDistance = getDistance(touch1, touch2);
+
+			if (initialDistance > 0) {
+				const newScale = initialScale * (currentDistance / initialDistance);
+				zoomLevel = Math.max(1, Math.min(4, newScale)); // Limit 1x-4x
+			}
+		}
+	}
+
+	function getDistance(touch1: Touch, touch2: Touch): number {
+		const dx = touch2.clientX - touch1.clientX;
+		const dy = touch2.clientY - touch1.clientY;
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
@@ -241,15 +331,19 @@
 				>
 					<div
 						use:motion
-						class="relative w-full h-full flex items-center justify-center p-20"
+						use:swipe={{ onSwipe: handleSwipe }}
+						class="relative w-full h-full flex items-center justify-center p-4 md:p-20"
 						onmousedown={handleMouseDown}
+						ontouchstart={handleTouchStart}
+						ontouchmove={handleTouchMove}
+						ontouchend={handleDoubleTap}
 						role="presentation"
 						style="cursor: {zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'}"
 					>
 						<img
 							src={photo.original_url || photo.image_url}
 							alt={photo.title || 'Photo'}
-							class="max-w-full max-h-full object-contain select-none transition-transform duration-200"
+							class="max-w-full max-h-full object-contain select-none transition-transform duration-200 touch-none"
 							style="transform: scale({zoomLevel}) translate({imagePosition.x /
 								zoomLevel}px, {imagePosition.y / zoomLevel}px)"
 							draggable="false"
@@ -322,10 +416,20 @@
 							{/if}
 						</div>
 
-						<!-- Keyboard Shortcuts Hint -->
-						<Typography variant="caption" class="text-white/40">
-							Use arrow keys to navigate • +/- to zoom • ESC to close
-						</Typography>
+						<!-- Mobile/Desktop Hints -->
+						{#if isTouch}
+							<Typography variant="caption" class="text-white/40 text-xs">
+								{#if zoomLevel > 1}
+									Pinch to zoom • Double-tap to reset
+								{:else}
+									Swipe to navigate • Double-tap to zoom • Swipe down to close
+								{/if}
+							</Typography>
+						{:else}
+							<Typography variant="caption" class="text-white/40">
+								Use arrow keys to navigate • +/- to zoom • ESC to close
+							</Typography>
+						{/if}
 					</div>
 				</div>
 			</div>
