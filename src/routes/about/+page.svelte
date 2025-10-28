@@ -250,7 +250,7 @@
 						<Motion let:motion whileHover={{ scale: 1.05 }} transition={MOTION.spring.snappy}>
 							<a
 								use:motion
-								href="https://instagram.com/ninochavez.photo"
+								href="https://www.instagram.com/nino.chavez.photo"
 								target="_blank"
 								rel="noopener noreferrer"
 								class="p-3 rounded-lg bg-charcoal-800 hover:bg-gold-500/10 border border-charcoal-700 hover:border-gold-500/50 transition-colors"

@@ -646,3 +646,128 @@ export async function getCategoryDistribution(): Promise<Array<{ name: string; c
     }
   }
 }
+
+export async function fetchPhotosByPeriod(options: {
+  page?: number;
+  limit?: number;
+  includeFeatured?: boolean;
+}) {
+  const { page = 1, limit = 12, includeFeatured = false } = options;
+  const offset = (page - 1) * limit;
+
+  // First, get the periods with photo counts using raw SQL
+  const { data: periods, error: periodsError } = await supabaseServer
+    .rpc('get_photo_periods', {
+      p_limit: limit,
+      p_offset: offset
+    });
+
+  if (periodsError) {
+    console.error('[Supabase] Error fetching periods:', periodsError);
+    // Fallback to a simpler query if RPC doesn't exist
+    const { data: fallbackPeriods, error: fallbackError } = await supabaseServer
+      .from('photo_metadata')
+      .select('upload_date')
+      .not('sharpness', 'is', null)
+      .order('upload_date', { ascending: false })
+      .range(offset * 10, (offset + limit) * 10); // Rough estimate
+
+    if (fallbackError) {
+      console.error('[Supabase] Fallback query also failed:', fallbackError);
+      throw fallbackError;
+    }
+
+    // Group by year/month manually
+    const periodMap = new Map<string, { year: number; month: number; count: number }>();
+    fallbackPeriods?.forEach((photo: any) => {
+      const date = new Date(photo.upload_date);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const key = `${year}-${month}`;
+
+      if (periodMap.has(key)) {
+        periodMap.get(key)!.count++;
+      } else {
+        periodMap.set(key, { year, month, count: 1 });
+      }
+    });
+
+    const periods = Array.from(periodMap.values())
+      .sort((a, b) => b.year - a.year || b.month - a.month)
+      .slice(0, limit);
+
+    // If we need featured photos, fetch them for each period
+    if (includeFeatured && periods) {
+      const periodsWithPhotos = await Promise.all(
+        periods.map(async (period) => {
+          const startDate = new Date(period.year, period.month - 1, 1);
+          const endDate = new Date(period.year, period.month, 1);
+
+          const { data: photos } = await supabaseServer
+            .from('photo_metadata')
+            .select('photo_id, ImageUrl, ThumbnailUrl, caption, sport_type, quality_score')
+            .gte('upload_date', startDate.toISOString())
+            .lt('upload_date', endDate.toISOString())
+            .not('sharpness', 'is', null)
+            .order('quality_score', { ascending: false })
+            .limit(6); // Top 6 photos per period
+
+          return {
+            year: period.year,
+            month: period.month,
+            monthName: new Date(period.year, period.month - 1).toLocaleString('default', { month: 'long' }),
+            photoCount: period.count,
+            featuredPhotos: photos || []
+          };
+        })
+      );
+
+      return periodsWithPhotos;
+    }
+
+    // Return just periods without photos
+    return periods.map(period => ({
+      year: period.year,
+      month: period.month,
+      monthName: new Date(period.year, period.month - 1).toLocaleString('default', { month: 'long' }),
+      photoCount: period.count
+    }));
+  }
+
+  // If we need featured photos, fetch them for each period
+  if (includeFeatured && periods) {
+    const periodsWithPhotos = await Promise.all(
+      periods.map(async (period: any) => {
+        const startDate = new Date(period.year, period.month - 1, 1);
+        const endDate = new Date(period.year, period.month, 1);
+
+        const { data: photos } = await supabaseServer
+          .from('photo_metadata')
+          .select('photo_id, ImageUrl, ThumbnailUrl, caption, sport_type, quality_score')
+          .gte('upload_date', startDate.toISOString())
+          .lt('upload_date', endDate.toISOString())
+          .not('sharpness', 'is', null)
+          .order('quality_score', { ascending: false })
+          .limit(6); // Top 6 photos per period
+
+        return {
+          year: period.year,
+          month: period.month,
+          monthName: new Date(period.year, period.month - 1).toLocaleString('default', { month: 'long' }),
+          photoCount: period.photo_count,
+          featuredPhotos: photos || []
+        };
+      })
+    );
+
+    return periodsWithPhotos;
+  }
+
+  // Return just periods without photos
+  return periods.map((period: any) => ({
+    year: period.year,
+    month: period.month,
+    monthName: new Date(period.year, period.month - 1).toLocaleString('default', { month: 'long' }),
+    photoCount: period.photo_count
+  }));
+}

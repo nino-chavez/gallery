@@ -26,7 +26,7 @@
 	const socialLinks: SocialLink[] = [
 		{
 			label: 'Instagram',
-			href: 'https://instagram.com/ninochavez.photo',
+			href: 'https://www.instagram.com/nino.chavez.photo',
 			icon: Instagram,
 		},
 		{
