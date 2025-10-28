@@ -20,10 +20,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 		.single();
 
 	if (photoError || !photoData) {
-		throw error(404, {
-			message: 'Photo not found',
-			details: `No photo found with ID: ${params.id}`
-		});
+		throw error(404, `Photo not found: ${params.id}`);
 	}
 
 	// Transform flat Supabase data to nested Photo type (two-bucket model)

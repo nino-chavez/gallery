@@ -167,6 +167,24 @@
 											metadata: {
 												sport_type: photo.sport_type,
 												photo_category: photo.photo_category,
+												play_type: null,
+												action_intensity: 'medium',
+												composition: undefined,
+												time_of_day: undefined,
+												lighting: undefined,
+												color_temperature: undefined,
+												emotion: 'focus',
+												sharpness: 0,
+												composition_score: 0,
+												exposure_accuracy: 0,
+												emotional_impact: 0,
+												time_in_game: undefined,
+												athlete_id: undefined,
+												event_id: undefined,
+												ai_provider: 'openai',
+												ai_cost: 0,
+												ai_confidence: 0,
+												enriched_at: ''
 											},
 										}}
 										{index}

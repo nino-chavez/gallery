@@ -3,12 +3,14 @@
  *
  * Tracks photo views, search queries, and popular photos
  * For privacy: tracks aggregate data, no individual user tracking
+ *
+ * FIXED: Changed photo_id from UUID to TEXT to match photo_metadata schema
  */
 
 -- Photo Views Table
 CREATE TABLE IF NOT EXISTS photo_views (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  photo_id UUID NOT NULL REFERENCES photo_metadata(photo_id) ON DELETE CASCADE,
+  photo_id TEXT NOT NULL REFERENCES photo_metadata(photo_id) ON DELETE CASCADE,
   viewed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   view_source TEXT, -- 'explore', 'collection', 'album', 'direct', 'search'
   referrer TEXT -- optional: collection slug, album key, or search query

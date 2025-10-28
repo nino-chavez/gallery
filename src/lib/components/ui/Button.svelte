@@ -12,7 +12,7 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 
-	type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+	type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
 	type ButtonSize = 'sm' | 'md' | 'lg';
 
 	interface Props extends HTMLAttributes<HTMLButtonElement> {
@@ -44,6 +44,8 @@
 			'bg-charcoal-800 hover:bg-charcoal-700 text-white border border-charcoal-700 disabled:bg-charcoal-800/50 disabled:cursor-not-allowed',
 		ghost:
 			'bg-transparent hover:bg-charcoal-800 text-charcoal-300 hover:text-white disabled:text-charcoal-400 disabled:cursor-not-allowed',
+		outline:
+			'bg-transparent border-2 border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-charcoal-950 font-medium disabled:border-gold-500/50 disabled:text-gold-500/50 disabled:cursor-not-allowed',
 	};
 
 	// Size styles

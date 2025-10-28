@@ -12,7 +12,7 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 
-	type TypographyVariant = 'h1' | 'h2' | 'h3' | 'body' | 'caption' | 'label';
+	type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'body' | 'caption' | 'label';
 
 	interface Props extends HTMLAttributes<HTMLElement> {
 		variant?: TypographyVariant;
@@ -28,6 +28,7 @@
 		h1: 'h1',
 		h2: 'h2',
 		h3: 'h3',
+		h4: 'h4',
 		body: 'p',
 		caption: 'span',
 		label: 'label',
@@ -38,6 +39,7 @@
 		h1: 'text-5xl font-bold text-white leading-tight tracking-tight',
 		h2: 'text-2xl font-semibold text-white leading-tight',
 		h3: 'text-xl font-semibold text-white',
+		h4: 'text-lg font-semibold text-white',
 		body: 'text-base text-charcoal-200 leading-relaxed',
 		caption: 'text-sm text-charcoal-400',
 		label: 'text-sm font-medium text-charcoal-300',
