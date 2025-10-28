@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { Motion } from 'svelte-motion';
 	import { ArrowLeft, Award, Sparkles } from 'lucide-svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
+	import Pagination from '$lib/components/ui/Pagination.svelte';
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
 
@@ -23,11 +26,20 @@
 	// Determine if this is Portfolio Excellence for special styling
 	let isPortfolio = $derived(data.collection.slug === 'portfolio-excellence');
 
+	// Pagination handler
+	function handlePageChange(newPage: number) {
+		const url = new URL($page.url);
+		url.searchParams.set('page', newPage.toString());
+		goto(url.toString(), { keepFocus: true });
+	}
+
 	// $effect for side effects
 	$effect(() => {
 		console.log('[Collection Detail] Loaded:', {
 			collection: data.collection.title,
 			photoCount: data.photos.length,
+			currentPage: data.currentPage,
+			totalCount: data.totalCount,
 		});
 	});
 </script>
@@ -112,6 +124,25 @@
 					<Typography variant="body" class="text-charcoal-400 text-sm">
 						Photos will appear once they match this collection's criteria
 					</Typography>
+				</div>
+			</Motion>
+		{/if}
+
+		<!-- Pagination -->
+		{#if data.totalCount > data.pageSize}
+			<Motion
+				let:motion
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ ...MOTION.spring.gentle, delay: 0.3 }}
+			>
+				<div use:motion class="mt-8">
+					<Pagination
+						currentPage={data.currentPage}
+						totalCount={data.totalCount}
+						pageSize={data.pageSize}
+						onPageChange={handlePageChange}
+					/>
 				</div>
 			</Motion>
 		{/if}

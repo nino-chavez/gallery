@@ -7,10 +7,11 @@
 
 import { error } from '@sveltejs/kit';
 import { supabaseServer } from '$lib/supabase/server';
+import { trackPhotoView } from '$lib/analytics/tracker';
 import type { PageServerLoad } from './$types';
 import type { Photo } from '$types/photo';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, url }) => {
 	// Fetch photo from Supabase using image_key
 	const { data: photoData, error: photoError } = await supabaseServer
 		.from('photo_metadata')
@@ -84,6 +85,34 @@ export const load: PageServerLoad = async ({ params }) => {
 		.select('*')
 		.eq('photo_id', photoData.photo_id)
 		.eq('approved', true);
+
+	// Track photo view (NEW - Analytics)
+	// Determine view source from referrer
+	const referrer = url.searchParams.get('ref') || url.searchParams.get('from');
+	let viewSource: 'explore' | 'collection' | 'album' | 'direct' | 'search' | 'timeline' | 'favorites' = 'direct';
+
+	if (referrer) {
+		if (referrer.startsWith('collection-')) {
+			viewSource = 'collection';
+		} else if (referrer.startsWith('album-')) {
+			viewSource = 'album';
+		} else if (referrer === 'explore') {
+			viewSource = 'explore';
+		} else if (referrer === 'search') {
+			viewSource = 'search';
+		} else if (referrer === 'timeline') {
+			viewSource = 'timeline';
+		} else if (referrer === 'favorites') {
+			viewSource = 'favorites';
+		}
+	}
+
+	// Track asynchronously (don't wait)
+	trackPhotoView({
+		photo_id: photoData.photo_id,
+		view_source: viewSource,
+		referrer: referrer || undefined,
+	});
 
 	return {
 		photo,

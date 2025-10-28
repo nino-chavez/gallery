@@ -48,9 +48,33 @@ const COLLECTIONS = [
 		narrative: 'Pure joy and shared triumph',
 		description: 'The moments after victory—unfiltered emotion, team unity, and the sweet taste of success. These photos capture the human side of sports: the joy, the relief, the celebration.',
 	},
+	{
+		slug: 'aerial-artistry',
+		title: 'Aerial Artistry',
+		narrative: 'Defying gravity with grace and power',
+		description: 'Athletes suspended in air, captured at the peak of their flight. These photos showcase the beauty of vertical movement—blocks, spikes, jumps—frozen in time with exceptional composition and sharpness.',
+	},
+	{
+		slug: 'early-game-energy',
+		title: 'Early Game Energy',
+		narrative: 'The fresh intensity of first contact',
+		description: 'Opening moments when teams are at their sharpest. These photos capture the explosive energy and focus of the first 10 minutes—when strategy meets execution and every play matters.',
+	},
+	{
+		slug: 'defensive-masterclass',
+		title: 'Defensive Masterclass',
+		narrative: 'The art of reading, reacting, and rescuing',
+		description: 'Digs, blocks, and defensive saves that change momentum. These photos celebrate the unsung heroes—defenders who turn impossible plays into highlights through anticipation and athleticism.',
+	},
+	{
+		slug: 'sunset-sessions',
+		title: 'Sunset Sessions',
+		narrative: 'Evening light transforms competition into cinema',
+		description: 'The drama of evening competition bathed in warm light. These photos capture the intersection of athletic performance and natural beauty as daylight fades into dusk.',
+	},
 ];
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, url }) => {
 	const { slug } = params;
 
 	// Find collection definition
@@ -59,98 +83,182 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(404, 'Collection not found');
 	}
 
+	// Pagination params
+	const page = parseInt(url.searchParams.get('page') || '1');
+	const pageSize = 24;
+	const offset = (page - 1) * pageSize;
+
 	// Fetch photos based on collection type (HYBRID: Story + Quality)
 	let photos: Photo[] = [];
+	let totalCount = 0;
 
 	if (slug === 'portfolio-excellence') {
 		// Triple-excellent: 9/10+ on all quality metrics
-		const { data } = await supabaseServer
+		const query = supabaseServer
 			.from('photo_metadata')
-			.select('*')
+			.select('*', { count: 'exact' })
 			.gte('sharpness', 9)
 			.gte('composition_score', 9)
 			.gte('emotional_impact', 9)
 			.not('sharpness', 'is', null)
-			.order('sharpness', { ascending: false })
-			.limit(48); // Show more of the best
+			.order('sharpness', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
 		photos = (data || []) as Photo[];
+		totalCount = count || 0;
 	} else if (slug === 'comeback-stories') {
 		// HYBRID: Story (triumph + final minutes) + Quality floor (7/10)
-		const { data } = await supabaseServer
+		const query = supabaseServer
 			.from('photo_metadata')
-			.select('*')
+			.select('*', { count: 'exact' })
 			.eq('emotion', 'triumph')
 			.eq('time_in_game', 'final_5_min')
 			.gte('emotional_impact', 7)
 			.gte('sharpness', 7)
 			.gte('composition_score', 7)
 			.not('sharpness', 'is', null)
-			.order('emotional_impact', { ascending: false })
-			.limit(24);
+			.order('emotional_impact', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
 		photos = (data || []) as Photo[];
+		totalCount = count || 0;
 	} else if (slug === 'peak-intensity') {
 		// HYBRID: Story (peak action) + Quality floor (7/10)
-		const { data } = await supabaseServer
+		const query = supabaseServer
 			.from('photo_metadata')
-			.select('*')
+			.select('*', { count: 'exact' })
 			.eq('action_intensity', 'peak')
 			.gte('emotional_impact', 8)
 			.gte('sharpness', 7)
 			.gte('composition_score', 7)
 			.not('sharpness', 'is', null)
-			.order('emotional_impact', { ascending: false })
-			.limit(24);
+			.order('emotional_impact', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
 		photos = (data || []) as Photo[];
+		totalCount = count || 0;
 	} else if (slug === 'golden-hour-magic') {
-		const { data } = await supabaseServer
+		const query = supabaseServer
 			.from('photo_metadata')
-			.select('*')
+			.select('*', { count: 'exact' })
 			.eq('time_of_day', 'golden_hour')
 			.gte('composition_score', 7)
 			.gte('sharpness', 7)
 			.not('sharpness', 'is', null)
-			.order('composition_score', { ascending: false })
-			.limit(24);
+			.order('composition_score', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
 		photos = (data || []) as Photo[];
+		totalCount = count || 0;
 	} else if (slug === 'focus-and-determination') {
 		// HYBRID: Story (determination) + Higher quality floor (8/10 sharpness, 7/10 others)
-		const { data } = await supabaseServer
+		const query = supabaseServer
 			.from('photo_metadata')
-			.select('*')
+			.select('*', { count: 'exact' })
 			.eq('emotion', 'determination')
 			.gte('sharpness', 8)
 			.gte('composition_score', 7)
 			.gte('emotional_impact', 7)
 			.not('sharpness', 'is', null)
-			.order('sharpness', { ascending: false })
-			.limit(24);
+			.order('sharpness', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
 		photos = (data || []) as Photo[];
+		totalCount = count || 0;
 	} else if (slug === 'victory-celebrations') {
 		// HYBRID: Story (celebrations) + Quality floor (7/10)
-		const { data } = await supabaseServer
+		const query = supabaseServer
 			.from('photo_metadata')
-			.select('*')
+			.select('*', { count: 'exact' })
 			.eq('photo_category', 'celebration')
 			.gte('emotional_impact', 7)
 			.gte('sharpness', 7)
 			.gte('composition_score', 7)
 			.not('sharpness', 'is', null)
-			.order('emotional_impact', { ascending: false })
-			.limit(24);
+			.order('emotional_impact', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
 		photos = (data || []) as Photo[];
+		totalCount = count || 0;
+	} else if (slug === 'aerial-artistry') {
+		// HYBRID: Story (attack/block actions) + High quality (8/10+)
+		const query = supabaseServer
+			.from('photo_metadata')
+			.select('*', { count: 'exact' })
+			.in('play_type', ['attack', 'block'])
+			.gte('sharpness', 8)
+			.gte('composition_score', 8)
+			.not('sharpness', 'is', null)
+			.order('composition_score', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
+
+		photos = (data || []) as Photo[];
+		totalCount = count || 0;
+	} else if (slug === 'early-game-energy') {
+		// HYBRID: Story (first_10_min) + Quality floor (7/10)
+		const query = supabaseServer
+			.from('photo_metadata')
+			.select('*', { count: 'exact' })
+			.eq('time_in_game', 'first_10_min')
+			.gte('sharpness', 7)
+			.gte('emotional_impact', 7)
+			.gte('composition_score', 7)
+			.not('sharpness', 'is', null)
+			.order('emotional_impact', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
+
+		photos = (data || []) as Photo[];
+		totalCount = count || 0;
+	} else if (slug === 'defensive-masterclass') {
+		// HYBRID: Story (dig/block plays) + Quality floor (7/10)
+		const query = supabaseServer
+			.from('photo_metadata')
+			.select('*', { count: 'exact' })
+			.in('play_type', ['dig', 'block'])
+			.gte('sharpness', 7)
+			.gte('emotional_impact', 7)
+			.gte('composition_score', 7)
+			.not('sharpness', 'is', null)
+			.order('sharpness', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
+
+		photos = (data || []) as Photo[];
+		totalCount = count || 0;
+	} else if (slug === 'sunset-sessions') {
+		// HYBRID: Story (evening time) + Quality floor (7/10)
+		const query = supabaseServer
+			.from('photo_metadata')
+			.select('*', { count: 'exact' })
+			.eq('time_of_day', 'evening')
+			.gte('composition_score', 7)
+			.gte('sharpness', 7)
+			.not('sharpness', 'is', null)
+			.order('composition_score', { ascending: false });
+
+		const { data, count } = await query.range(offset, offset + pageSize - 1);
+
+		photos = (data || []) as Photo[];
+		totalCount = count || 0;
 	}
 
 	return {
 		collection: {
 			...collectionDef,
-			photoCount: photos.length,
+			photoCount: totalCount,
 		},
 		photos,
+		totalCount,
+		currentPage: page,
+		pageSize,
+		hasMore: totalCount > page * pageSize,
 	};
 };

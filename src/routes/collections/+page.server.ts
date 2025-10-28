@@ -59,6 +59,34 @@ const COLLECTIONS = [
 		description: 'The moments after victory—unfiltered emotion, team unity, and the sweet taste of success. These photos capture the human side of sports: the joy, the relief, the celebration.',
 		coverPhotoIndex: 0,
 	},
+	{
+		slug: 'aerial-artistry',
+		title: 'Aerial Artistry',
+		narrative: 'Defying gravity with grace and power',
+		description: 'Athletes suspended in air, captured at the peak of their flight. These photos showcase the beauty of vertical movement—blocks, spikes, jumps—frozen in time with exceptional composition and sharpness.',
+		coverPhotoIndex: 0,
+	},
+	{
+		slug: 'early-game-energy',
+		title: 'Early Game Energy',
+		narrative: 'The fresh intensity of first contact',
+		description: 'Opening moments when teams are at their sharpest. These photos capture the explosive energy and focus of the first 10 minutes—when strategy meets execution and every play matters.',
+		coverPhotoIndex: 0,
+	},
+	{
+		slug: 'defensive-masterclass',
+		title: 'Defensive Masterclass',
+		narrative: 'The art of reading, reacting, and rescuing',
+		description: 'Digs, blocks, and defensive saves that change momentum. These photos celebrate the unsung heroes—defenders who turn impossible plays into highlights through anticipation and athleticism.',
+		coverPhotoIndex: 0,
+	},
+	{
+		slug: 'sunset-sessions',
+		title: 'Sunset Sessions',
+		narrative: 'Evening light transforms competition into cinema',
+		description: 'The drama of evening competition bathed in warm light. These photos capture the intersection of athletic performance and natural beauty as daylight fades into dusk.',
+		coverPhotoIndex: 0,
+	},
 ];
 
 interface CollectionWithPhotos {
@@ -163,6 +191,64 @@ export const load: PageServerLoad = async () => {
 				.gte('composition_score', 7)
 				.not('sharpness', 'is', null)
 				.order('emotional_impact', { ascending: false })
+				.limit(1);
+
+			photoCount = count || 0;
+			coverPhoto = data?.[0] || null;
+		} else if (collection.slug === 'aerial-artistry') {
+			// HYBRID: Story (attack/block actions) + High quality (8/10+)
+			const { data, count } = await supabaseServer
+				.from('photo_metadata')
+				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+				.in('play_type', ['attack', 'block'])
+				.gte('sharpness', 8)
+				.gte('composition_score', 8)
+				.not('sharpness', 'is', null)
+				.order('composition_score', { ascending: false })
+				.limit(1);
+
+			photoCount = count || 0;
+			coverPhoto = data?.[0] || null;
+		} else if (collection.slug === 'early-game-energy') {
+			// HYBRID: Story (first_10_min) + Quality floor (7/10)
+			const { data, count } = await supabaseServer
+				.from('photo_metadata')
+				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+				.eq('time_in_game', 'first_10_min')
+				.gte('sharpness', 7)
+				.gte('emotional_impact', 7)
+				.gte('composition_score', 7)
+				.not('sharpness', 'is', null)
+				.order('emotional_impact', { ascending: false })
+				.limit(1);
+
+			photoCount = count || 0;
+			coverPhoto = data?.[0] || null;
+		} else if (collection.slug === 'defensive-masterclass') {
+			// HYBRID: Story (dig/block plays) + Quality floor (7/10)
+			const { data, count } = await supabaseServer
+				.from('photo_metadata')
+				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+				.in('play_type', ['dig', 'block'])
+				.gte('sharpness', 7)
+				.gte('emotional_impact', 7)
+				.gte('composition_score', 7)
+				.not('sharpness', 'is', null)
+				.order('sharpness', { ascending: false })
+				.limit(1);
+
+			photoCount = count || 0;
+			coverPhoto = data?.[0] || null;
+		} else if (collection.slug === 'sunset-sessions') {
+			// HYBRID: Story (evening time) + Quality floor (7/10)
+			const { data, count} = await supabaseServer
+				.from('photo_metadata')
+				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+				.eq('time_of_day', 'evening')
+				.gte('composition_score', 7)
+				.gte('sharpness', 7)
+				.not('sharpness', 'is', null)
+				.order('composition_score', { ascending: false })
 				.limit(1);
 
 			photoCount = count || 0;
