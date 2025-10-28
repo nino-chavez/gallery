@@ -9,16 +9,9 @@
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import Lightbox from '$lib/components/gallery/Lightbox.svelte';
 	import VisualDataLegend from '$lib/components/ui/VisualDataLegend.svelte';
-	import SportFilter from '$lib/components/filters/SportFilter.svelte';
-	import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte';
-	import PlayTypeFilter from '$lib/components/filters/PlayTypeFilter.svelte';
-	import ActionIntensityFilter from '$lib/components/filters/ActionIntensityFilter.svelte';
-	import LightingFilter from '$lib/components/filters/LightingFilter.svelte';
-	import ColorTemperatureFilter from '$lib/components/filters/ColorTemperatureFilter.svelte';
-	import TimeOfDayFilter from '$lib/components/filters/TimeOfDayFilter.svelte';
-	import CompositionFilter from '$lib/components/filters/CompositionFilter.svelte';
 	import SearchAutocomplete from '$lib/components/search/SearchAutocomplete.svelte';
 	import FilterChip from '$lib/components/filters/FilterChip.svelte';
+	import ConsolidatedFilter from '$lib/components/filters/ConsolidatedFilter.svelte';
 	import Toast from '$lib/components/ui/Toast.svelte';
 	import { parseQuery, describeFilters } from '$lib/utils/nlp-query-parser';
 	import {
@@ -504,81 +497,30 @@
 			</div>
 		{/if}
 
-		<!-- Quick Filters (Sport/Category Pills) -->
-		<div class="flex flex-wrap items-center gap-2">
-			{#if data.sports && data.sports.length > 0}
-				<SportFilter
-					sports={data.sports}
-					selectedSport={data.selectedSport}
-					onSelect={handleSportSelect}
-					filterCounts={data.filterCounts?.sports}
-				/>
-			{/if}
-
-			{#if data.categories && data.categories.length > 0}
-				<CategoryFilter
-					categories={data.categories}
-					selectedCategory={data.selectedCategory}
-					onSelect={handleCategorySelect}
-					filterCounts={data.filterCounts?.categories}
-				/>
-			{/if}
-		</div>
-
-		<!-- Advanced Filters Toggle Button (All Breakpoints) -->
-		<button
-			onclick={() => (mobileFiltersOpen = !mobileFiltersOpen)}
-			class="mt-3 w-full flex items-center justify-between px-4 py-3 bg-charcoal-900 hover:bg-charcoal-800 rounded-lg border border-charcoal-800/50 transition-colors"
-		>
-			<div class="flex items-center gap-2">
-				<SlidersHorizontal class="w-4 h-4 text-charcoal-400" />
-				<Typography variant="label" class="text-charcoal-200">Advanced Filters</Typography>
-				{#if activeFilterCount > 0}
-					<span class="px-2 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs">
-						{activeFilterCount}
-					</span>
-				{/if}
-			</div>
-			<ChevronDown
-				class="w-4 h-4 text-charcoal-400 transition-transform duration-200 {mobileFiltersOpen
-					? 'rotate-180'
-					: ''}"
-			/>
-		</button>
-
-		<!-- Bucket 1 Filters (Collapsible on All Breakpoints) -->
-		<div class="mt-4 space-y-2 {mobileFiltersOpen ? '' : 'hidden'}">
-			<PlayTypeFilter
-				selectedPlayType={data.selectedPlayType}
+		<!-- Consolidated Filters (Reduces component count from 8 to 2) -->
+		{#if data.sports && data.sports.length > 0 && data.categories && data.categories.length > 0}
+			<ConsolidatedFilter
+				sports={data.sports}
+				categories={data.categories}
 				selectedSport={data.selectedSport}
-				onSelect={handlePlayTypeSelect}
-			/>
-
-			<ActionIntensityFilter
+				selectedCategory={data.selectedCategory}
+				selectedPlayType={data.selectedPlayType}
 				selectedIntensity={data.selectedIntensity}
-				onSelect={handleIntensitySelect}
-			/>
-
-			<LightingFilter
 				selectedLighting={data.selectedLighting}
-				onSelect={handleLightingSelect}
+				selectedColorTemp={data.selectedColorTemp}
+				selectedTimeOfDay={data.selectedTimeOfDay}
+				selectedComposition={data.selectedComposition}
+				onSportSelect={handleSportSelect}
+				onCategorySelect={handleCategorySelect}
+				onPlayTypeSelect={handlePlayTypeSelect}
+				onIntensitySelect={handleIntensitySelect}
+				onLightingSelect={handleLightingSelect}
+				onColorTempSelect={handleColorTempSelect}
+				onTimeOfDaySelect={handleTimeOfDaySelect}
+				onCompositionSelect={handleCompositionSelect}
+				filterCounts={data.filterCounts}
 			/>
-
-			<ColorTemperatureFilter
-				selectedTemp={data.selectedColorTemp}
-				onSelect={handleColorTempSelect}
-			/>
-
-			<TimeOfDayFilter
-				selectedTime={data.selectedTimeOfDay}
-				onSelect={handleTimeOfDaySelect}
-			/>
-
-			<CompositionFilter
-				selected={data.selectedComposition}
-				onSelect={handleCompositionSelect}
-			/>
-		</div>
+		{/if}
 	</div>
 </div>
 

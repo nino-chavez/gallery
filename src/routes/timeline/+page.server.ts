@@ -1,12 +1,16 @@
 /**
- * Timeline View - Server-Side Data Loading (REFACTORED)
+ * Timeline View - Server-Side Data Loading (VIEW-BASED ARCHITECTURE)
  *
- * PERFORMANCE OPTIMIZATIONS:
- * - Cursor-based pagination (loads 3 months at a time)
- * - No arbitrary photo limits per month (shows all)
- * - Efficient querying (~500 photos per page vs 20K)
+ * STRATEGY:
+ * 1. Query timeline_months view to get month metadata (fast, ~50 rows)
+ * 2. Determine which months to display (first N months after cursor)
+ * 3. Fetch photos only for those specific months (targeted queries)
  *
- * Week 2: Discovery Features
+ * BENEFITS:
+ * - See all years immediately (view has pre-computed metadata)
+ * - Fast initial load (metadata query is <10ms)
+ * - Efficient photo fetching (only load displayed months)
+ * - Accurate photo counts for scrubber/filters
  */
 
 import { supabaseServer } from '$lib/supabase/server';
@@ -21,8 +25,18 @@ interface TimelineGroup {
 	count: number;
 }
 
-const MONTHS_PER_PAGE = 3; // Load 3 months at a time for performance
-const PHOTOS_PER_PAGE = 500; // Avg ~150-200 photos per month
+interface TimelineMonthMetadata {
+	month_start: string;
+	year: number;
+	month: number;
+	photo_count: number;
+	sport_counts: Record<string, number> | null;
+	category_counts: Record<string, number> | null;
+	first_photo_date: string;
+	last_photo_date: string;
+}
+
+const MONTHS_PER_PAGE = 6; // Load 6 months at a time
 
 export const load: PageServerLoad = async ({ url }) => {
 	// Get filter params from URL
@@ -30,137 +44,145 @@ export const load: PageServerLoad = async ({ url }) => {
 	const categoryFilter = url.searchParams.get('category') || undefined;
 	const yearFilter = url.searchParams.get('year') ? parseInt(url.searchParams.get('year')!) : undefined;
 	const monthFilter = url.searchParams.get('month') ? parseInt(url.searchParams.get('month')!) : undefined;
-	const cursor = url.searchParams.get('cursor') || null; // Format: "2025-10-01"
+	const cursorMonthStart = url.searchParams.get('cursor') || null; // Format: "2025-10-01"
 
-	// Build query
-	let query = supabaseServer
-		.from('photo_metadata')
+	// STEP 1: Query timeline_months view to get month metadata
+	let monthQuery = supabaseServer
+		.from('timeline_months')
 		.select('*')
-		.not('sharpness', 'is', null) // Only enriched photos
-		.order('upload_date', { ascending: false }); // Most recent first
+		.order('year', { ascending: false })
+		.order('month', { ascending: false });
 
-	// Apply cursor for pagination (if loading more months)
-	if (cursor) {
-		query = query.lt('upload_date', cursor);
+	// Apply cursor for pagination
+	if (cursorMonthStart) {
+		monthQuery = monthQuery.lt('month_start', cursorMonthStart);
 	}
 
-	// Apply filters
-	if (sportFilter) {
-		query = query.eq('sport_type', sportFilter);
-	}
-	if (categoryFilter) {
-		query = query.eq('photo_category', categoryFilter);
+	// Apply year filter
+	if (yearFilter) {
+		monthQuery = monthQuery.eq('year', yearFilter);
 	}
 
-	// Limit to reasonable batch size
-	query = query.limit(PHOTOS_PER_PAGE);
-
-	const { data: photos, error } = await query;
-
-	if (error) {
-		console.error('[Timeline] Error fetching photos:', error);
-		throw new Error(`Failed to fetch timeline photos: ${error.message}`);
+	// Apply month filter (only if year is also specified)
+	if (yearFilter && monthFilter !== undefined) {
+		monthQuery = monthQuery.eq('month', monthFilter);
 	}
 
-	// Group photos by year/month
+	const { data: monthsMetadata, error: monthsError } = await monthQuery;
+
+	if (monthsError) {
+		console.error('[Timeline] Error fetching month metadata:', monthsError);
+		throw new Error(`Failed to fetch timeline metadata: ${monthsError.message}`);
+	}
+
+	// Filter months by sport/category if specified
+	let filteredMonths = monthsMetadata || [];
+
+	if (sportFilter && filteredMonths.length > 0) {
+		filteredMonths = filteredMonths.filter(m =>
+			m.sport_counts && m.sport_counts[sportFilter] > 0
+		);
+	}
+
+	if (categoryFilter && filteredMonths.length > 0) {
+		filteredMonths = filteredMonths.filter(m =>
+			m.category_counts && m.category_counts[categoryFilter] > 0
+		);
+	}
+
+	// Take first N months for this page
+	const monthsToLoad = filteredMonths.slice(0, MONTHS_PER_PAGE);
+
+	// STEP 2: Fetch photos for these specific months
 	const monthNames = [
 		'January', 'February', 'March', 'April', 'May', 'June',
 		'July', 'August', 'September', 'October', 'November', 'December'
 	];
 
-	const groupMap = new Map<string, any[]>();
-
-	for (const photo of photos || []) {
-		const uploadDate = new Date(photo.upload_date);
-		const yearNum = uploadDate.getFullYear();
-		const monthNum = uploadDate.getMonth();
-
-		// Skip photos with invalid dates
-		if (isNaN(yearNum) || isNaN(monthNum)) continue;
-
-		// Filter by year if specified
-		if (yearFilter && yearNum !== yearFilter) continue;
-
-		// Filter by month if specified (only when year is also specified)
-		if (yearFilter && monthFilter !== undefined && monthNum !== monthFilter) continue;
-
-		const key = `${yearNum}-${monthNum}`;
-
-		if (!groupMap.has(key)) {
-			groupMap.set(key, []);
-		}
-		groupMap.get(key)!.push(photo);
-	}
-
-	// Convert map to sorted array (no photo limit per month!)
 	const timelineGroups: TimelineGroup[] = [];
-	for (const [key, groupPhotos] of groupMap.entries()) {
-		const [yearStr, monthStr] = key.split('-');
-		const yearNum = parseInt(yearStr);
-		const monthNum = parseInt(monthStr);
 
-		timelineGroups.push({
-			year: yearNum,
-			month: monthNum,
-			monthName: monthNames[monthNum],
-			photos: groupPhotos, // FIXED: Show ALL photos (no .slice(0, 12))
-			count: groupPhotos.length
-		});
+	for (const monthMeta of monthsToLoad) {
+		// Build query for photos in this specific month
+		let photoQuery = supabaseServer
+			.from('photo_metadata')
+			.select('*')
+			.not('sharpness', 'is', null)
+			.gte('upload_date', monthMeta.first_photo_date)
+			.lte('upload_date', monthMeta.last_photo_date)
+			.order('upload_date', { ascending: false });
+
+		// Apply filters
+		if (sportFilter) {
+			photoQuery = photoQuery.eq('sport_type', sportFilter);
+		}
+		if (categoryFilter) {
+			photoQuery = photoQuery.eq('photo_category', categoryFilter);
+		}
+
+		const { data: photos, error: photosError } = await photoQuery;
+
+		if (photosError) {
+			console.error(`[Timeline] Error fetching photos for ${monthMeta.year}-${monthMeta.month}:`, photosError);
+			continue; // Skip this month but continue with others
+		}
+
+		if (photos && photos.length > 0) {
+			timelineGroups.push({
+				year: monthMeta.year,
+				month: monthMeta.month - 1, // Convert to 0-indexed (JavaScript months)
+				monthName: monthNames[monthMeta.month - 1],
+				photos: photos,
+				count: photos.length
+			});
+		}
 	}
 
-	// Sort by year/month descending
-	timelineGroups.sort((a, b) => {
-		if (a.year !== b.year) return b.year - a.year;
-		return b.month - a.month;
+	// Calculate next cursor (last month's start date)
+	let nextCursor: string | null = null;
+	if (monthsToLoad.length === MONTHS_PER_PAGE && filteredMonths.length > MONTHS_PER_PAGE) {
+		const lastMonth = monthsToLoad[monthsToLoad.length - 1];
+		nextCursor = lastMonth.month_start;
+	}
+
+	// Get ALL unique years with photo counts from view (for horizontal timeline)
+	const { data: allYearsData } = await supabaseServer
+		.from('timeline_months')
+		.select('year, photo_count')
+		.order('year', { ascending: false });
+
+	// Aggregate photo counts by year
+	const yearCounts = new Map<number, number>();
+	(allYearsData || []).forEach((row) => {
+		const count = row.photo_count || 0;
+		yearCounts.set(row.year, (yearCounts.get(row.year) || 0) + count);
 	});
 
-	// Limit to MONTHS_PER_PAGE for pagination
-	const paginatedGroups = timelineGroups.slice(0, MONTHS_PER_PAGE);
+	const allYears = Array.from(new Set((allYearsData || []).map(row => row.year)));
+	const allYearsWithCounts = Array.from(yearCounts.entries())
+		.map(([year, photoCount]) => ({ year, photoCount }))
+		.sort((a, b) => b.year - a.year);
 
-	// Calculate next cursor (last photo date of last loaded month)
-	let nextCursor: string | null = null;
-	if (paginatedGroups.length === MONTHS_PER_PAGE && photos && photos.length > 0) {
-		const lastGroup = paginatedGroups[paginatedGroups.length - 1];
-		const lastPhoto = lastGroup.photos[lastGroup.photos.length - 1];
-		if (lastPhoto?.upload_date) {
-			nextCursor = lastPhoto.upload_date;
-		}
-	}
+	// Calculate total photos count (from view, very fast)
+	const totalPhotos = timelineGroups.reduce((sum, group) => sum + group.count, 0);
 
-	// Get ALL unique years from database (not just current page)
-	// This is a separate lightweight query to populate year dropdown
-	const { data: allYearsData } = await supabaseServer
-		.from('photo_metadata')
-		.select('upload_date')
-		.not('sharpness', 'is', null)
-		.order('upload_date', { ascending: false });
-
-	const allYears = new Set<number>();
-	for (const row of allYearsData || []) {
-		const year = new Date(row.upload_date).getFullYear();
-		if (!isNaN(year)) {
-			allYears.add(year);
-		}
-	}
-	const years = Array.from(allYears).sort((a, b) => b - a);
-
-	// Calculate total photos count (from current batch only for performance)
-	const totalPhotos = paginatedGroups.reduce((sum, group) => sum + group.count, 0);
-
-	// Get sport/category distributions (from current batch for performance)
+	// Get sport/category distributions (from current months only)
 	const sportCounts = new Map<string, number>();
 	const categoryCounts = new Map<string, number>();
 
-	for (const group of paginatedGroups) {
-		for (const photo of group.photos) {
-			const sport = photo.sport_type;
-			const category = photo.photo_category;
-
-			if (sport && sport !== 'unknown') {
-				sportCounts.set(sport, (sportCounts.get(sport) || 0) + 1);
+	for (const month of monthsToLoad) {
+		if (month.sport_counts) {
+			for (const [sport, count] of Object.entries(month.sport_counts)) {
+				if (sport !== 'unknown') {
+					sportCounts.set(sport, (sportCounts.get(sport) || 0) + count);
+				}
 			}
-			if (category && category !== 'unknown') {
-				categoryCounts.set(category, (categoryCounts.get(category) || 0) + 1);
+		}
+
+		if (month.category_counts) {
+			for (const [category, count] of Object.entries(month.category_counts)) {
+				if (category !== 'unknown') {
+					categoryCounts.set(category, (categoryCounts.get(category) || 0) + count);
+				}
 			}
 		}
 	}
@@ -188,27 +210,20 @@ export const load: PageServerLoad = async ({ url }) => {
 	// Get available months for selected year (if year is selected)
 	let availableMonths: number[] = [];
 	if (yearFilter) {
-		const { data: monthsData } = await supabaseServer
-			.from('photo_metadata')
-			.select('upload_date')
-			.not('sharpness', 'is', null)
-			.gte('upload_date', `${yearFilter}-01-01`)
-			.lt('upload_date', `${yearFilter + 1}-01-01`);
+		const { data: yearMonths } = await supabaseServer
+			.from('timeline_months')
+			.select('month')
+			.eq('year', yearFilter)
+			.order('month', { ascending: true });
 
-		const monthsSet = new Set<number>();
-		for (const row of monthsData || []) {
-			const month = new Date(row.upload_date).getMonth();
-			if (!isNaN(month)) {
-				monthsSet.add(month);
-			}
-		}
-		availableMonths = Array.from(monthsSet).sort((a, b) => a - b);
+		availableMonths = (yearMonths || []).map(row => row.month - 1); // Convert to 0-indexed
 	}
 
 	return {
-		timelineGroups: paginatedGroups,
-		years,
-		availableMonths, // NEW: Months with actual photos
+		timelineGroups,
+		years: allYears,
+		yearsWithCounts: allYearsWithCounts,
+		availableMonths,
 		sports,
 		categories,
 		selectedYear: yearFilter || null,

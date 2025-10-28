@@ -15,7 +15,8 @@
 	import YearFilterPill from '$lib/components/filters/YearFilterPill.svelte';
 	import FloatingDateIndicator from '$lib/components/ui/FloatingDateIndicator.svelte';
 	import JumpControls from '$lib/components/filters/JumpControls.svelte';
-	import TimelineScrubber from '$lib/components/ui/TimelineScrubber.svelte';
+	import HorizontalTimeline from '$lib/components/ui/HorizontalTimeline.svelte';
+	import BackToTop from '$lib/components/ui/BackToTop.svelte';
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
 	import type { PhotoMetadataRow } from '$types/database';
@@ -39,6 +40,9 @@
 	let currentScrollMonthName = $state(data.timelineGroups[0]?.monthName || '');
 	let currentScrollPhotoCount = $state(data.timelineGroups[0]?.count || 0);
 
+	// Scroll progress for scrubber (0-1)
+	let scrollProgress = $state(0);
+
 	// Active filters count
 	let activeFilterCount = $derived.by(() => {
 		let count = 0;
@@ -58,10 +62,26 @@
 		return counts;
 	});
 
-	// All available years for scrubber
-	let availableYears = $derived.by(() => {
-		const years = Array.from(new Set(allGroups.map((g) => g.year))).sort((a, b) => b - a);
-		return years;
+	// Use years with counts from server (not derived from allGroups which is paginated)
+	let availableYearsWithCounts = $derived(data.yearsWithCounts || []);
+
+	// Transform availableMonths for horizontal timeline
+	let availableMonthsWithCounts = $derived.by(() => {
+		if (!data.selectedYear) return [];
+
+		const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+		// Get months that exist for the selected year from timeline groups
+		const monthsInYear = allGroups
+			.filter(g => g.year === data.selectedYear)
+			.map(g => ({
+				month: g.month,
+				monthName: monthNames[g.month],
+				photoCount: g.count
+			}))
+			.sort((a, b) => a.month - b.month);
+
+		return monthsInYear;
 	});
 
 	// Transform raw photos to Photo type
@@ -142,7 +162,17 @@
 			url.searchParams.set('year', year.toString());
 		} else {
 			url.searchParams.delete('year');
+			url.searchParams.delete('month'); // Clear month when clearing year
 		}
+		url.searchParams.delete('cursor'); // Reset pagination
+		goto(url.toString());
+	}
+
+	// Handle month selection from horizontal timeline
+	function handleMonthSelect(year: number, month: number): void {
+		const url = new URL($page.url);
+		url.searchParams.set('year', year.toString());
+		url.searchParams.set('month', month.toString());
 		url.searchParams.delete('cursor'); // Reset pagination
 		goto(url.toString());
 	}
@@ -204,6 +234,33 @@
 
 		// Update current scroll position
 		updateScrollPosition();
+
+		// Calculate scroll progress for scrubber (0-1)
+		calculateScrollProgress();
+	}
+
+	// Calculate scroll progress (0-1) based on document scroll position
+	function calculateScrollProgress(): void {
+		const scrollTop = window.scrollY;
+		const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+		if (docHeight <= 0) {
+			scrollProgress = 0;
+			return;
+		}
+
+		scrollProgress = Math.max(0, Math.min(1, scrollTop / docHeight));
+	}
+
+	// Handle scrubber seek (user drags or clicks scrubber)
+	function handleScrubberSeek(progress: number, instant = false): void {
+		const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+		const targetScrollTop = progress * docHeight;
+
+		window.scrollTo({
+			top: targetScrollTop,
+			behavior: instant ? 'auto' : 'smooth' // Instant during drag, smooth on click
+		});
 	}
 
 	// Calculate which month/year is currently in view
@@ -291,6 +348,7 @@
 				event.preventDefault();
 				{
 					const targetYear = currentScrollYear - 1;
+					const availableYears = availableYearsWithCounts.map(y => y.year);
 					if (availableYears.includes(targetYear)) {
 						// Pass null to show all months in that year, not just January
 						jumpToDate(targetYear, null);
@@ -302,6 +360,7 @@
 				event.preventDefault();
 				{
 					const targetYear = currentScrollYear + 1;
+					const availableYears = availableYearsWithCounts.map(y => y.year);
 					if (availableYears.includes(targetYear)) {
 						// Pass null to show all months in that year, not just January
 						jumpToDate(targetYear, null);
@@ -357,8 +416,9 @@
 		// Add scroll listener
 		window.addEventListener('scroll', handleScroll);
 
-		// Initial position calculation
+		// Initial position calculations
 		updateScrollPosition();
+		calculateScrollProgress();
 
 		return () => {
 			observer.disconnect();
@@ -380,92 +440,66 @@
 
 <svelte:window onkeydown={handleKeyDown} />
 
-<!-- Single Minimal Sticky Header (FIXED: from ~130px to ~50px) -->
-<Motion let:motion initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-	<div
-		use:motion
-		class="sticky top-0 z-20 bg-charcoal-950/95 backdrop-blur-sm border-b border-charcoal-800/50"
-	>
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5">
-			<!-- Single Row: Title + Current Position + Controls -->
-			<div class="flex items-center justify-between gap-4 mb-2">
-				<!-- Left: Title + Current Scroll Position -->
-				<div class="flex items-center gap-3">
-					<h1 class="text-base font-medium">
-						Timeline
-						<span class="text-xs text-charcoal-400 ml-1">{data.totalPhotos.toLocaleString()}</span>
-					</h1>
-
-					<!-- Current position indicator (dynamic) -->
-					{#if currentScrollMonthName}
-						<span class="text-xs text-charcoal-500 hidden sm:inline">
-							• {currentScrollMonthName}
-							{currentScrollYear}
-						</span>
-					{/if}
+<!-- Sticky Header with Filters -->
+<div class="sticky top-0 z-20 bg-charcoal-950/98 backdrop-blur-md border-b border-charcoal-700/80 shadow-lg">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+		<!-- Title and Stats -->
+		<div class="flex items-center justify-between gap-4 mb-3">
+			<div class="flex items-center gap-3">
+				<div class="flex items-center gap-2">
+					<Calendar class="w-4 h-4 text-gold-400" />
+					<h1 class="text-lg font-semibold text-white">Timeline</h1>
 				</div>
-
-				<!-- Right: Jump Controls (year/month dropdowns) -->
-				<div class="hidden md:flex">
-					<JumpControls
-						years={availableYears}
-						availableMonths={data.availableMonths || []}
-						selectedYear={data.selectedYear}
-						selectedMonth={data.selectedYear ? currentScrollMonth : null}
-						onJump={jumpToDate}
-					/>
-				</div>
-			</div>
-
-			<!-- Inline Filters (FIXED: removed separate rows, reduced spacing) -->
-			<div class="flex flex-wrap items-center gap-2">
-				{#if activeFilterCount > 0}
-					<button
-						onclick={clearAllFilters}
-						class="inline-flex items-center gap-1 px-2 py-1 text-xs text-charcoal-400 hover:text-gold-400 transition-colors rounded-lg hover:bg-charcoal-800/50"
-						title="Clear all filters"
-					>
-						<X class="w-3 h-3" />
-						<span>Clear</span>
-						<span class="ml-1 px-1.5 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs">
-							{activeFilterCount}
-						</span>
-					</button>
-				{/if}
-
-				{#if data.years && data.years.length > 0}
-					<YearFilterPill years={data.years} selectedYear={data.selectedYear} onSelect={handleYearSelect} />
-				{/if}
-
-				{#if data.sports && data.sports.length > 0}
-					<SportFilter
-						sports={data.sports}
-						selectedSport={data.selectedSport}
-						onSelect={handleSportSelect}
-					/>
-				{/if}
-
-				{#if data.categories && data.categories.length > 0}
-					<CategoryFilter
-						categories={data.categories}
-						selectedCategory={data.selectedCategory}
-						onSelect={handleCategorySelect}
-					/>
-				{/if}
-			</div>
-
-			<!-- Mobile Jump Controls -->
-			<div class="md:hidden mt-2">
-				<JumpControls
-					years={availableYears}
-					availableMonths={data.availableMonths || []}
-					selectedYear={data.selectedYear}
-					selectedMonth={data.selectedYear ? currentScrollMonth : null}
-					onJump={jumpToDate}
-				/>
+				<span class="text-xs text-charcoal-400">{data.totalPhotos.toLocaleString()} photos</span>
 			</div>
 		</div>
+
+		<!-- Inline Filters -->
+		<div class="flex flex-wrap items-center gap-2.5">
+			{#if activeFilterCount > 0}
+				<button
+					onclick={clearAllFilters}
+					class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-charcoal-300 hover:text-gold-400 bg-charcoal-800/50 hover:bg-charcoal-800 transition-all rounded-lg border border-charcoal-700/50 hover:border-gold-500/50"
+					title="Clear all filters"
+				>
+					<X class="w-3.5 h-3.5" />
+					<span>Clear Filters</span>
+					<span class="ml-1 px-2 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs font-bold">
+						{activeFilterCount}
+					</span>
+				</button>
+			{/if}
+
+			{#if data.sports && data.sports.length > 0}
+				<SportFilter
+					sports={data.sports}
+					selectedSport={data.selectedSport}
+					onSelect={handleSportSelect}
+				/>
+			{/if}
+
+			{#if data.categories && data.categories.length > 0}
+				<CategoryFilter
+					categories={data.categories}
+					selectedCategory={data.selectedCategory}
+					onSelect={handleCategorySelect}
+				/>
+			{/if}
+		</div>
 	</div>
+</div>
+
+<!-- Horizontal Timeline Navigation (Year + Month) -->
+<div class="sticky top-[110px] z-10">
+	<HorizontalTimeline
+		availableYears={availableYearsWithCounts}
+		availableMonths={availableMonthsWithCounts}
+		selectedYear={data.selectedYear}
+		selectedMonth={data.selectedMonth}
+		onYearSelect={handleYearSelect}
+		onMonthSelect={handleMonthSelect}
+	/>
+</div>
 
 	<!-- Timeline Groups Content (FIXED: removed sticky year/month headers) -->
 	<div use:motion class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -554,7 +588,6 @@
 			</Card>
 		{/if}
 	</div>
-</Motion>
 
 <!-- Floating Date Indicator (appears during scroll) -->
 <FloatingDateIndicator
@@ -564,14 +597,8 @@
 	photoCount={currentScrollPhotoCount}
 />
 
-<!-- Timeline Scrubber (right side, desktop only) -->
-<TimelineScrubber
-	years={availableYears}
-	currentYear={currentScrollYear}
-	currentMonth={currentScrollMonth}
-	{photoCounts}
-	onJump={jumpToDate}
-/>
-
 <!-- Photo Detail Modal -->
 <PhotoDetailModal bind:open={modalOpen} photo={selectedPhoto} />
+
+<!-- Back to Top Button -->
+<BackToTop threshold={400} />
