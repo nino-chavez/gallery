@@ -84,7 +84,12 @@ export function getEmotionColor(emotion: string | null | undefined): string | nu
  * const score = calculateQualityScore(photo.metadata);
  * // => 8.5
  */
-export function calculateQualityScore(metadata: PhotoMetadata): number {
+export function calculateQualityScore(metadata: PhotoMetadata | undefined | null): number {
+  // Handle undefined or null metadata
+  if (!metadata) {
+    return 0;
+  }
+
   const { sharpness, exposure_accuracy, composition_score, emotional_impact } = metadata;
 
   // Validate all scores are numbers
@@ -171,6 +176,12 @@ export function sortPhotosByDate(photos: Photo[]): Photo[] {
  */
 export function generatePhotoAltText(photo: Photo, includeTitle: boolean = true): string {
   const { metadata } = photo;
+
+  // Handle undefined metadata
+  if (!metadata) {
+    return photo.title || 'Sports photo';
+  }
+
   const qualityScore = getPhotoQualityScore(photo);
   const parts: string[] = [];
 

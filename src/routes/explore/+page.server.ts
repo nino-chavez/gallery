@@ -25,6 +25,7 @@ export const load: PageServerLoad = async ({ url, parent }) => {
   const lightingFilters = url.searchParams.getAll('lighting'); // Multi-select
   const colorTempFilter = url.searchParams.get('color_temp') || undefined;
   const timeOfDayFilter = url.searchParams.get('time_of_day') || undefined;
+  const compositionFilter = url.searchParams.get('composition') || undefined;
 
   // Sort mode (default to newest)
   const sortBy = (url.searchParams.get('sort') || 'newest') as 'newest' | 'oldest' | 'action' | 'intensity';
@@ -40,6 +41,7 @@ export const load: PageServerLoad = async ({ url, parent }) => {
     lighting: lightingFilters.length > 0 ? (lightingFilters as any[]) : undefined,
     colorTemperature: colorTempFilter ? [colorTempFilter as any] : undefined,
     timeOfDay: timeOfDayFilter ? [timeOfDayFilter as any] : undefined,
+    composition: compositionFilter ? [compositionFilter as any] : undefined,
   };
 
   // Fetch photos with pagination
@@ -68,5 +70,6 @@ export const load: PageServerLoad = async ({ url, parent }) => {
     selectedLighting: lightingFilters.length > 0 ? lightingFilters : null,
     selectedColorTemp: colorTempFilter || null,
     selectedTimeOfDay: timeOfDayFilter || null,
+    selectedComposition: compositionFilter || null,
   };
 };

@@ -14,7 +14,10 @@
 	import LightingFilter from '$lib/components/filters/LightingFilter.svelte';
 	import ColorTemperatureFilter from '$lib/components/filters/ColorTemperatureFilter.svelte';
 	import TimeOfDayFilter from '$lib/components/filters/TimeOfDayFilter.svelte';
+	import CompositionFilter from '$lib/components/filters/CompositionFilter.svelte';
 	import SearchAutocomplete from '$lib/components/search/SearchAutocomplete.svelte';
+	import VisualDataLegend from '$lib/components/ui/VisualDataLegend.svelte';
+	import { parseQuery, describeFilters } from '$lib/utils/nlp-query-parser';
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
 
@@ -26,6 +29,13 @@
 
 	// Search
 	let searchQuery = $state('');
+
+	// Parse current search query for detected filters
+	let detectedFilters = $derived.by(() => {
+		if (!searchQuery.trim()) return null;
+		const parsed = parseQuery(searchQuery);
+		return Object.keys(parsed).length > 0 ? describeFilters(parsed) : null;
+	});
 
 	// Filter photos by search (client-side only)
 	let displayPhotos = $derived.by(() => {
@@ -49,6 +59,7 @@
 		if (data.selectedLighting && data.selectedLighting.length > 0) count += data.selectedLighting.length;
 		if (data.selectedColorTemp) count++;
 		if (data.selectedTimeOfDay) count++;
+		if (data.selectedComposition) count++;
 		return count;
 	});
 
@@ -92,7 +103,37 @@
 	}
 
 	function handleSearch(query: string) {
-		searchQuery = query;
+		// Parse the query for NLP filters
+		const parsedFilters = parseQuery(query);
+
+		// If we detected filters, apply them to URL
+		if (Object.keys(parsedFilters).length > 0) {
+			const url = new URL($page.url);
+
+			// Apply detected filters
+			if (parsedFilters.sport) url.searchParams.set('sport', parsedFilters.sport);
+			if (parsedFilters.category) url.searchParams.set('category', parsedFilters.category);
+			if (parsedFilters.play_type) url.searchParams.set('play_type', parsedFilters.play_type);
+			if (parsedFilters.action_intensity)
+				url.searchParams.set('intensity', parsedFilters.action_intensity);
+			if (parsedFilters.lighting && parsedFilters.lighting.length > 0) {
+				url.searchParams.delete('lighting');
+				parsedFilters.lighting.forEach((l) => url.searchParams.append('lighting', l));
+			}
+			if (parsedFilters.color_temperature)
+				url.searchParams.set('color_temp', parsedFilters.color_temperature);
+			if (parsedFilters.time_of_day) url.searchParams.set('time_of_day', parsedFilters.time_of_day);
+			if (parsedFilters.composition) url.searchParams.set('composition', parsedFilters.composition);
+
+			url.searchParams.delete('page');
+			goto(url.toString());
+
+			// Keep the query for text display but filters are now active
+			searchQuery = query;
+		} else {
+			// No NLP filters detected, just use as client-side text search
+			searchQuery = query;
+		}
 	}
 
 	function handleClearSearch() {
@@ -153,6 +194,17 @@
 		goto(url.toString());
 	}
 
+	function handleCompositionSelect(composition: string | null) {
+		const url = new URL($page.url);
+		if (composition) {
+			url.searchParams.set('composition', composition);
+		} else {
+			url.searchParams.delete('composition');
+		}
+		url.searchParams.delete('page');
+		goto(url.toString());
+	}
+
 	function clearAllFilters() {
 		const url = new URL($page.url);
 		// Remove all filter params
@@ -163,6 +215,7 @@
 		url.searchParams.delete('lighting');
 		url.searchParams.delete('color_temp');
 		url.searchParams.delete('time_of_day');
+		url.searchParams.delete('composition');
 		url.searchParams.delete('page');
 		// Keep sort preference
 		goto(url.toString());
@@ -234,6 +287,16 @@
 				onSearch={handleSearch}
 				onClear={handleClearSearch}
 			/>
+
+			<!-- NLP Filter Detection Indicator -->
+			{#if detectedFilters}
+				<div class="mt-2 px-3 py-2 bg-gold-500/10 border border-gold-500/20 rounded-lg">
+					<Typography variant="caption" class="text-xs text-gold-400">
+						<span class="font-medium">Detected filters:</span>
+						{detectedFilters}
+					</Typography>
+				</div>
+			{/if}
 		</div>
 
 		<!-- Filters Header with Clear All Button -->
@@ -279,10 +342,10 @@
 			{/if}
 		</div>
 
-		<!-- Mobile Filter Toggle Button -->
+		<!-- Advanced Filters Toggle Button (All Breakpoints) -->
 		<button
 			onclick={() => (mobileFiltersOpen = !mobileFiltersOpen)}
-			class="md:hidden mt-3 w-full flex items-center justify-between px-4 py-3 bg-charcoal-900 hover:bg-charcoal-800 rounded-lg border border-charcoal-800/50 transition-colors"
+			class="mt-3 w-full flex items-center justify-between px-4 py-3 bg-charcoal-900 hover:bg-charcoal-800 rounded-lg border border-charcoal-800/50 transition-colors"
 		>
 			<div class="flex items-center gap-2">
 				<SlidersHorizontal class="w-4 h-4 text-charcoal-400" />
@@ -300,8 +363,8 @@
 			/>
 		</button>
 
-		<!-- Bucket 1 Filters (Desktop: Always visible, Mobile: Collapsible) -->
-		<div class="mt-4 space-y-2 {mobileFiltersOpen ? '' : 'hidden md:block'}">
+		<!-- Bucket 1 Filters (Collapsible on All Breakpoints) -->
+		<div class="mt-4 space-y-2 {mobileFiltersOpen ? '' : 'hidden'}">
 			<PlayTypeFilter selectedPlayType={data.selectedPlayType} onSelect={handlePlayTypeSelect} />
 
 			<ActionIntensityFilter
@@ -322,6 +385,11 @@
 			<TimeOfDayFilter
 				selectedTime={data.selectedTimeOfDay}
 				onSelect={handleTimeOfDaySelect}
+			/>
+
+			<CompositionFilter
+				selected={data.selectedComposition}
+				onSelect={handleCompositionSelect}
 			/>
 		</div>
 	</div>
@@ -404,6 +472,9 @@
 	currentIndex={selectedPhotoIndex}
 	onNavigate={handleLightboxNavigate}
 />
+
+<!-- Visual Data Legend (fixed position, zero chrome impact) -->
+<VisualDataLegend />
 
 <style>
 	/* Performance: Use CSS transitions instead of JS animations */

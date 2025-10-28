@@ -1,9 +1,11 @@
 /**
  * Favorites Store - Manage user's favorite photos with localStorage persistence
  * Week 3: Engagement Features
+ * Enhanced: Toast notifications for user feedback
  */
 
 import type { Photo } from '$types/photo';
+import { toast } from './toast.svelte';
 
 const STORAGE_KEY = 'gallery-favorites';
 const MAX_FAVORITES = 100; // Prevent unlimited storage growth
@@ -94,10 +96,27 @@ function createFavoritesStore() {
 
 			if (isFav) {
 				this.removeFavorite(photo.image_key);
+				toast.info('Removed from favorites', { duration: 2000 });
 				return false;
 			} else {
-				this.addFavorite(photo);
-				return true;
+				try {
+					this.addFavorite(photo);
+					const count = state.photoIds.size;
+					toast.success(`❤️ Added to favorites! (${count} total)`, {
+						duration: 3000
+					});
+					return true;
+				} catch (error) {
+					// Handle max favorites error
+					if (error instanceof Error && error.message.includes('Maximum')) {
+						toast.error(`Maximum ${MAX_FAVORITES} favorites reached`, {
+							duration: 4000
+						});
+					} else {
+						toast.error('Failed to add to favorites', { duration: 3000 });
+					}
+					return false;
+				}
 			}
 		},
 

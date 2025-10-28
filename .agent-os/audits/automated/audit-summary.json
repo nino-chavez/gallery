@@ -1,0 +1,799 @@
+{
+  "timestamp": "2025-10-27T23:48:24.031Z",
+  "summary": {
+    "totalPages": 6,
+    "totalBreakpoints": 3,
+    "totalAudits": 18,
+    "violations": {
+      "p0": 2,
+      "p1": 9,
+      "p2": 0,
+      "total": 11
+    },
+    "grades": {
+      "A": 7,
+      "B": 9,
+      "C": 0,
+      "D": 0,
+      "F": 2
+    }
+  },
+  "results": [
+    {
+      "file": "desktop-albums",
+      "timestamp": "2025-10-27T23:44:25.269Z",
+      "url": "http://localhost:5173/albums/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07111111111111111,
+          "chromeHeight": 64,
+          "viewportHeight": 900,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": null,
+          "pass": null,
+          "note": "No photos found on page (may be collections/albums page)"
+        },
+        "componentCount": {
+          "value": 10,
+          "pass": true,
+          "severity": null
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 0,
+          "withVisualData": 0,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [],
+      "pass": true,
+      "grade": "A"
+    },
+    {
+      "file": "desktop-collections",
+      "timestamp": "2025-10-27T23:44:33.857Z",
+      "url": "http://localhost:5173/collections/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07111111111111111,
+          "chromeHeight": 64,
+          "viewportHeight": 900,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 190,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 232,
+          "pass": false,
+          "severity": "P1"
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 226,
+          "withVisualData": 0,
+          "pass": false,
+          "severity": "P1"
+        }
+      },
+      "violations": [
+        {
+          "type": "Excessive component count",
+          "severity": "P1",
+          "value": "232 interactive elements",
+          "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+        }
+      ],
+      "pass": true,
+      "grade": "B"
+    },
+    {
+      "file": "desktop-explore",
+      "timestamp": "2025-10-27T23:44:27.378Z",
+      "url": "http://localhost:5173/explore/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07111111111111111,
+          "chromeHeight": 64,
+          "viewportHeight": 900,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 327,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 42,
+          "pass": false,
+          "severity": "P1"
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 24,
+          "withVisualData": 0,
+          "pass": false,
+          "severity": "P1"
+        },
+        "sortProximity": {
+          "value": 16,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [
+        {
+          "type": "Excessive component count",
+          "severity": "P1",
+          "value": "42 interactive elements",
+          "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+        }
+      ],
+      "pass": true,
+      "grade": "B"
+    },
+    {
+      "file": "desktop-favorites",
+      "timestamp": "2025-10-27T23:44:23.376Z",
+      "url": "http://localhost:5173/favorites/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07111111111111111,
+          "chromeHeight": 64,
+          "viewportHeight": 900,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": null,
+          "pass": null,
+          "note": "No photos found on page (may be collections/albums page)"
+        },
+        "componentCount": {
+          "value": 7,
+          "pass": true,
+          "severity": null
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 0,
+          "withVisualData": 0,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [],
+      "pass": true,
+      "grade": "A"
+    },
+    {
+      "file": "desktop-home",
+      "timestamp": "2025-10-27T23:44:26.288Z",
+      "url": "http://localhost:5173/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07111111111111111,
+          "chromeHeight": 64,
+          "viewportHeight": 900,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 65,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 6,
+          "pass": true,
+          "severity": null
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 0,
+          "withVisualData": 0,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [],
+      "pass": true,
+      "grade": "A"
+    },
+    {
+      "file": "desktop-timeline",
+      "timestamp": "2025-10-27T23:44:27.114Z",
+      "url": "http://localhost:5173/timeline/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07111111111111111,
+          "chromeHeight": 64,
+          "viewportHeight": 900,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 296,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 45,
+          "pass": false,
+          "severity": "P1"
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 36,
+          "withVisualData": 0,
+          "pass": false,
+          "severity": "P1"
+        }
+      },
+      "violations": [
+        {
+          "type": "Excessive component count",
+          "severity": "P1",
+          "value": "45 interactive elements",
+          "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+        }
+      ],
+      "pass": true,
+      "grade": "B"
+    },
+    {
+      "file": "mobile-albums",
+      "timestamp": "2025-10-27T23:44:19.486Z",
+      "url": "http://localhost:5173/albums/",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07881773399014778,
+          "chromeHeight": 64,
+          "viewportHeight": 812,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": null,
+          "pass": null,
+          "note": "No photos found on page (may be collections/albums page)"
+        },
+        "componentCount": {
+          "value": 10,
+          "pass": true,
+          "severity": null
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 0,
+          "withVisualData": 0,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [],
+      "pass": true,
+      "grade": "A"
+    },
+    {
+      "file": "mobile-collections",
+      "timestamp": "2025-10-27T23:44:21.572Z",
+      "url": "http://localhost:5173/collections/",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07881773399014778,
+          "chromeHeight": 64,
+          "viewportHeight": 812,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 186,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 232,
+          "pass": false,
+          "severity": "P1"
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 226,
+          "withVisualData": 0,
+          "pass": false,
+          "severity": "P1"
+        }
+      },
+      "violations": [
+        {
+          "type": "Excessive component count",
+          "severity": "P1",
+          "value": "232 interactive elements",
+          "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+        }
+      ],
+      "pass": true,
+      "grade": "B"
+    },
+    {
+      "file": "mobile-explore",
+      "timestamp": "2025-10-27T23:44:20.431Z",
+      "url": "http://localhost:5173/explore/",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07881773399014778,
+          "chromeHeight": 64,
+          "viewportHeight": 812,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 359,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 42,
+          "pass": false,
+          "severity": "P1"
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 24,
+          "withVisualData": 0,
+          "pass": false,
+          "severity": "P1"
+        },
+        "sortProximity": {
+          "value": 16,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [
+        {
+          "type": "Excessive component count",
+          "severity": "P1",
+          "value": "42 interactive elements",
+          "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+        }
+      ],
+      "pass": true,
+      "grade": "B"
+    },
+    {
+      "file": "mobile-favorites",
+      "timestamp": "2025-10-27T23:44:18.898Z",
+      "url": "http://localhost:5173/favorites/",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07881773399014778,
+          "chromeHeight": 64,
+          "viewportHeight": 812,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": null,
+          "pass": null,
+          "note": "No photos found on page (may be collections/albums page)"
+        },
+        "componentCount": {
+          "value": 7,
+          "pass": true,
+          "severity": null
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 0,
+          "withVisualData": 0,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [],
+      "pass": true,
+      "grade": "A"
+    },
+    {
+      "file": "mobile-home",
+      "timestamp": "2025-10-27T23:44:19.381Z",
+      "url": "http://localhost:5173/",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07881773399014778,
+          "chromeHeight": 64,
+          "viewportHeight": 812,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 503,
+          "pass": false,
+          "severity": "P0"
+        },
+        "componentCount": {
+          "value": 6,
+          "pass": true,
+          "severity": null
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 0,
+          "withVisualData": 0,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [
+        {
+          "type": "Content burial",
+          "severity": "P0",
+          "value": "First photo at 503px (below 50% of viewport)",
+          "fix": "Collapse chrome to bring content above fold"
+        }
+      ],
+      "pass": false,
+      "grade": "F"
+    },
+    {
+      "file": "mobile-timeline",
+      "timestamp": "2025-10-27T23:44:20.431Z",
+      "url": "http://localhost:5173/timeline/",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.07881773399014778,
+          "chromeHeight": 64,
+          "viewportHeight": 812,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 292,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 45,
+          "pass": false,
+          "severity": "P1"
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 36,
+          "withVisualData": 0,
+          "pass": false,
+          "severity": "P1"
+        }
+      },
+      "violations": [
+        {
+          "type": "Excessive component count",
+          "severity": "P1",
+          "value": "45 interactive elements",
+          "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+        }
+      ],
+      "pass": true,
+      "grade": "B"
+    },
+    {
+      "file": "tablet-albums",
+      "timestamp": "2025-10-27T23:44:22.366Z",
+      "url": "http://localhost:5173/albums/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.0625,
+          "chromeHeight": 64,
+          "viewportHeight": 1024,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": null,
+          "pass": null,
+          "note": "No photos found on page (may be collections/albums page)"
+        },
+        "componentCount": {
+          "value": 10,
+          "pass": true,
+          "severity": null
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 0,
+          "withVisualData": 0,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [],
+      "pass": true,
+      "grade": "A"
+    },
+    {
+      "file": "tablet-collections",
+      "timestamp": "2025-10-27T23:44:27.473Z",
+      "url": "http://localhost:5173/collections/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.0625,
+          "chromeHeight": 64,
+          "viewportHeight": 1024,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 186,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 232,
+          "pass": false,
+          "severity": "P1"
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 226,
+          "withVisualData": 0,
+          "pass": false,
+          "severity": "P1"
+        }
+      },
+      "violations": [
+        {
+          "type": "Excessive component count",
+          "severity": "P1",
+          "value": "232 interactive elements",
+          "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+        }
+      ],
+      "pass": true,
+      "grade": "B"
+    },
+    {
+      "file": "tablet-explore",
+      "timestamp": "2025-10-27T23:44:23.805Z",
+      "url": "http://localhost:5173/explore/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.0625,
+          "chromeHeight": 64,
+          "viewportHeight": 1024,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 319,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 42,
+          "pass": false,
+          "severity": "P1"
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 24,
+          "withVisualData": 0,
+          "pass": false,
+          "severity": "P1"
+        },
+        "sortProximity": {
+          "value": 16,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [
+        {
+          "type": "Excessive component count",
+          "severity": "P1",
+          "value": "42 interactive elements",
+          "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+        }
+      ],
+      "pass": true,
+      "grade": "B"
+    },
+    {
+      "file": "tablet-favorites",
+      "timestamp": "2025-10-27T23:44:21.133Z",
+      "url": "http://localhost:5173/favorites/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.0625,
+          "chromeHeight": 64,
+          "viewportHeight": 1024,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": null,
+          "pass": null,
+          "note": "No photos found on page (may be collections/albums page)"
+        },
+        "componentCount": {
+          "value": 7,
+          "pass": true,
+          "severity": null
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 0,
+          "withVisualData": 0,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [],
+      "pass": true,
+      "grade": "A"
+    },
+    {
+      "file": "tablet-home",
+      "timestamp": "2025-10-27T23:44:22.858Z",
+      "url": "http://localhost:5173/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.0625,
+          "chromeHeight": 64,
+          "viewportHeight": 1024,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 609,
+          "pass": false,
+          "severity": "P0"
+        },
+        "componentCount": {
+          "value": 6,
+          "pass": true,
+          "severity": null
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 0,
+          "withVisualData": 0,
+          "pass": true,
+          "severity": null
+        }
+      },
+      "violations": [
+        {
+          "type": "Content burial",
+          "severity": "P0",
+          "value": "First photo at 609px (below 50% of viewport)",
+          "fix": "Collapse chrome to bring content above fold"
+        }
+      ],
+      "pass": false,
+      "grade": "F"
+    },
+    {
+      "file": "tablet-timeline",
+      "timestamp": "2025-10-27T23:44:23.760Z",
+      "url": "http://localhost:5173/timeline/",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "metrics": {
+        "chromeRatio": {
+          "value": 0.0625,
+          "chromeHeight": 64,
+          "viewportHeight": 1024,
+          "pass": true,
+          "severity": null
+        },
+        "contentAboveFold": {
+          "value": 292,
+          "pass": true,
+          "severity": null
+        },
+        "componentCount": {
+          "value": 45,
+          "pass": false,
+          "severity": "P1"
+        },
+        "visualDataScore": {
+          "value": 0,
+          "totalPhotos": 36,
+          "withVisualData": 0,
+          "pass": false,
+          "severity": "P1"
+        }
+      },
+      "violations": [
+        {
+          "type": "Excessive component count",
+          "severity": "P1",
+          "value": "45 interactive elements",
+          "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+        }
+      ],
+      "pass": true,
+      "grade": "B"
+    }
+  ]
+}

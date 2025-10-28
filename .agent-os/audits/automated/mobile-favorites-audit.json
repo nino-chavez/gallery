@@ -1,0 +1,39 @@
+{
+  "timestamp": "2025-10-27T23:48:26.594Z",
+  "url": "http://localhost:5173/favorites/",
+  "viewport": {
+    "width": 375,
+    "height": 812
+  },
+  "metrics": {
+    "chromeRatio": {
+      "value": 0.07881773399014778,
+      "chromeHeight": 64,
+      "viewportHeight": 812,
+      "pass": true,
+      "severity": null
+    },
+    "contentAboveFold": {
+      "value": null,
+      "pass": true,
+      "note": "Hero/landing page detected - skipping content burial check"
+    },
+    "componentCount": {
+      "chromeComponents": 6,
+      "photoCardButtons": 0,
+      "total": 6,
+      "pass": true,
+      "severity": null
+    },
+    "visualDataScore": {
+      "value": 0,
+      "totalPhotos": 0,
+      "withVisualData": 0,
+      "pass": true,
+      "severity": null
+    }
+  },
+  "violations": [],
+  "pass": true,
+  "grade": "A"
+}

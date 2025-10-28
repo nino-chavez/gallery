@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-10-27T23:44:27.378Z",
+  "url": "http://localhost:5173/explore/",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "metrics": {
+    "chromeRatio": {
+      "value": 0.07111111111111111,
+      "chromeHeight": 64,
+      "viewportHeight": 900,
+      "pass": true,
+      "severity": null
+    },
+    "contentAboveFold": {
+      "value": 327,
+      "pass": true,
+      "severity": null
+    },
+    "componentCount": {
+      "value": 42,
+      "pass": false,
+      "severity": "P1"
+    },
+    "visualDataScore": {
+      "value": 0,
+      "totalPhotos": 24,
+      "withVisualData": 0,
+      "pass": false,
+      "severity": "P1"
+    },
+    "sortProximity": {
+      "value": 16,
+      "pass": true,
+      "severity": null
+    }
+  },
+  "violations": [
+    {
+      "type": "Excessive component count",
+      "severity": "P1",
+      "value": "42 interactive elements",
+      "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+    }
+  ],
+  "pass": true,
+  "grade": "B"
+}

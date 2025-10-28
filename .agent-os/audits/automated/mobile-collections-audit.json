@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-10-27T23:44:21.572Z",
+  "url": "http://localhost:5173/collections/",
+  "viewport": {
+    "width": 375,
+    "height": 812
+  },
+  "metrics": {
+    "chromeRatio": {
+      "value": 0.07881773399014778,
+      "chromeHeight": 64,
+      "viewportHeight": 812,
+      "pass": true,
+      "severity": null
+    },
+    "contentAboveFold": {
+      "value": 186,
+      "pass": true,
+      "severity": null
+    },
+    "componentCount": {
+      "value": 232,
+      "pass": false,
+      "severity": "P1"
+    },
+    "visualDataScore": {
+      "value": 0,
+      "totalPhotos": 226,
+      "withVisualData": 0,
+      "pass": false,
+      "severity": "P1"
+    }
+  },
+  "violations": [
+    {
+      "type": "Excessive component count",
+      "severity": "P1",
+      "value": "232 interactive elements",
+      "fix": "Consolidate controls, use dropdowns instead of multiple buttons"
+    }
+  ],
+  "pass": true,
+  "grade": "B"
+}
