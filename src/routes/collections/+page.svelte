@@ -6,6 +6,7 @@
 	import Card from '$lib/components/ui/Card.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
+	import CollectionCard3D from '$lib/components/gallery/CollectionCard3D.svelte';
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
 
@@ -55,70 +56,20 @@
 	<div use:motion class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
 		<!-- Collections Grid -->
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 			{#each data.collections as collection, index}
-				{@const isPortfolio = collection.slug === 'portfolio-excellence'}
-
 				<Motion
 					let:motion
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ ...MOTION.spring.gentle, delay: index * 0.1 }}
 				>
-					<a
-						use:motion
-						href="/collections/{collection.slug}"
-						class="group block"
-					>
-						<Card
-							padding="none"
-							class="overflow-hidden hover:ring-2 {isPortfolio ? 'hover:ring-gold-500/50' : 'hover:ring-charcoal-600/50'} transition-all duration-300"
-						>
-							<!-- Cover Photo -->
-							{#if collection.coverPhoto}
-								<div class="relative aspect-[4/3] overflow-hidden bg-charcoal-900">
-									<img
-										src={collection.coverPhoto.ThumbnailUrl || collection.coverPhoto.ImageUrl}
-										alt="{collection.title} cover"
-										class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-										loading="lazy"
-									/>
-									{#if isPortfolio}
-										<div class="absolute top-3 right-3">
-											<div class="bg-gold-500/90 backdrop-blur-sm text-charcoal-950 px-2 py-1 rounded-full flex items-center gap-1 text-xs font-medium">
-												<Award class="w-3 h-3" />
-												<span>Excellence</span>
-											</div>
-										</div>
-									{/if}
-								</div>
-							{:else}
-								<div class="aspect-[4/3] bg-charcoal-900 flex items-center justify-center">
-									<Sparkles class="w-12 h-12 text-charcoal-700" />
-								</div>
-							{/if}
-
-							<!-- Collection Info -->
-							<div class="p-5">
-								<div class="flex items-start justify-between gap-3 mb-2">
-									<Typography variant="h3" class="text-base font-medium group-hover:text-gold-500 transition-colors">
-										{collection.title}
-									</Typography>
-									<Typography variant="caption" class="text-charcoal-400 text-xs shrink-0">
-										{collection.photoCount}
-									</Typography>
-								</div>
-
-								<Typography variant="body" class="text-charcoal-400 text-xs mb-3 italic">
-									{collection.narrative}
-								</Typography>
-
-								<Typography variant="body" class="text-charcoal-500 text-xs line-clamp-2">
-									{collection.description}
-								</Typography>
-							</div>
-						</Card>
-					</a>
+					<div use:motion>
+						<CollectionCard3D
+							{collection}
+							href="/collections/{collection.slug}"
+						/>
+					</div>
 				</Motion>
 			{/each}
 		</div>

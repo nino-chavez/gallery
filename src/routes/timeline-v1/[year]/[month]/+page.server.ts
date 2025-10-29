@@ -55,7 +55,7 @@ export const load: PageServerLoad = async ({ params, url, parent }) => {
 	// Execute query with pagination
 	const { data: photos, error: photosError, count } = await query
 		.order('upload_date', { ascending: false })
-		.order('quality_score', { ascending: false })
+		.order('composition_score', { ascending: false })
 		.range(offset, offset + PHOTOS_PER_PAGE - 1);
 
 	if (photosError) {

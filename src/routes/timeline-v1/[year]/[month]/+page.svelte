@@ -41,8 +41,8 @@
 			original_url: raw.OriginalUrl || undefined,
 			title: raw.album_name || 'Untitled',
 			caption: raw.composition || '',
-			keywords: raw.use_cases || [],
-			created_at: raw.photo_date || raw.enriched_at,
+			keywords: Array.isArray(raw.use_cases) ? raw.use_cases : [],
+			created_at: raw.photo_date || raw.enriched_at || '',
 			metadata: {
 				// BUCKET 1: Concrete & Filterable
 				play_type: (raw.play_type as any) || null,

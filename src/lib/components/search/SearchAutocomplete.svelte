@@ -59,6 +59,8 @@
 		'sharp',
 		'emotional',
 		'golden hour',
+		'intense',
+		'high intensity',
 		'indoor',
 		'outdoor',
 		'team',

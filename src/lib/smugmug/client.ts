@@ -62,8 +62,8 @@ export class SmugMugClient {
 		// Initialize OAuth client
 		this.oauth = new OAuth({
 			consumer: {
-				key: process.env.SMUGMUG_API_KEY || '',
-				secret: process.env.SMUGMUG_API_SECRET || '',
+				key: import.meta.env.VITE_SMUGMUG_API_KEY || '',
+				secret: import.meta.env.VITE_SMUGMUG_API_SECRET || '',
 			},
 			signature_method: 'HMAC-SHA1',
 			hash_function: (baseString, key) =>
@@ -72,23 +72,23 @@ export class SmugMugClient {
 
 		// Get access token
 		this.token = {
-			key: process.env.SMUGMUG_ACCESS_TOKEN || '',
-			secret: process.env.SMUGMUG_ACCESS_TOKEN_SECRET || '',
+			key: import.meta.env.VITE_SMUGMUG_ACCESS_TOKEN || '',
+			secret: import.meta.env.VITE_SMUGMUG_ACCESS_TOKEN_SECRET || '',
 		};
 
 		if (!this.oauth.consumer.key || !this.oauth.consumer.secret) {
-			throw new Error('Missing SmugMug API credentials (SMUGMUG_API_KEY, SMUGMUG_API_SECRET)');
+			throw new Error('Missing SmugMug API credentials (VITE_SMUGMUG_API_KEY, VITE_SMUGMUG_API_SECRET)');
 		}
 
 		if (!this.token.key || !this.token.secret) {
-			throw new Error('Missing SmugMug access tokens (SMUGMUG_ACCESS_TOKEN, SMUGMUG_ACCESS_TOKEN_SECRET)');
+			throw new Error('Missing SmugMug access tokens (VITE_SMUGMUG_ACCESS_TOKEN, VITE_SMUGMUG_ACCESS_TOKEN_SECRET)');
 		}
 	}
 
 	/**
 	 * Make authenticated SmugMug API request
 	 */
-	private async request(
+	async request(
 		method: string,
 		endpoint: string,
 		body?: any,
@@ -280,6 +280,33 @@ export class SmugMugClient {
 		}
 
 		return allAlbums;
+	}
+
+	/**
+	 * Download image data with proper authentication
+	 * Returns the image as a Response object ready for proxying
+	 */
+	async downloadImage(imageUrl: string): Promise<Response> {
+		const requestData = {
+			url: imageUrl,
+			method: 'GET',
+		};
+
+		const authHeader = this.oauth.toHeader(this.oauth.authorize(requestData, this.token));
+
+		return await fetch(imageUrl, {
+			method: 'GET',
+			headers: {
+				...authHeader,
+				'Accept': 'image/*',
+				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+				'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+				'sec-ch-ua-mobile': '?0',
+				'sec-ch-ua-platform': '"macOS"',
+			},
+			mode: 'cors',
+			credentials: 'omit',
+		});
 	}
 }
 

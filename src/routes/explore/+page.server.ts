@@ -26,14 +26,15 @@ export const load: PageServerLoad = async ({ url, parent }) => {
   let colorTempFilter = url.searchParams.get('color_temp') || undefined;
   let timeOfDayFilter = url.searchParams.get('time_of_day') || undefined;
   let compositionFilter = url.searchParams.get('composition') || undefined;
+  let searchQuery = url.searchParams.get('q') || undefined;
 
   // DEBUG: Log the sport filter
   console.log('[DEBUG] Sport filter from URL:', sportFilter);
 
-  // Sort mode (default to newest)
-  const sortBy = (url.searchParams.get('sort') || 'newest') as 'newest' | 'oldest' | 'action' | 'intensity';
-  const page = parseInt(url.searchParams.get('page') || '1');
-  const pageSize = 24;
+  // Sort mode (default to quality)
+  const sortBy = (url.searchParams.get('sort') || 'quality') as 'quality' | 'newest' | 'oldest' | 'action' | 'intensity';
+  const page = Math.max(1, parseInt(url.searchParams.get('page') || '1')); // Ensure minimum page 1
+  const pageSize = 24; // Fixed page size for consistent pagination
   const offset = (page - 1) * pageSize;
 
   const filterOptions = {
@@ -179,5 +180,6 @@ export const load: PageServerLoad = async ({ url, parent }) => {
     selectedComposition: compositionFilter || null,
     filterCounts, // NEW: Dynamic result counts for smart filtering
     clearedFilters, // Phase 4: List of auto-cleared filters for notification
+    searchQuery, // Global search query from URL
   };
 };

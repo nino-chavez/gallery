@@ -2,6 +2,7 @@
 	import { Motion } from 'svelte-motion';
 	import { Download, Check } from 'lucide-svelte';
 	import Typography from '$lib/components/ui/Typography.svelte';
+	import { toast } from '$lib/stores/toast.svelte';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
@@ -20,25 +21,25 @@
 		{
 			label: 'Original Quality',
 			description: 'Full resolution, best for print',
-			url: photo.original_url || photo.image_url,
+			url: (photo.original_url || photo.image_url)?.replace('photos.smugmug.com', 'ninochavez.smugmug.com'),
 			filename: `${photo.image_key}_original.jpg`,
 			size: 'Large (~2-5 MB)'
 		},
 		{
 			label: 'Web Quality',
 			description: 'Optimized for web and social media',
-			url: photo.image_url,
+			url: photo.image_url?.replace('photos.smugmug.com', 'ninochavez.smugmug.com'),
 			filename: `${photo.image_key}_web.jpg`,
 			size: 'Medium (~500 KB)'
 		},
 		{
 			label: 'Thumbnail',
 			description: 'Small preview size',
-			url: photo.thumbnail_url,
+			url: (photo.thumbnail_url || photo.image_url)?.replace('photos.smugmug.com', 'ninochavez.smugmug.com'),
 			filename: `${photo.image_key}_thumb.jpg`,
 			size: 'Small (~100 KB)'
 		}
-	]);
+	].filter(option => option.url)); // Filter out options without URLs
 
 	async function handleDownload(url: string, filename: string, event?: MouseEvent) {
 		event?.stopPropagation();
@@ -46,14 +47,12 @@
 		downloadSuccess = false;
 
 		try {
-			// Fetch the image
-			const response = await fetch(url);
-			const blob = await response.blob();
+			// Use our proxy endpoint to avoid CORS issues
+			const proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
 
-			// Create download link
-			const downloadUrl = window.URL.createObjectURL(blob);
+			// Create download link that points to our proxy
 			const link = document.createElement('a');
-			link.href = downloadUrl;
+			link.href = proxyUrl;
 			link.download = filename;
 
 			// Trigger download
@@ -61,10 +60,7 @@
 			link.click();
 			document.body.removeChild(link);
 
-			// Cleanup
-			window.URL.revokeObjectURL(downloadUrl);
-
-			// Show success feedback
+			// Show success feedback (we assume success since the download was triggered)
 			downloadSuccess = true;
 			setTimeout(() => {
 				downloadSuccess = false;
@@ -72,7 +68,7 @@
 			}, 2000);
 		} catch (error) {
 			console.error('Download failed:', error);
-			alert('Download failed. Please try again.');
+			toast.error('Download failed. Please try again.');
 		} finally {
 			downloading = false;
 		}

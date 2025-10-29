@@ -19,6 +19,7 @@
 	import { Camera, Grid, Sparkles, Folder, Heart, Calendar } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
+	import GlobalSearch from '$lib/components/ui/GlobalSearch.svelte';
 	import { cn } from '$lib/utils';
 	import { favorites } from '$lib/stores/favorites.svelte';
 
@@ -97,6 +98,11 @@
 					<Typography variant="h3" class="sm:hidden group-hover:text-gold-500 transition-colors">
 						NCG
 					</Typography>
+				</div>
+
+				<!-- Global Search -->
+				<div class="flex-1 max-w-md mx-4">
+					<GlobalSearch />
 				</div>
 
 				<!-- Navigation -->

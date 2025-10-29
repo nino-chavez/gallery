@@ -2,14 +2,14 @@
  * Gallery User Preferences Store
  *
  * Manages user preferences with localStorage persistence:
- * - Sort preference (newest, oldest, highest_quality, lowest_quality)
+ * - Sort preference (quality, newest, oldest, intensity, action)
  * - View mode (grid, list)
  * - Advanced filters visibility
  *
  * Uses Svelte 5 runes for reactive state management
  */
 
-export type SortOption = 'newest' | 'oldest' | 'highest_quality' | 'lowest_quality';
+export type SortOption = 'quality' | 'newest' | 'oldest' | 'intensity' | 'action';
 export type ViewMode = 'grid' | 'list';
 
 export interface FilterPreset {
@@ -44,7 +44,7 @@ interface GalleryPreferences {
 const STORAGE_KEY = 'gallery_preferences';
 
 const DEFAULT_PREFERENCES: GalleryPreferences = {
-	sortBy: 'newest',
+	sortBy: 'quality',
 	viewMode: 'grid',
 	showAdvancedFilters: false,
 	savedPresets: [],

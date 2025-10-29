@@ -104,7 +104,7 @@
 		mouseY = event.clientY;
 	}
 
-	function setPillRef(id: string, element: HTMLElement | null) {
+	function setPillRef(element: HTMLElement, id: string) {
 		if (element) {
 			pillRefs.set(id, element);
 		} else {
@@ -226,35 +226,37 @@
 	<!-- Filter Pills with Magnetic Attraction -->
 	<div class="flex flex-wrap gap-3">
 		<!-- All Sports Pill -->
-		{@const allTransform = getMagneticTransform('sport-all')}
-		<Motion
-			let:motion
-			animate={{
-				x: allTransform.x,
-				y: allTransform.y
-			}}
-			transition={{
-				type: 'spring',
-				stiffness: 300,
-				damping: 30
-			}}
-		>
-			<button
-				use:motion
-				use:setPillRef={'sport-all'}
-				onclick={() => handleSportClick(null)}
-				class="min-h-[48px] px-6 py-3 rounded-full text-sm font-medium transition-colors {!selectedSport
-					? 'bg-gold-500 text-charcoal-950 shadow-lg shadow-gold-500/20'
-					: 'bg-charcoal-800/50 text-charcoal-100 border border-charcoal-700 hover:border-gold-500/30 hover:bg-charcoal-800'}"
-				aria-label="Show all sports"
-				aria-pressed={!selectedSport}
+		{#if true}
+			{@const allTransform = getMagneticTransform('sport-all')}
+			<Motion
+				let:motion
+				animate={{
+					x: allTransform.x,
+					y: allTransform.y
+				}}
+				transition={{
+					type: 'spring',
+					stiffness: 300,
+					damping: 30
+				}}
 			>
-				<span class="flex items-center gap-2 whitespace-nowrap">
-					<Sparkles class="w-4 h-4" />
-					<span>All</span>
-				</span>
-			</button>
-		</Motion>
+				<button
+					use:motion
+					use:setPillRef={'sport-all'}
+					onclick={() => handleSportClick(null)}
+					class="min-h-[48px] px-6 py-3 rounded-full text-sm font-medium transition-colors {!selectedSport
+						? 'bg-gold-500 text-charcoal-950 shadow-lg shadow-gold-500/20'
+						: 'bg-charcoal-800/50 text-charcoal-100 border border-charcoal-700 hover:border-gold-500/30 hover:bg-charcoal-800'}"
+					aria-label="Show all sports"
+					aria-pressed={!selectedSport}
+				>
+					<span class="flex items-center gap-2 whitespace-nowrap">
+						<Sparkles class="w-4 h-4" />
+						<span>All</span>
+					</span>
+				</button>
+			</Motion>
+		{/if}
 
 		<!-- Individual Sport Pills (Progressive Disclosure with Magnetic) -->
 		{#each displayedSports as sport (sport.name)}

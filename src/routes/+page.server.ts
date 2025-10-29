@@ -29,9 +29,9 @@ import type { PhotoMetadataRow } from '$types/database';
  * Map database row to Photo type
  */
 function mapRowToPhoto(row: PhotoMetadataRow): Photo {
-  const imageUrl = row.ImageUrl || row.OriginalUrl || `/api/smugmug/images/${row.image_key}`;
-  const thumbnailUrl = row.ThumbnailUrl || undefined;
-  const originalUrl = row.OriginalUrl || undefined;
+  const imageUrl = (row.ImageUrl || row.OriginalUrl || '').replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+  const thumbnailUrl = row.ThumbnailUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+  const originalUrl = row.OriginalUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
 
   return {
     id: row.photo_id,
@@ -92,7 +92,7 @@ export const load: PageServerLoad = async () => {
 
     if (error) {
       console.error('[Homepage] Error fetching hero photo:', error);
-      return { heroPhoto: null };
+      return { heroPhoto: null, featuredAlbums: [] };
     }
 
     if (!data || data.length === 0) {
@@ -109,7 +109,7 @@ export const load: PageServerLoad = async () => {
       if (fallbackData && fallbackData.length > 0) {
         const randomIndex = Math.floor(Math.random() * fallbackData.length);
         const row = fallbackData[randomIndex];
-        return { heroPhoto: mapRowToPhoto(row) };
+        return { heroPhoto: mapRowToPhoto(row), featuredAlbums: [] };
       }
 
       // Fallback 2: Any photo (multi-sport)
@@ -122,12 +122,12 @@ export const load: PageServerLoad = async () => {
 
       if (anyPhotoError || !anyPhotoData || anyPhotoData.length === 0) {
         console.error('[Homepage] No photos available at all');
-        return { heroPhoto: null };
+        return { heroPhoto: null, featuredAlbums: [] };
       }
 
       const randomIndex = Math.floor(Math.random() * anyPhotoData.length);
       const row = anyPhotoData[randomIndex];
-      return { heroPhoto: mapRowToPhoto(row) };
+      return { heroPhoto: mapRowToPhoto(row), featuredAlbums: [] };
     }
 
     // Group photos by album to ensure diversity
@@ -160,9 +160,200 @@ export const load: PageServerLoad = async () => {
     const randomIndex = Math.floor(Math.random() * balancedPhotos.length);
     const row = balancedPhotos[randomIndex];
 
-    return { heroPhoto: mapRowToPhoto(row) };
+    // Fetch three featured albums for homepage
+    const featuredAlbums = await fetchFeaturedAlbums();
+
+    return { heroPhoto: mapRowToPhoto(row), featuredAlbums };
   } catch (err) {
     console.error('[Homepage] Critical error in load function:', err);
-    return { heroPhoto: null };
+    return { heroPhoto: null, featuredAlbums: [] };
   }
 };
+
+/**
+ * Fetch three featured albums for homepage display
+ * - Most Recent: Latest real album by photo date
+ * - Editor's Choice: Virtual album of emotionally compelling photos
+ * - Action Showcase: Virtual album of high-intensity action shots
+ */
+async function fetchFeaturedAlbums() {
+  try {
+    // 1. Get the most recent real album
+    const { data: albumsData, error: albumsError } = await supabaseServer
+      .from('albums_summary')
+      .select('*')
+      .not('album_key', 'is', null)
+      .not('latest_photo_date', 'is', null)
+      .order('latest_photo_date', { ascending: false })
+      .limit(1);
+
+    let mostRecentAlbum = null;
+    if (!albumsError && albumsData && albumsData.length > 0) {
+      const album = albumsData[0];
+      mostRecentAlbum = {
+        type: 'recent',
+        title: 'Latest Event',
+        album: {
+          albumKey: album.album_key,
+          albumName: album.album_name || 'Unknown Album',
+          photoCount: parseInt(album.photo_count) || 0,
+          coverImageUrl: album.cover_image_url,
+          primarySport: album.primary_sport || 'volleyball',
+          primaryCategory: album.primary_category || 'action',
+          avgQualityScore: parseFloat(album.avg_quality_score) || 0,
+          latestPhotoDate: album.latest_photo_date,
+          isVirtual: false
+        }
+      };
+    }
+
+    // 2. Create "Editor's Choice" virtual album - emotionally compelling photos
+    const editorsChoice = await createEditorsChoiceAlbum();
+
+    // 3. Create "Action Showcase" virtual album - high-intensity action shots
+    const actionShowcase = await createActionShowcaseAlbum();
+
+    // Build featured albums array
+    const featuredAlbums = [];
+    if (mostRecentAlbum) featuredAlbums.push(mostRecentAlbum);
+    if (editorsChoice) featuredAlbums.push(editorsChoice);
+    if (actionShowcase) featuredAlbums.push(actionShowcase);
+
+    return featuredAlbums;
+  } catch (err) {
+    console.error('[Homepage] Error fetching featured albums:', err);
+    return [];
+  }
+}
+
+/**
+ * Create "Editor's Choice" virtual album
+ * Features photos with high emotional impact and quality scores across different events
+ */
+async function createEditorsChoiceAlbum() {
+  try {
+    const { data, error } = await supabaseServer
+      .from('photo_metadata')
+      .select('*')
+      .eq('sport_type', 'volleyball')
+      .gte('emotional_impact', 8.0)  // High emotional impact
+      .gte('sharpness', 8.0)         // Technically excellent
+      .gte('composition_score', 8.0) // Well composed
+      .in('photo_category', ['action', 'celebration', 'portrait'])
+      .not('sharpness', 'is', null)
+      .order('emotional_impact', { ascending: false })
+      .limit(50); // Get top candidates
+
+    if (error || !data || data.length === 0) {
+      console.warn('[Homepage] No photos found for Editor\'s Choice album');
+      return null;
+    }
+
+    // Select diverse photos from different events/albums
+    const selectedPhotos = [];
+    const usedAlbums = new Set();
+
+    for (const photo of data) {
+      const albumKey = photo.album_name || photo.album_key || 'unknown';
+      if (!usedAlbums.has(albumKey) && selectedPhotos.length < 12) {
+        selectedPhotos.push(photo);
+        usedAlbums.add(albumKey);
+      }
+    }
+
+    if (selectedPhotos.length === 0) return null;
+
+    // Use the highest emotional impact photo as cover
+    const coverPhoto = selectedPhotos[0];
+
+    // Calculate aggregate stats
+    const avgQuality = selectedPhotos.reduce((sum, p) =>
+      sum + ((p.sharpness || 0) + (p.composition_score || 0) + (p.emotional_impact || 0)) / 3, 0
+    ) / selectedPhotos.length;
+
+    return {
+      type: 'editors-choice',
+      title: 'Editor\'s Choice',
+      album: {
+        albumKey: 'editors-choice', // Virtual album key
+        albumName: 'Editor\'s Choice',
+        photoCount: selectedPhotos.length,
+        coverImageUrl: coverPhoto.ThumbnailUrl || coverPhoto.ImageUrl,
+        primarySport: 'volleyball',
+        primaryCategory: 'mixed',
+        avgQualityScore: Math.round(avgQuality * 10) / 10,
+        latestPhotoDate: coverPhoto.photo_date || coverPhoto.upload_date,
+        isVirtual: true
+      }
+    };
+  } catch (err) {
+    console.error('[Homepage] Error creating Editor\'s Choice album:', err);
+    return null;
+  }
+}
+
+/**
+ * Create "Action Showcase" virtual album
+ * Features high-intensity action shots from various tournaments
+ */
+async function createActionShowcaseAlbum() {
+  try {
+    const { data, error } = await supabaseServer
+      .from('photo_metadata')
+      .select('*')
+      .eq('sport_type', 'volleyball')
+      .eq('photo_category', 'action')
+      .in('action_intensity', ['high', 'extreme'])
+      .gte('sharpness', 7.5)
+      .gte('emotional_impact', 7.0)
+      .not('sharpness', 'is', null)
+      .order('action_intensity', { ascending: false })
+      .limit(50);
+
+    if (error || !data || data.length === 0) {
+      console.warn('[Homepage] No photos found for Action Showcase album');
+      return null;
+    }
+
+    // Select diverse high-intensity shots
+    const selectedPhotos = [];
+    const usedAlbums = new Set();
+
+    for (const photo of data) {
+      const albumKey = photo.album_name || photo.album_key || 'unknown';
+      if (!usedAlbums.has(albumKey) && selectedPhotos.length < 15) {
+        selectedPhotos.push(photo);
+        usedAlbums.add(albumKey);
+      }
+    }
+
+    if (selectedPhotos.length === 0) return null;
+
+    // Use the most intense action shot as cover
+    const coverPhoto = selectedPhotos[0];
+
+    // Calculate aggregate stats
+    const avgQuality = selectedPhotos.reduce((sum, p) =>
+      sum + ((p.sharpness || 0) + (p.composition_score || 0) + (p.emotional_impact || 0)) / 3, 0
+    ) / selectedPhotos.length;
+
+    return {
+      type: 'action-showcase',
+      title: 'Action Showcase',
+      album: {
+        albumKey: 'action-showcase', // Virtual album key
+        albumName: 'Action Showcase',
+        photoCount: selectedPhotos.length,
+        coverImageUrl: coverPhoto.ThumbnailUrl || coverPhoto.ImageUrl,
+        primarySport: 'volleyball',
+        primaryCategory: 'action',
+        avgQualityScore: Math.round(avgQuality * 10) / 10,
+        latestPhotoDate: coverPhoto.photo_date || coverPhoto.upload_date,
+        isVirtual: true
+      }
+    };
+  } catch (err) {
+    console.error('[Homepage] Error creating Action Showcase album:', err);
+    return null;
+  }
+}

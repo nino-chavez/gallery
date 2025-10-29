@@ -2,6 +2,7 @@
 	import { Motion } from 'svelte-motion';
 	import { Heart } from 'lucide-svelte';
 	import { favorites } from '$lib/stores/favorites.svelte';
+	import { toast } from '$lib/stores/toast.svelte';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
@@ -23,7 +24,7 @@
 			favorites.toggleFavorite(photo);
 		} catch (error) {
 			if (error instanceof Error) {
-				alert(error.message); // Show limit error to user
+				toast.error(error.message); // Show limit error to user
 			}
 		}
 	}

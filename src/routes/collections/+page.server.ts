@@ -103,157 +103,119 @@ export const load: PageServerLoad = async () => {
 	// Generate collections dynamically by querying with the same criteria as generate-collections.ts
 	const collectionsWithPhotos: CollectionWithPhotos[] = [];
 
+	// Track used photo IDs to ensure unique cover photos across collections
+	const usedPhotoIds: string[] = [];
+
 	for (const collection of COLLECTIONS) {
 		let photoCount = 0;
 		let coverPhoto = null;
 
 		// Query based on collection type (HYBRID: Story + Quality thresholds)
+		let query = supabaseServer
+			.from('photo_metadata')
+			.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' });
+
 		if (collection.slug === 'portfolio-excellence') {
 			// Triple-excellent: 9/10+ on all quality metrics
-			const { data, count } = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.gte('sharpness', 9)
 				.gte('composition_score', 9)
 				.gte('emotional_impact', 9)
 				.not('sharpness', 'is', null)
-				.order('sharpness', { ascending: false })
-				.limit(1);
-
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+				.order('sharpness', { ascending: false });
 		} else if (collection.slug === 'comeback-stories') {
 			// HYBRID: Story (triumph + final minutes) + Quality floor (7/10)
-			const { data, count } = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.eq('emotion', 'triumph')
 				.eq('time_in_game', 'final_5_min')
 				.gte('emotional_impact', 7)
 				.gte('sharpness', 7)
 				.gte('composition_score', 7)
 				.not('sharpness', 'is', null)
-				.order('emotional_impact', { ascending: false })
-				.limit(1);
-
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+				.order('emotional_impact', { ascending: false });
 		} else if (collection.slug === 'peak-intensity') {
 			// HYBRID: Story (peak action) + Quality floor (7/10)
-			const { data, count } = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.eq('action_intensity', 'peak')
 				.gte('emotional_impact', 8)
 				.gte('sharpness', 7)
 				.gte('composition_score', 7)
 				.not('sharpness', 'is', null)
-				.order('emotional_impact', { ascending: false })
-				.limit(1);
-
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+				.order('emotional_impact', { ascending: false });
 		} else if (collection.slug === 'golden-hour-magic') {
-			const { data, count } = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.eq('time_of_day', 'golden_hour')
 				.gte('composition_score', 7)
 				.gte('sharpness', 7)
 				.not('sharpness', 'is', null)
-				.order('composition_score', { ascending: false })
-				.limit(1);
-
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+				.order('composition_score', { ascending: false });
 		} else if (collection.slug === 'focus-and-determination') {
 			// HYBRID: Story (determination) + Higher quality floor (8/10 sharpness, 7/10 others)
-			const { data, count } = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.eq('emotion', 'determination')
 				.gte('sharpness', 8)
 				.gte('composition_score', 7)
 				.gte('emotional_impact', 7)
 				.not('sharpness', 'is', null)
-				.order('sharpness', { ascending: false })
-				.limit(1);
-
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+				.order('sharpness', { ascending: false });
 		} else if (collection.slug === 'victory-celebrations') {
 			// HYBRID: Story (celebrations) + Quality floor (7/10)
-			const { data, count } = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.eq('photo_category', 'celebration')
 				.gte('emotional_impact', 7)
 				.gte('sharpness', 7)
 				.gte('composition_score', 7)
 				.not('sharpness', 'is', null)
-				.order('emotional_impact', { ascending: false })
-				.limit(1);
-
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+				.order('emotional_impact', { ascending: false });
 		} else if (collection.slug === 'aerial-artistry') {
 			// HYBRID: Story (attack/block actions) + High quality (8/10+)
-			const { data, count } = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.in('play_type', ['attack', 'block'])
 				.gte('sharpness', 8)
 				.gte('composition_score', 8)
 				.not('sharpness', 'is', null)
-				.order('composition_score', { ascending: false })
-				.limit(1);
-
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+				.order('composition_score', { ascending: false });
 		} else if (collection.slug === 'early-game-energy') {
 			// HYBRID: Story (first_10_min) + Quality floor (7/10)
-			const { data, count } = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.eq('time_in_game', 'first_10_min')
 				.gte('sharpness', 7)
 				.gte('emotional_impact', 7)
 				.gte('composition_score', 7)
 				.not('sharpness', 'is', null)
-				.order('emotional_impact', { ascending: false })
-				.limit(1);
-
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+				.order('emotional_impact', { ascending: false });
 		} else if (collection.slug === 'defensive-masterclass') {
 			// HYBRID: Story (dig/block plays) + Quality floor (7/10)
-			const { data, count } = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.in('play_type', ['dig', 'block'])
 				.gte('sharpness', 7)
 				.gte('emotional_impact', 7)
 				.gte('composition_score', 7)
 				.not('sharpness', 'is', null)
-				.order('sharpness', { ascending: false })
-				.limit(1);
-
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+				.order('sharpness', { ascending: false });
 		} else if (collection.slug === 'sunset-sessions') {
 			// HYBRID: Story (evening time) + Quality floor (7/10)
-			const { data, count} = await supabaseServer
-				.from('photo_metadata')
-				.select('photo_id, image_key, ImageUrl, ThumbnailUrl', { count: 'exact' })
+			query = query
 				.eq('time_of_day', 'evening')
 				.gte('composition_score', 7)
 				.gte('sharpness', 7)
 				.not('sharpness', 'is', null)
-				.order('composition_score', { ascending: false })
-				.limit(1);
+				.order('composition_score', { ascending: false });
+		}
 
-			photoCount = count || 0;
-			coverPhoto = data?.[0] || null;
+		// Exclude already used photos to ensure uniqueness
+		if (usedPhotoIds.length > 0) {
+			query = query.not('photo_id', 'in', `(${usedPhotoIds.join(',')})`);
+		}
+
+		const { data, count } = await query.limit(1);
+
+		photoCount = count || 0;
+		coverPhoto = data?.[0] || null;
+
+		// Track used photo IDs to ensure uniqueness
+		if (coverPhoto) {
+			usedPhotoIds.push(coverPhoto.photo_id);
 		}
 
 		collectionsWithPhotos.push({

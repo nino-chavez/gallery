@@ -30,7 +30,7 @@
 	const pageTitle = $derived.by(() => {
 		const path = $page.url.pathname;
 		if (path === '/') return siteTitle;
-		if (path === '/explore') return `Explore Photos | ${siteTitle}`;
+		if (path === '/explore') return `Search Photos | ${siteTitle}`;
 		if (path === '/timeline') return `Timeline | ${siteTitle}`;
 		if (path === '/collections') return `Collections | ${siteTitle}`;
 		if (path === '/albums') return `Albums | ${siteTitle}`;
@@ -42,7 +42,7 @@
 	const pageDescription = $derived.by(() => {
 		const path = $page.url.pathname;
 		if (path === '/explore')
-			return 'Browse 19,000+ professional action sports photos. Filter by sport, emotion, quality, and more.';
+			return 'Search and filter through 19,000+ professional action sports photos. Find the perfect shot with advanced search and filtering.';
 		if (path === '/timeline') return 'Explore photos chronologically by upload date.';
 		if (path === '/collections')
 			return 'Curated collections showcasing portfolio-worthy shots and emotion-driven moments.';

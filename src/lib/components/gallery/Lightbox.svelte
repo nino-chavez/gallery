@@ -13,6 +13,7 @@
 	import { swipe, type SwipeEvent, isTouchDevice } from '$lib/utils/gestures';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import DownloadButton from '$lib/components/photo/DownloadButton.svelte';
+	import { generatePhotoTitle, generatePhotoCaption, generateMetadataSummary } from '$lib/photo-utils';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
@@ -64,6 +65,11 @@
 	const findSimilarUrl = $derived(
 		photo?.metadata.emotion ? `/explore?emotion=${photo.metadata.emotion.toLowerCase()}` : null
 	);
+
+	// Generate user-friendly display text
+	const displayTitle = $derived(photo ? generatePhotoTitle(photo) : 'Sports Photo');
+	const displayCaption = $derived(photo ? generatePhotoCaption(photo) : '');
+	const metadataSummary = $derived(photo ? generateMetadataSummary(photo) : []);
 
 	function handleClose() {
 		open = false;
@@ -274,8 +280,13 @@
 						<!-- Photo Info -->
 						<div class="flex-1">
 							<Typography variant="h3" class="text-white text-lg">
-								{photo.title || 'Untitled'}
+								{displayTitle}
 							</Typography>
+							{#if displayCaption}
+								<Typography variant="body" class="text-white/70 text-sm mt-1 italic">
+									{displayCaption}
+								</Typography>
+							{/if}
 							{#if photos.length > 0}
 								<Typography variant="caption" class="text-white/60">
 									{currentIndex + 1} / {photos.length}
@@ -338,7 +349,7 @@
 				>
 					<img
 						src={photo.original_url || photo.image_url}
-						alt={photo.title || 'Photo'}
+						alt={displayTitle}
 						class="max-w-full max-h-full object-contain select-none transition-transform duration-200 touch-none"
 						style="transform: scale({zoomLevel}) translate({imagePosition.x /
 							zoomLevel}px, {imagePosition.y / zoomLevel}px)"
@@ -379,18 +390,9 @@
 				>
 					<div class="max-w-7xl mx-auto flex items-center justify-between">
 						<div class="flex items-center gap-6 text-white/80 text-sm">
-							{#if photo.metadata.sport_type}
-								<span class="capitalize">{photo.metadata.sport_type}</span>
-							{/if}
-							{#if photo.metadata.photo_category}
-								<span class="capitalize">{photo.metadata.photo_category}</span>
-							{/if}
-							{#if photo.metadata.lighting}
-								<span class="capitalize">{photo.metadata.lighting} light</span>
-							{/if}
-							{#if photo.metadata.time_of_day}
-								<span class="capitalize">{photo.metadata.time_of_day.replace('_', ' ')}</span>
-							{/if}
+							{#each metadataSummary as tag}
+								<span class="capitalize">{tag}</span>
+							{/each}
 
 							<!-- "Find Similar" Button -->
 							{#if findSimilarUrl && emotionColor}

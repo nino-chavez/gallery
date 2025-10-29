@@ -1,18 +1,26 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { Camera, ChevronDown, X, Filter, SlidersHorizontal } from 'lucide-svelte';
+	import { Camera, X, Filter, SlidersHorizontal } from 'lucide-svelte';
 	import { preferences } from '$lib/stores/preferences.svelte';
 	import { filterNotifications } from '$lib/stores/filter-notifications.svelte';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
+	import Pagination from '$lib/components/ui/Pagination.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import Lightbox from '$lib/components/gallery/Lightbox.svelte';
 	import VisualDataLegend from '$lib/components/ui/VisualDataLegend.svelte';
 	import SearchAutocomplete from '$lib/components/search/SearchAutocomplete.svelte';
 	import FilterChip from '$lib/components/filters/FilterChip.svelte';
 	import ConsolidatedFilter from '$lib/components/filters/ConsolidatedFilter.svelte';
+	import FilterSidebar from '$lib/components/filters/FilterSidebar.svelte';
+	import FilterSidebarDrawer from '$lib/components/filters/FilterSidebarDrawer.svelte';
+	import FilterShareButton from '$lib/components/filters/FilterShareButton.svelte';
+	import FilterPresetsPanel from '$lib/components/filters/FilterPresetsPanel.svelte';
 	import Toast from '$lib/components/ui/Toast.svelte';
+	import { filterHistory, type FilterHistoryEntry } from '$lib/stores/filter-history.svelte';
+	import { filterAnalytics } from '$lib/stores/filter-analytics.svelte';
+	import type { FilterPreset } from '$lib/stores/filter-presets.svelte';
 	import { parseQuery, describeFilters } from '$lib/utils/nlp-query-parser';
 	import {
 		buildFilterState,
@@ -74,8 +82,11 @@
 	let lightboxOpen = $state(false);
 	let selectedPhotoIndex = $state(0);
 
+	// Mobile drawer state
+	let mobileFilterDrawerOpen = $state(false);
+
 	// Search
-	let searchQuery = $state('');
+	let searchQuery = $state(data.searchQuery || '');
 
 	// Parse current search query for detected filters
 	let detectedFilters = $derived.by(() => {
@@ -84,8 +95,22 @@
 		return Object.keys(parsed).length > 0 ? describeFilters(parsed) : null;
 	});
 
-	// Filter photos by search (client-side only)
+	// Check if current search has NLP filters applied (vs client-side text search)
+	let hasActiveNLPFilters = $derived.by(() => {
+		return !!(data.selectedTimeOfDay === 'golden_hour' || 
+		          data.selectedColorTemp === 'warm' || 
+		          data.selectedIntensity === 'high' ||
+		          detectedFilters);
+	});
+
+	// Filter photos by search (client-side only when no NLP filters are active)
 	let displayPhotos = $derived.by(() => {
+		// If we have active NLP filters, don't do client-side text filtering
+		if (hasActiveNLPFilters) {
+			return data.photos;
+		}
+
+		// Only do client-side text search when no NLP filters are active
 		if (!searchQuery.trim()) return data.photos;
 
 		const query = searchQuery.toLowerCase();
@@ -213,6 +238,8 @@
 
 		// If we detected filters, apply them to URL
 		if (Object.keys(parsedFilters).length > 0) {
+			console.log('[handleSearch] NLP filters detected:', parsedFilters, 'for query:', query);
+			
 			const url = new URL($page.url);
 
 			// Apply detected filters
@@ -230,19 +257,28 @@
 			if (parsedFilters.time_of_day) url.searchParams.set('time_of_day', parsedFilters.time_of_day);
 			if (parsedFilters.composition) url.searchParams.set('composition', parsedFilters.composition);
 
+			// Set the search query
+			url.searchParams.set('q', query);
+
+			url.searchParams.delete('page');
+			
+			goto(url.toString());
+		} else {
+			console.log('[handleSearch] No NLP filters detected, setting search query:', query);
+			// No NLP filters detected, just set the search query
+			const url = new URL($page.url);
+			url.searchParams.set('q', query);
 			url.searchParams.delete('page');
 			goto(url.toString());
-
-			// Keep the query for text display but filters are now active
-			searchQuery = query;
-		} else {
-			// No NLP filters detected, just use as client-side text search
-			searchQuery = query;
 		}
 	}
 
 	function handleClearSearch() {
 		searchQuery = '';
+		const url = new URL($page.url);
+		url.searchParams.delete('q');
+		url.searchParams.delete('page');
+		goto(url.toString());
 	}
 
 	function handlePlayTypeSelect(playType: string | null) {
@@ -322,8 +358,80 @@
 		url.searchParams.delete('color_temp');
 		url.searchParams.delete('time_of_day');
 		url.searchParams.delete('composition');
+		url.searchParams.delete('q'); // Clear search query too
 		url.searchParams.delete('page');
-		// Keep sort preference
+		goto(url.toString());
+	}	// Apply filter preset
+	function handleApplyPreset(filters: FilterPreset['filters']) {
+		const url = new URL($page.url);
+
+		// Clear existing filters
+		url.searchParams.delete('sport');
+		url.searchParams.delete('category');
+		url.searchParams.delete('play_type');
+		url.searchParams.delete('intensity');
+		url.searchParams.delete('lighting');
+		url.searchParams.delete('color_temp');
+		url.searchParams.delete('time_of_day');
+		url.searchParams.delete('composition');
+		// Keep search query
+
+		// Apply preset filters
+		if (filters.sport) url.searchParams.set('sport', filters.sport);
+		if (filters.category) url.searchParams.set('category', filters.category);
+		if (filters.playType) url.searchParams.set('play_type', filters.playType);
+		if (filters.intensity) url.searchParams.set('intensity', filters.intensity);
+		if (filters.lighting && filters.lighting.length > 0) {
+			filters.lighting.forEach(l => url.searchParams.append('lighting', l));
+		}
+		if (filters.colorTemp) url.searchParams.set('color_temp', filters.colorTemp);
+		if (filters.timeOfDay) url.searchParams.set('time_of_day', filters.timeOfDay);
+		if (filters.composition) url.searchParams.set('composition', filters.composition);
+
+		url.searchParams.delete('page');
+		goto(url.toString());
+
+		// Close mobile drawer if open
+		mobileFilterDrawerOpen = false;
+	}
+
+	// Apply filter history entry
+	function handleApplyHistory(filters: FilterHistoryEntry['filters']) {
+		const url = new URL($page.url);
+
+		// Clear existing filters
+		url.searchParams.delete('sport');
+		url.searchParams.delete('category');
+		url.searchParams.delete('play_type');
+		url.searchParams.delete('intensity');
+		url.searchParams.delete('lighting');
+		url.searchParams.delete('color_temp');
+		url.searchParams.delete('time_of_day');
+		url.searchParams.delete('composition');
+		// Keep search query
+
+		// Apply history filters
+		if (filters.sport) url.searchParams.set('sport', filters.sport);
+		if (filters.category) url.searchParams.set('category', filters.category);
+		if (filters.playType) url.searchParams.set('play_type', filters.playType);
+		if (filters.intensity) url.searchParams.set('intensity', filters.intensity);
+		if (filters.lighting && filters.lighting.length > 0) {
+			filters.lighting.forEach(l => url.searchParams.append('lighting', l));
+		}
+		if (filters.colorTemp) url.searchParams.set('color_temp', filters.colorTemp);
+		if (filters.timeOfDay) url.searchParams.set('time_of_day', filters.timeOfDay);
+		if (filters.composition) url.searchParams.set('composition', filters.composition);
+
+		url.searchParams.delete('page');
+		goto(url.toString());
+
+		// Close mobile drawer if open
+		mobileFilterDrawerOpen = false;
+	}
+
+	function handlePageChange(page: number) {
+		const url = new URL(window.location.href);
+		url.searchParams.set('page', String(page));
 		goto(url.toString());
 	}
 
@@ -332,22 +440,14 @@
 		const sortBy = select.value as typeof preferences.sortBy;
 		preferences.setSortBy(sortBy);
 
-		const url = new URL($page.url);
+		const url = new URL(window.location.href);
 		url.searchParams.set('sort', sortBy);
-		goto(url.toString());
-	}
-
-	function loadMore() {
-		const url = new URL($page.url);
-		const currentPage = parseInt(url.searchParams.get('page') || '1');
-		url.searchParams.set('page', String(currentPage + 1));
 		goto(url.toString());
 	}
 
 	// Pagination
 	const showingStart = $derived((data.currentPage - 1) * data.pageSize + 1);
 	const showingEnd = $derived(Math.min(data.currentPage * data.pageSize, data.totalCount));
-	const hasMore = $derived(showingEnd < data.totalCount);
 
 	// Apply stored preference if no URL sort param
 	$effect(() => {
@@ -358,75 +458,107 @@
 			goto(url.toString(), { replaceState: true });
 		}
 	});
+
+	// Track filter changes and add to history
+	$effect(() => {
+		const currentFilters = {
+			sport: data.selectedSport,
+			category: data.selectedCategory,
+			playType: data.selectedPlayType,
+			intensity: data.selectedIntensity,
+			lighting: data.selectedLighting,
+			colorTemp: data.selectedColorTemp,
+			timeOfDay: data.selectedTimeOfDay,
+			composition: data.selectedComposition,
+		};
+
+		// Track analytics
+		if (data.selectedSport) filterAnalytics.trackFilter('sports', data.selectedSport);
+		if (data.selectedCategory) filterAnalytics.trackFilter('categories', data.selectedCategory);
+		if (data.selectedPlayType) filterAnalytics.trackFilter('playTypes', data.selectedPlayType);
+		if (data.selectedIntensity) filterAnalytics.trackFilter('intensities', data.selectedIntensity);
+		if (data.selectedLighting) {
+			data.selectedLighting.forEach(l => filterAnalytics.trackFilter('lighting', l));
+		}
+		if (data.selectedColorTemp) filterAnalytics.trackFilter('colorTemps', data.selectedColorTemp);
+		if (data.selectedTimeOfDay) filterAnalytics.trackFilter('timesOfDay', data.selectedTimeOfDay);
+		if (data.selectedComposition) filterAnalytics.trackFilter('compositions', data.selectedComposition);
+
+		// Track combination
+		if (activeFilterCount > 0) {
+			const filterCombination: Record<string, string | string[]> = {};
+			if (data.selectedSport) filterCombination.sport = data.selectedSport;
+			if (data.selectedCategory) filterCombination.category = data.selectedCategory;
+			if (data.selectedPlayType) filterCombination.playType = data.selectedPlayType;
+			if (data.selectedIntensity) filterCombination.intensity = data.selectedIntensity;
+			if (data.selectedLighting) filterCombination.lighting = data.selectedLighting;
+			if (data.selectedColorTemp) filterCombination.colorTemp = data.selectedColorTemp;
+			if (data.selectedTimeOfDay) filterCombination.timeOfDay = data.selectedTimeOfDay;
+			if (data.selectedComposition) filterCombination.composition = data.selectedComposition;
+
+			filterAnalytics.trackCombination(filterCombination);
+		}
+
+		// Add to history (debounced via store logic)
+		filterHistory.addToHistory(currentFilters);
+	});
 </script>
 
 <!-- Minimal Sticky Header -->
 <div class="sticky top-0 z-20 bg-charcoal-950/95 backdrop-blur-sm border-b border-charcoal-800/50">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-		<!-- Title + Count -->
-		<div class="flex items-center justify-between gap-4 mb-3">
-			<div class="flex items-center gap-3">
-				<Typography variant="h1" class="text-xl lg:text-2xl">Gallery</Typography>
-				<span class="px-2.5 py-1 rounded-full bg-charcoal-800/60 border border-charcoal-700 text-charcoal-300 text-xs font-medium">
-					{data.totalCount.toLocaleString()} photos
-				</span>
-			</div>
-
-			<!-- Desktop Search -->
-			<div class="hidden md:block flex-1 max-w-md">
-				<SearchAutocomplete
-					bind:value={searchQuery}
-					sportContext={data.selectedSport}
-					categoryContext={data.selectedCategory}
-					onSearch={handleSearch}
-					onClear={handleClearSearch}
-				/>
-			</div>
-		</div>
-
-		<!-- Mobile Search -->
-		<div class="md:hidden mb-3">
-			<SearchAutocomplete
-				bind:value={searchQuery}
-				sportContext={data.selectedSport}
-				categoryContext={data.selectedCategory}
-				onSearch={handleSearch}
-				onClear={handleClearSearch}
-			/>
-
-			<!-- NLP Filter Detection Indicator -->
-			{#if detectedFilters}
-				<div class="mt-2 px-3 py-2 bg-gold-500/10 border border-gold-500/20 rounded-lg">
-					<Typography variant="caption" class="text-xs text-gold-400">
-						<span class="font-medium">Detected filters:</span>
-						{detectedFilters}
-					</Typography>
-				</div>
-			{/if}
-		</div>
-
-		<!-- Filters Header with Clear All Button -->
+		<!-- Filters Header with Actions -->
 		<div class="flex items-center justify-between gap-2 mb-2">
 			<div class="flex items-center gap-2">
-				<Typography variant="label" class="text-charcoal-300 text-xs">
-					Filters
-					{#if activeFilterCount > 0}
-						<span class="ml-1 px-2 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs">
-							{activeFilterCount}
-						</span>
-					{/if}
-				</Typography>
+				<!-- Share Button removed from here -->
 			</div>
 
-			{#if activeFilterCount > 0}
+			<div class="flex items-center gap-2">
+				<!-- Mobile Filter Drawer Toggle (visible on small screens only) -->
 				<button
-					onclick={clearAllFilters}
-					class="inline-flex items-center gap-1 px-2 py-1 text-xs text-charcoal-400 hover:text-gold-400 transition-colors"
+					onclick={() => mobileFilterDrawerOpen = true}
+					class="lg:hidden inline-flex items-center gap-1 px-3 py-1.5 text-xs rounded-full border transition-all bg-charcoal-800/50 border-charcoal-700 hover:border-gold-500/50"
+					aria-label="Open filters"
 				>
-					<X class="w-3 h-3" />
-					<span>Clear All</span>
+					<Filter class="w-3 h-3" />
+					<span>Filters</span>
+					{#if activeFilterCount > 0}
+						<span class="px-1.5 py-0.5 rounded-full bg-gold-500/30 text-gold-200 text-xs font-medium">{activeFilterCount}</span>
+					{/if}
 				</button>
-			{/if}
+
+				{#if activeFilterCount > 0}
+					<button
+						onclick={clearAllFilters}
+						class="inline-flex items-center gap-1 px-2 py-1 text-xs text-charcoal-400 hover:text-gold-400 transition-colors"
+					>
+						<X class="w-3 h-3" />
+						<span class="hidden sm:inline">Clear All</span>
+					</button>
+				{/if}
+			</div>
+		</div>
+
+		<!-- Filter Presets Panel (Collapsible) -->
+		<div class="mb-3">
+			<FilterPresetsPanel
+				onApplyPreset={handleApplyPreset}
+				onApplyHistory={handleApplyHistory}
+			/>
+		</div>
+
+		<!-- Share Button - Always visible -->
+		<div class="flex justify-end mb-3">
+			<FilterShareButton
+				sport={data.selectedSport}
+				category={data.selectedCategory}
+				playType={data.selectedPlayType}
+				intensity={data.selectedIntensity}
+				lighting={data.selectedLighting}
+				colorTemp={data.selectedColorTemp}
+				timeOfDay={data.selectedTimeOfDay}
+				composition={data.selectedComposition}
+			/>
 		</div>
 
 		<!-- Active Filter Chips (NEW: P0 Enhancement) -->
@@ -497,35 +629,68 @@
 			</div>
 		{/if}
 
-		<!-- Consolidated Filters (Reduces component count from 8 to 2) -->
-		{#if data.sports && data.sports.length > 0 && data.categories && data.categories.length > 0}
-			<ConsolidatedFilter
-				sports={data.sports}
-				categories={data.categories}
-				selectedSport={data.selectedSport}
-				selectedCategory={data.selectedCategory}
-				selectedPlayType={data.selectedPlayType}
-				selectedIntensity={data.selectedIntensity}
-				selectedLighting={data.selectedLighting}
-				selectedColorTemp={data.selectedColorTemp}
-				selectedTimeOfDay={data.selectedTimeOfDay}
-				selectedComposition={data.selectedComposition}
-				onSportSelect={handleSportSelect}
-				onCategorySelect={handleCategorySelect}
-				onPlayTypeSelect={handlePlayTypeSelect}
-				onIntensitySelect={handleIntensitySelect}
-				onLightingSelect={handleLightingSelect}
-				onColorTempSelect={handleColorTempSelect}
-				onTimeOfDaySelect={handleTimeOfDaySelect}
-				onCompositionSelect={handleCompositionSelect}
-				filterCounts={data.filterCounts}
-			/>
-		{/if}
+		<!-- Consolidated Filters (Mobile only - dropdowns) -->
+		<div class="lg:hidden">
+			{#if data.sports && data.sports.length > 0 && data.categories && data.categories.length > 0}
+				<ConsolidatedFilter
+					sports={data.sports}
+					categories={data.categories}
+					selectedSport={data.selectedSport}
+					selectedCategory={data.selectedCategory}
+					selectedPlayType={data.selectedPlayType}
+					selectedIntensity={data.selectedIntensity}
+					selectedLighting={data.selectedLighting}
+					selectedColorTemp={data.selectedColorTemp}
+					selectedTimeOfDay={data.selectedTimeOfDay}
+					selectedComposition={data.selectedComposition}
+					onSportSelect={handleSportSelect}
+					onCategorySelect={handleCategorySelect}
+					onPlayTypeSelect={handlePlayTypeSelect}
+					onIntensitySelect={handleIntensitySelect}
+					onLightingSelect={handleLightingSelect}
+					onColorTempSelect={handleColorTempSelect}
+					onTimeOfDaySelect={handleTimeOfDaySelect}
+					onCompositionSelect={handleCompositionSelect}
+					filterCounts={data.filterCounts}
+				/>
+			{/if}
+		</div>
 	</div>
 </div>
 
-<!-- Main Content -->
+<!-- Main Content with Sidebar (Desktop) / Full Width (Mobile) -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
+	<div class="flex gap-6">
+		<!-- Filter Sidebar (Desktop only) -->
+		<div class="hidden lg:block">
+			{#if data.sports && data.sports.length > 0 && data.categories && data.categories.length > 0}
+				<FilterSidebar
+					sports={data.sports}
+					categories={data.categories}
+					selectedSport={data.selectedSport}
+					selectedCategory={data.selectedCategory}
+					selectedPlayType={data.selectedPlayType}
+					selectedIntensity={data.selectedIntensity}
+					selectedLighting={data.selectedLighting}
+					selectedColorTemp={data.selectedColorTemp}
+					selectedTimeOfDay={data.selectedTimeOfDay}
+					selectedComposition={data.selectedComposition}
+					onSportSelect={handleSportSelect}
+					onCategorySelect={handleCategorySelect}
+					onPlayTypeSelect={handlePlayTypeSelect}
+					onIntensitySelect={handleIntensitySelect}
+					onLightingSelect={handleLightingSelect}
+					onColorTempSelect={handleColorTempSelect}
+					onTimeOfDaySelect={handleTimeOfDaySelect}
+					onCompositionSelect={handleCompositionSelect}
+					onClearAll={clearAllFilters}
+					filterCounts={data.filterCounts}
+				/>
+			{/if}
+		</div>
+
+		<!-- Gallery Content -->
+		<div class="flex-1 min-w-0">
 	<!-- Sort & Count -->
 	<div class="flex items-center justify-between mb-4">
 		<Typography variant="caption" class="text-charcoal-400 text-xs">
@@ -541,8 +706,8 @@
 			<option value="quality">Best Photos First</option>
 			<option value="newest">Newest</option>
 			<option value="oldest">Oldest</option>
-			<option value="highest_quality">Highest Quality</option>
-			<option value="lowest_quality">Lowest Quality</option>
+			<option value="intensity">Most Action</option>
+			<option value="action">By Play Type</option>
 		</select>
 	</div>
 
@@ -583,15 +748,19 @@
 	{/if}
 
 	<!-- Load More -->
-	{#if hasMore && displayPhotos.length > 0}
+	{#if displayPhotos.length > 0}
 		<div class="flex justify-center mt-8">
-			<Button size="lg" onclick={loadMore}>
-				Load More Photos
-				<ChevronDown class="w-5 h-5 ml-2" />
-			</Button>
+			<Pagination
+				currentPage={data.currentPage}
+				totalCount={data.totalCount}
+				pageSize={data.pageSize}
+				onPageChange={handlePageChange}
+			/>
 		</div>
 	{/if}
-</div>
+		</div><!-- End Gallery Content -->
+	</div><!-- End flex container -->
+</div><!-- End max-w-7xl container -->
 
 <!-- Lightbox -->
 {#snippet debugLightbox()}

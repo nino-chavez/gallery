@@ -3,6 +3,7 @@
 	import { Heart, Trash2, Download, Upload, AlertCircle } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
 	import { favorites } from '$lib/stores/favorites.svelte';
+	import { toast } from '$lib/stores/toast.svelte';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
@@ -80,7 +81,7 @@
 			try {
 				const json = e.target?.result as string;
 				const count = favorites.importFavorites(json);
-				alert(`Successfully imported ${count} favorites!`);
+				toast.success(`Successfully imported ${count} favorites!`);
 				showImportDialog = false;
 				importError = null;
 			} catch (error) {

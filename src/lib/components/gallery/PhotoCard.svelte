@@ -57,6 +57,7 @@
 	href={photoUrl}
 	class="photo-card group relative aspect-[4/3] bg-charcoal-900 rounded-lg overflow-hidden border border-charcoal-800 transition-all cursor-pointer outline-none block"
 	aria-label={accessibleAltText}
+	data-sveltekit-preload-data="false"
 	onclick={handleClick}
 >
 	<!-- Optimized Image with Lazy Loading & Blur Placeholder -->

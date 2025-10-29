@@ -11,6 +11,7 @@
 	import Card from '$lib/components/ui/Card.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
 	import SearchBar from '$lib/components/ui/SearchBar.svelte';
+	import PremiumHero from '$lib/components/ui/PremiumHero.svelte';
 	import { Heart, Camera, Award } from 'lucide-svelte';
 	import type { Photo } from '$types/photo';
 
@@ -30,9 +31,6 @@
 				exposure_accuracy: 9.0,
 				composition_score: 9.5,
 				emotional_impact: 9.0,
-				portfolio_worthy: true,
-				print_ready: true,
-				social_media_optimized: true,
 				emotion: 'triumph',
 				composition: 'rule_of_thirds',
 				time_of_day: 'midday',
@@ -40,10 +38,11 @@
 				action_intensity: 'high',
 				sport_type: 'volleyball',
 				photo_category: 'action',
-				action_type: 'attack',
-				use_cases: ['portfolio', 'print', 'social'],
+				lighting: 'natural',
+				color_temperature: 'warm',
 				ai_provider: 'claude',
 				ai_cost: 0.05,
+				ai_confidence: 0.95,
 				enriched_at: '2025-01-15T10:00:00Z'
 			}
 		},
@@ -61,20 +60,18 @@
 				exposure_accuracy: 7.5,
 				composition_score: 8.0,
 				emotional_impact: 8.5,
-				portfolio_worthy: false,
-				print_ready: true,
-				social_media_optimized: true,
 				emotion: 'intensity',
-				composition: 'leading-lines',
+				composition: 'leading_lines',
 				time_of_day: 'evening',
 				play_type: 'dig',
 				action_intensity: 'peak',
 				sport_type: 'volleyball',
 				photo_category: 'action',
-				action_type: 'dig',
-				use_cases: ['social', 'web'],
+				lighting: 'dramatic',
+				color_temperature: 'cool',
 				ai_provider: 'claude',
 				ai_cost: 0.05,
+				ai_confidence: 0.88,
 				enriched_at: '2025-01-14T10:00:00Z'
 			}
 		},
@@ -92,20 +89,18 @@
 				exposure_accuracy: 4.5,
 				composition_score: 4.0,
 				emotional_impact: 4.5,
-				portfolio_worthy: false,
-				print_ready: false,
-				social_media_optimized: false,
 				emotion: 'focus',
-				composition: 'centered',
-				time_of_day: 'morning',
+				composition: 'symmetry',
+				time_of_day: 'dawn',
 				play_type: null,
 				action_intensity: 'low',
 				sport_type: 'volleyball',
 				photo_category: 'candid',
-				action_type: null,
-				use_cases: ['archive'],
+				lighting: 'soft',
+				color_temperature: 'neutral',
 				ai_provider: 'claude',
 				ai_cost: 0.05,
+				ai_confidence: 0.72,
 				enriched_at: '2025-01-13T10:00:00Z'
 			}
 		}
@@ -978,6 +973,33 @@ animate-glow-fast   /* 1.5s duration - attention-grabbing CTAs */</code></pre>
 					Current query: "{searchQuery}"
 				</p>
 			{/if}
+		</div>
+
+		<!-- Premium Hero -->
+		<div class="mb-12">
+			<h3 class="text-lg mb-4 text-charcoal-300 font-semibold">Premium Hero</h3>
+			<p class="text-xs text-charcoal-400 mb-4">
+				Full-screen hero section with dark overlay and premium typography. Perfect for marketing pages and landing sections.
+			</p>
+			<div class="border border-charcoal-800 rounded-lg overflow-hidden">
+				<PremiumHero
+					backgroundImage="https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=1200"
+					title="VOLLEYBALL PHOTOGRAPHY"
+					subtitle="ACTION & MOMENTS"
+				/>
+			</div>
+			<div class="mt-4 p-4 bg-charcoal-900/50 rounded-lg">
+				<p class="text-xs text-charcoal-400 mb-2">
+					<strong>Features:</strong>
+				</p>
+				<ul class="text-xs text-charcoal-500 space-y-1 list-disc list-inside">
+					<li><strong>Full Viewport Height:</strong> 100vh with responsive design</li>
+					<li><strong>Dark Overlay:</strong> Semi-transparent gradient for text readability</li>
+					<li><strong>Premium Typography:</strong> Montserrat font with uppercase styling</li>
+					<li><strong>Centered Content:</strong> Perfectly centered both vertically and horizontally</li>
+					<li><strong>Motion Integration:</strong> Smooth fade-in animation with svelte-motion</li>
+				</ul>
+			</div>
 		</div>
 
 		<!-- Photo Cards (Live Demo) -->

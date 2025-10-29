@@ -2,189 +2,505 @@
   TimelineV2 Component - Vertical timeline for photo browsing
 
   Features:
-  - Scroll-based animations with progress indicator
   - Year/month grouping for large datasets
-  - Lazy-loaded photo grids
+  - Photo grids
   - Mobile-responsive design
-  - Content-first layout
 
   Usage:
   <TimelineV2 {timelineData} />
 -->
 
 <script lang="ts">
-  import { Motion } from 'svelte-motion';
-  import { Calendar, ChevronDown } from 'lucide-svelte';
-  import { MOTION } from '$lib/motion-tokens';
   import Typography from '$lib/components/ui/Typography.svelte';
   import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
+  import { Calendar, ChevronDown, ChevronUp, Filter, X } from 'lucide-svelte';
+  import SportFilter from '$lib/components/filters/SportFilter.svelte';
+  import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte';
+  import { Motion } from 'svelte-motion';
+  import { MOTION } from '$lib/motion-tokens';
+  import type { Photo } from '$types/photo';
 
   interface TimelineEntry {
     year: number;
     month?: number;
     monthName?: string;
     photoCount: number;
-    featuredPhotos: Array<{
-      id: string;
-      thumbnailUrl: string;
-      imageUrl: string;
-      caption: string;
-      sportType: string;
-      qualityScore: number;
-    }>;
+    featuredPhotos: Photo[];
     description?: string;
   }
 
   interface Props {
     timelineData: TimelineEntry[];
-    onLoadMore?: () => void;
     hasMore?: boolean;
+    currentPage?: number;
+    selectedSport?: string | null;
+    selectedCategory?: string | null;
+    sports?: Array<{ name: string; count: number; percentage: number }>;
+    categories?: Array<{ name: string; count: number; percentage: number }>;
+    allAvailablePeriods?: TimelineEntry[];
   }
 
-  let { timelineData, onLoadMore, hasMore = false }: Props = $props();
+  let {
+    timelineData,
+    hasMore = false,
+    currentPage = 1,
+    selectedSport = null,
+    selectedCategory = null,
+    sports = [],
+    categories = [],
+    allAvailablePeriods = []
+  }: Props = $props();
 
-  // Animation state
-  let containerElement = $state<HTMLElement>();
-  let progressHeight = $state(0);
-  let scrollProgress = $state(0);
+  // Lazy loading state
+  let isLoadingMore = $state(false);
+  let allPeriods = $state(timelineData);
+  let hasMorePeriods = $state(hasMore);
+  let currentPageNum = $state(currentPage);
 
-  // Scroll handler for progress animation
-  function handleScroll() {
-    if (!containerElement) return;
+  // Navigation state
+  let selectedYear: number | null = $state(null);
+  let selectedMonth: number | null = $state(null);
+  let showPeriodSelector = $state(false);
 
-    const rect = containerElement.getBoundingClientRect();
-    const scrollTop = window.scrollY;
-    const elementTop = rect.top + scrollTop;
-    const elementHeight = rect.height;
-    const windowHeight = window.innerHeight;
+  // Animation state for period transitions
+  let currentVisiblePeriod = $state<{ year: number; month?: number } | null>(null);
+  let isTransitioning = $state(false);
+  let transitionType = $state<'same-year' | 'new-year' | null>(null);
 
-    const progress = Math.min(Math.max((scrollTop - elementTop + windowHeight) / elementHeight, 0), 1);
-    scrollProgress = progress;
-    progressHeight = progress * elementHeight;
+  // Intersection observer for period visibility and animations
+  let periodObservers = $state<Map<string, IntersectionObserver>>(new Map());
+
+  // Group periods by year for sticky year headers
+  let periodsByYear = $derived.by(() => {
+    const grouped: Record<number, TimelineEntry[]> = {};
+    allPeriods.forEach(entry => {
+      if (!grouped[entry.year]) {
+        grouped[entry.year] = [];
+      }
+      grouped[entry.year].push(entry);
+    });
+
+    // Sort years descending, and within each year sort months descending
+    return Object.keys(grouped)
+      .map(year => parseInt(year))
+      .sort((a, b) => b - a)
+      .map(year => ({
+        year,
+        periods: grouped[year].sort((a, b) => (b.month || 0) - (a.month || 0))
+      }));
+  });
+
+  // Get unique years and months for navigation
+  let availableYears = $derived.by(() => {
+    const years = new Set(allPeriods.map(entry => entry.year));
+    return Array.from(years).sort((a, b) => b - a); // Newest first
+  });
+
+  let availableMonths = $derived.by(() => {
+    if (!selectedYear) return [];
+    return allPeriods
+      .filter(entry => entry.year === selectedYear && entry.month)
+      .map(entry => ({ month: entry.month!, monthName: entry.monthName! }))
+      .sort((a, b) => b.month - a.month); // Newest first
+  });
+
+  // Combined periods for single dropdown
+  let availablePeriods = $derived.by(() => {
+    return allAvailablePeriods
+      .filter(entry => entry.month) // Only include entries with months
+      .map(entry => ({
+        year: entry.year,
+        month: entry.month!,
+        monthName: entry.monthName!,
+        label: `${entry.monthName} ${entry.year}`,
+        id: `${entry.year}-${entry.month}`
+      }))
+      .sort((a, b) => {
+        // Sort by year descending, then by month descending
+        if (a.year !== b.year) return b.year - a.year;
+        return b.month - a.month;
+      });
+  });
+
+  // Filter state
+  let showFilters = $state(false);
+  let activeFilterCount = $derived.by(() => {
+    let count = 0;
+    if (selectedSport) count++;
+    if (selectedCategory) count++;
+    return count;
+  });
+
+  // Filter handlers
+  function handleSportSelect(sport: string | null) {
+    selectedSport = sport;
+    // Reset to first page when filtering
+    currentPageNum = 1;
+    // Reload data with new filters
+    reloadTimeline();
   }
 
-  // Intersection observer for lazy loading
-  let loadMoreTrigger = $state<HTMLElement>();
+  function handleCategorySelect(category: string | null) {
+    selectedCategory = category;
+    // Reset to first page when filtering
+    currentPageNum = 1;
+    // Reload data with new filters
+    reloadTimeline();
+  }
 
+  function clearAllFilters() {
+    selectedSport = null;
+    selectedCategory = null;
+    currentPageNum = 1;
+    reloadTimeline();
+  }
+
+  // Reload timeline with current filters
+  async function reloadTimeline() {
+    try {
+      isLoadingMore = true;
+      const params = new URLSearchParams({
+        page: '1',
+        limit: '6'
+      });
+
+      if (selectedSport) params.set('sport', selectedSport);
+      if (selectedCategory) params.set('category', selectedCategory);
+
+      const response = await fetch(`/api/timeline?${params}`);
+      const data = await response.json();
+
+      allPeriods = data.periods || [];
+      hasMorePeriods = data.hasMore || false;
+      currentPageNum = 1;
+    } catch (error) {
+      console.error('[Timeline] Failed to reload with filters:', error);
+    } finally {
+      isLoadingMore = false;
+    }
+  }
+
+  // Scroll to period function
+  function scrollToPeriod(year: number, month?: number) {
+    const periodId = month ? `month-${year}-${month}` : `year-${year}`;
+    const element = document.getElementById(periodId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      selectedYear = year;
+      selectedMonth = month || null;
+      showPeriodSelector = false;
+    }
+  }
+
+  // Calculate content diversity for a period
+  function getContentDiversity(photos: Photo[]) {
+    const sports = new Set(photos.map(p => p.metadata?.sport_type).filter(Boolean));
+    const categories = new Set(photos.map(p => p.metadata?.photo_category).filter(Boolean));
+
+    return {
+      sportCount: sports.size,
+      categoryCount: categories.size,
+      sports: Array.from(sports),
+      categories: Array.from(categories)
+    };
+  }
+
+  // Get featured photos (simple passthrough for now)
+  function getFeaturedPhotos(photos: Photo[]): Photo[] {
+    return photos || [];
+  }
+
+  // Click outside handler for dropdowns
+  function handleClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('[data-dropdown]')) {
+      showPeriodSelector = false;
+    }
+  }
+
+  // Close dropdowns on escape
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      showPeriodSelector = false;
+    }
+  }
+
+  // Effects for event listeners
   $effect(() => {
-    if (loadMoreTrigger && onLoadMore) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting && hasMore) {
-            onLoadMore();
-          }
-        },
-        { threshold: 0.1 }
-      );
-
-      observer.observe(loadMoreTrigger);
-
-      return () => observer.disconnect();
+    if (showPeriodSelector) {
+      document.addEventListener('click', handleClickOutside);
+      document.addEventListener('keydown', handleKeydown);
+      return () => {
+        document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('keydown', handleKeydown);
+      };
     }
   });
 
-  // Group photos by quality for display
-  function getFeaturedPhotos(photos: TimelineEntry['featuredPhotos']) {
-    return photos
-      .sort((a, b) => b.qualityScore - a.qualityScore)
-      .slice(0, 6); // Show top 6 photos per period
+  // Intersection observer for infinite scroll
+  let sentinelElement: HTMLElement | null = $state(null);
+  let sentinelObserver: IntersectionObserver | null = $state(null);
+
+  // Load more periods
+  async function loadMorePeriods() {
+    if (isLoadingMore || !hasMorePeriods) return;
+
+    try {
+      isLoadingMore = true;
+      const nextPage = currentPageNum + 1;
+
+      const params = new URLSearchParams({
+        page: nextPage.toString(),
+        limit: '6'
+      });
+
+      if (selectedSport) params.set('sport', selectedSport);
+      if (selectedCategory) params.set('category', selectedCategory);
+
+      const response = await fetch(`/api/timeline?${params}`);
+      const data = await response.json();
+
+      if (data.periods && data.periods.length > 0) {
+        allPeriods = [...allPeriods, ...data.periods];
+        currentPageNum = nextPage;
+        hasMorePeriods = data.hasMore || false;
+      } else {
+        hasMorePeriods = false;
+      }
+    } catch (error) {
+      console.error('[Timeline] Failed to load more periods:', error);
+    } finally {
+      isLoadingMore = false;
+    }
   }
+
+  // Initialize intersection observer for infinite scroll
+  function initIntersectionObserver() {
+    if (sentinelObserver) {
+      sentinelObserver.disconnect();
+    }
+
+    sentinelObserver = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasMorePeriods && !isLoadingMore) {
+          loadMorePeriods();
+        }
+      },
+      {
+        rootMargin: '100px', // Start loading 100px before the sentinel comes into view
+        threshold: 0.1
+      }
+    );
+
+    if (sentinelElement) {
+      sentinelObserver.observe(sentinelElement);
+    }
+  }
+
+  // Set up observer when sentinel element is available
+  $effect(() => {
+    if (sentinelElement && !sentinelObserver) {
+      initIntersectionObserver();
+    }
+
+    return () => {
+      if (sentinelObserver) {
+        sentinelObserver.disconnect();
+        sentinelObserver = null;
+      }
+    };
+  });
 </script>
 
-<svelte:window onscroll={handleScroll} />
-
-<div bind:this={containerElement} class="relative w-full bg-charcoal-950">
-  <!-- Header -->
-  <div class="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:px-10">
-    <Motion
-      let:motion
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={MOTION.spring.gentle}
-    >
-      <div use:motion class="text-center">
-        <Typography variant="h1" class="text-white mb-4">
-          Photo Timeline
-        </Typography>
-        <Typography variant="body" class="text-charcoal-300 max-w-2xl mx-auto">
-          Explore my photography journey through the years. Each period showcases the moments that defined my style and captured the essence of sports.
-        </Typography>
+<div class="relative w-full bg-charcoal-950">
+  <!-- Compact Header with Navigation -->
+  <div class="sticky top-0 z-50 bg-charcoal-950/95 backdrop-blur-sm border-b border-charcoal-800/50">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-10">
+      <div class="flex items-center justify-end gap-3 py-4">
+        <!-- Header is now empty but kept for future use -->
       </div>
-    </Motion>
+    </div>
   </div>
 
-  <!-- Timeline -->
-  <div class="relative max-w-7xl mx-auto pb-20">
-    {#each timelineData as entry, index (entry.year + (entry.month || 0))}
-      <Motion
-        let:motion
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ ...MOTION.spring.gentle, delay: index * 0.1 }}
+  <!-- Timeline Content -->
+  <div class="relative max-w-7xl mx-auto pt-8 pb-20">
+    {#each periodsByYear as yearGroup}
+      <!-- Sticky Year Header -->
+      <div
+        id="year-{yearGroup.year}"
+        class="sticky top-20 z-30 bg-charcoal-950/95 backdrop-blur-sm border-y border-charcoal-800/50 mb-8 -mx-4 px-4 py-6 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10"
       >
-        <div use:motion class="flex justify-start pt-16 md:pt-24 md:gap-12">
-          <!-- Timeline Marker -->
-          <div class="sticky flex flex-col items-center top-24 self-start z-40 max-w-xs lg:max-w-sm md:w-full">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <!-- Year Marker -->
             <div class="h-12 w-12 rounded-full bg-gold-500 flex items-center justify-center shadow-lg">
               <Calendar class="w-6 h-6 text-charcoal-950" />
             </div>
-            <Typography variant="h2" class="hidden md:block text-center mt-4 text-white">
-              {entry.year}
-              {#if entry.monthName}
-                <br />
-                <span class="text-gold-400 text-lg">{entry.monthName}</span>
-              {/if}
-            </Typography>
+
+            <!-- Year Title -->
+            <div>
+              <Typography variant="h2" class="text-white">
+                {yearGroup.year}
+              </Typography>
+              <Typography variant="caption" class="text-charcoal-400">
+                {yearGroup.periods.reduce((total, period) => total + period.photoCount, 0)} photos this year
+              </Typography>
+            </div>
           </div>
 
-          <!-- Content -->
-          <div class="relative pl-8 md:pl-0 w-full max-w-4xl">
-            <!-- Mobile Title -->
-            <Typography variant="h3" class="md:hidden block mb-6 text-white">
-              {entry.year}
-              {#if entry.monthName}
-                <span class="text-gold-400 ml-2">{entry.monthName}</span>
-              {/if}
-            </Typography>
+          <!-- Filters and navigation aligned with year row -->
+          <div class="flex items-center gap-2">
+            <!-- Jump to dropdown -->
+            {#if availablePeriods.length > 0}
+              <div class="flex items-center gap-2">
+                <Typography variant="label" class="text-charcoal-300 text-xs font-medium">
+                  Jump to:
+                </Typography>
+                <div class="relative" data-dropdown>
+                  <button
+                    onclick={() => showPeriodSelector = !showPeriodSelector}
+                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-200 rounded-lg border border-charcoal-700 transition-colors"
+                  >
+                    <span>{selectedYear && selectedMonth ? `${availablePeriods.find(p => p.year === selectedYear && p.month === selectedMonth)?.monthName} ${selectedYear}` : 'Select period'}</span>
+                    <ChevronDown class="w-3 h-3" />
+                  </button>
 
+                  {#if showPeriodSelector}
+                    <div class="absolute top-full right-0 mt-1 bg-charcoal-800 border border-charcoal-700 rounded-lg shadow-xl z-50 min-w-[160px] max-h-48 overflow-y-auto">
+                      {#each availablePeriods as period}
+                        <button
+                          onclick={() => scrollToPeriod(period.year, period.month)}
+                          class="w-full text-left px-3 py-2 text-sm text-charcoal-200 hover:bg-charcoal-700 hover:text-white transition-colors first:rounded-t-lg last:rounded-b-lg"
+                        >
+                          {period.label}
+                        </button>
+                      {/each}
+                    </div>
+                  {/if}
+                </div>
+              </div>
+            {/if}
+
+            {#if activeFilterCount > 0}
+              <button
+                onclick={clearAllFilters}
+                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-charcoal-300 hover:text-gold-400 bg-charcoal-800/50 hover:bg-charcoal-800 transition-all rounded-lg border border-charcoal-700/50 hover:border-gold-500/50"
+              >
+                <X class="w-3 h-3" />
+                <span>Clear</span>
+                <span class="ml-1 px-1.5 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs font-bold">
+                  {activeFilterCount}
+                </span>
+              </button>
+            {/if}
+
+            {#if sports && sports.length > 0}
+              <SportFilter
+                {sports}
+                selectedSport={selectedSport}
+                onSelect={handleSportSelect}
+              />
+            {/if}
+
+            {#if categories && categories.length > 0}
+              <CategoryFilter
+                {categories}
+                selectedCategory={selectedCategory}
+                onSelect={handleCategorySelect}
+              />
+            {/if}
+          </div>
+        </div>
+      </div>
+
+      <!-- Months within this year -->
+      {#each yearGroup.periods as entry, monthIndex}
+        <div
+          id="month-{entry.year}-{entry.month}"
+          class="mb-12"
+        >
+          <!-- Month Header -->
+          <div class="flex items-center gap-4 mb-6">
+            <!-- Month Marker -->
+            <div class="h-8 w-8 rounded-full bg-gold-400 flex items-center justify-center shadow-md">
+              <span class="text-charcoal-950 text-sm font-bold">
+                {entry.month}
+              </span>
+            </div>
+
+            <!-- Month Title -->
+            <div>
+              <Typography variant="h3" class="text-white">
+                {entry.monthName}
+              </Typography>
+              <Typography variant="caption" class="text-charcoal-400">
+                {entry.photoCount} photos
+              </Typography>
+            </div>
+          </div>
+
+          <!-- Month Content -->
+          <div class="ml-12">
             <!-- Description -->
             {#if entry.description}
-              <Typography variant="body" class="text-charcoal-300 mb-8">
+              <Typography variant="body" class="text-charcoal-300 mb-4">
                 {entry.description}
               </Typography>
             {/if}
 
-            <!-- Photo Count -->
-            <div class="flex items-center gap-2 mb-6">
-              <Typography variant="caption" class="text-charcoal-400">
-                {entry.photoCount} photos from this period
-              </Typography>
-            </div>
+            <!-- Diversity Indicators -->
+            {#if entry.featuredPhotos && entry.featuredPhotos.length > 0}
+              {@const diversity = getContentDiversity(entry.featuredPhotos)}
+              <div class="flex items-center gap-4 mb-4">
+                <Typography variant="caption" class="text-charcoal-400">
+                  {entry.photoCount} photos from this month
+                </Typography>
 
-            <!-- Photo Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-              {#each getFeaturedPhotos(entry.featuredPhotos) as photo (photo.id)}
-                <Motion
-                  let:motion
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  transition={MOTION.spring.snappy}
-                >
-                  <div use:motion>
-                    <PhotoCard
-                      {photo}
-                      size="small"
-                      showCaption={false}
-                      class="aspect-square"
-                    />
-                  </div>
-                </Motion>
-              {/each}
-            </div>
+                <div class="flex items-center gap-2 text-xs text-charcoal-500">
+                  {#if diversity.sportCount > 1}
+                    <span class="flex items-center gap-1">
+                      <span class="w-2 h-2 bg-gold-500 rounded-full"></span>
+                      {diversity.sportCount} sports
+                    </span>
+                  {/if}
+                  {#if diversity.categoryCount > 1}
+                    <span class="flex items-center gap-1">
+                      <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                      {diversity.categoryCount} categories
+                    </span>
+                  {/if}
+                </div>
+              </div>
+            {/if}
+
+            <!-- Photo Grid or Empty State -->
+            {#if getFeaturedPhotos(entry.featuredPhotos).length > 0}
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                {#each getFeaturedPhotos(entry.featuredPhotos) as photo (photo.id)}
+                  <PhotoCard
+                    {photo}
+                    index={0}
+                  />
+                {/each}
+              </div>
+            {:else}
+              <!-- Empty State for periods with no featured photos -->
+              <div class="bg-charcoal-900/50 border border-charcoal-800 rounded-lg p-6 mb-6 text-center">
+                <Calendar class="w-10 h-10 text-charcoal-600 mx-auto mb-3" />
+                <Typography variant="body" class="text-charcoal-400 mb-1">
+                  Featured photos coming soon
+                </Typography>
+                <Typography variant="caption" class="text-charcoal-500">
+                  {entry.photoCount} photos available • Processing in progress
+                </Typography>
+              </div>
+            {/if}
 
             <!-- View All Link -->
             <a
               href="/explore?year={entry.year}{entry.month ? `&month=${entry.month}` : ''}"
-              class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors"
+              class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors text-sm"
             >
               <Typography variant="body" class="font-medium">
                 View all {entry.photoCount} photos
@@ -195,53 +511,30 @@
         </div>
       {/each}
 
-      <!-- Load More Trigger -->
-      {#if hasMore}
-        <div bind:this={loadMoreTrigger} class="flex justify-center py-12">
-          <Motion
-            let:motion
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          >
-            <div use:motion class="w-8 h-8 border-2 border-gold-500 border-t-transparent rounded-full"></div>
-          </Motion>
+      <!-- Infinite scroll sentinel - only show for the last year group -->
+      {#if yearGroup === periodsByYear[periodsByYear.length - 1] && hasMorePeriods}
+        <div
+          bind:this={sentinelElement}
+          class="flex justify-center py-12"
+        >
+          {#if isLoadingMore}
+            <div class="flex items-center gap-3 text-charcoal-400">
+              <div class="w-6 h-6 border-2 border-gold-500 border-t-transparent rounded-full animate-spin"></div>
+              <Typography variant="body" class="text-sm">
+                Loading more periods...
+              </Typography>
+            </div>
+          {:else}
+            <div class="h-4"></div>
+          {/if}
         </div>
       {/if}
+    {/each}
 
     <!-- Progress Line -->
-    <div class="absolute left-6 md:left-6 top-0 w-0.5 bg-gradient-to-b from-transparent via-gold-500/50 to-transparent">
-      <Motion
-        let:motion
-        animate={{ height: `${scrollProgress * 100}%` }}
-        transition={MOTION.timing.smooth}
-      >
-        <div use:motion class="w-full bg-gradient-to-b from-gold-400 to-gold-600 rounded-full"></div>
-      </Motion>
+    <div class="absolute left-4 md:left-6 top-0 w-0.5 bg-gradient-to-b from-transparent via-gold-500/50 to-transparent">
+      <div class="w-full bg-gradient-to-b from-gold-400 to-gold-600 rounded-full h-full"></div>
     </div>
   </div>
+
 </div>
-
-<style>
-  /* Custom scrollbar for timeline */
-  .timeline-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: rgb(245 158 11 / 0.3) transparent;
-  }
-
-  .timeline-scroll::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .timeline-scroll::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .timeline-scroll::-webkit-scrollbar-thumb {
-    background: rgb(245 158 11 / 0.3);
-    border-radius: 3px;
-  }
-
-  .timeline-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgb(245 158 11 / 0.5);
-  }
-</style>
