@@ -14,6 +14,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Photo, PhotoFilterState } from '$types/photo';
 import type { PhotoMetadataRow, SportDistributionRow, CategoryDistributionRow } from '$types/database';
+import { getOptimizedSmugMugUrl } from '$lib/utils/smugmug-image-optimizer';
 
 // Server-side environment variables (NOT exposed to browser)
 // In SvelteKit, we need to use import.meta.env even server-side
@@ -34,6 +35,56 @@ if (!import.meta.env.VITE_SUPABASE_URL && import.meta.env.PROD) {
 
 if (!import.meta.env.VITE_SUPABASE_ANON_KEY && import.meta.env.PROD) {
   console.error('[Server] Missing VITE_SUPABASE_ANON_KEY environment variable. Please add it to Vercel.');
+}
+
+/**
+ * Transform database row to Photo type with optimized SmugMug URLs
+ * Exported for use in other server-side loaders
+ */
+export function transformPhotoRow(row: any): Photo {
+  const baseImageUrl = (row.ImageUrl || row.OriginalUrl || '').replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+  const baseThumbnailUrl = row.ThumbnailUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+  const baseOriginalUrl = row.OriginalUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+
+  // Optimize sizes for different contexts
+  const imageUrl = getOptimizedSmugMugUrl(baseImageUrl, 'grid') || baseImageUrl;
+  const isSameBaseUrl = baseThumbnailUrl && baseImageUrl.includes(row.image_key) && baseThumbnailUrl.includes(row.image_key);
+  const thumbnailUrl = isSameBaseUrl ? undefined : (getOptimizedSmugMugUrl(baseThumbnailUrl, 'thumbnail') || baseThumbnailUrl);
+  const originalUrl = baseOriginalUrl;
+
+  return {
+    id: row.photo_id,
+    image_key: row.image_key,
+    image_url: imageUrl,
+    thumbnail_url: thumbnailUrl,
+    original_url: originalUrl,
+    title: row.image_key,
+    caption: '',
+    keywords: [],
+    created_at: row.photo_date || row.enriched_at || row.upload_date,
+    metadata: {
+      play_type: (row.play_type || null) as Photo['metadata']['play_type'],
+      action_intensity: (row.action_intensity || 'medium') as Photo['metadata']['action_intensity'],
+      sport_type: row.sport_type,
+      photo_category: row.photo_category,
+      composition: (row.composition || '') as Photo['metadata']['composition'],
+      time_of_day: (row.time_of_day || '') as Photo['metadata']['time_of_day'],
+      lighting: (row.lighting || undefined) as Photo['metadata']['lighting'],
+      color_temperature: (row.color_temperature || undefined) as Photo['metadata']['color_temperature'],
+      emotion: (row.emotion || 'focus') as Photo['metadata']['emotion'],
+      sharpness: row.sharpness ?? 0,
+      composition_score: row.composition_score ?? 0,
+      exposure_accuracy: row.exposure_accuracy ?? 0,
+      emotional_impact: row.emotional_impact ?? 0,
+      time_in_game: (row.time_in_game || undefined) as Photo['metadata']['time_in_game'],
+      athlete_id: row.athlete_id || undefined,
+      event_id: row.event_id || undefined,
+      ai_provider: (row.ai_provider || 'gemini') as Photo['metadata']['ai_provider'],
+      ai_cost: row.ai_cost ?? 0,
+      ai_confidence: row.ai_confidence ?? 0,
+      enriched_at: row.enriched_at || new Date().toISOString(),
+    },
+  } as Photo;
 }
 
 // Create Supabase client with service role for server-side operations
@@ -158,9 +209,22 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
       return hasValidUrl;
     })
     .map((row: PhotoMetadataRow) => {
-    const imageUrl = (row.ImageUrl || row.OriginalUrl || '').replace('photos.smugmug.com', 'ninochavez.smugmug.com');
-    const thumbnailUrl = row.ThumbnailUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
-    const originalUrl = row.OriginalUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+    // PERFORMANCE FIX: Use size-optimized SmugMug URLs
+    // Before: Loading D-size (1600px) for 400px grid = 4x wasted bandwidth
+    // After: Loading S-size (400px) for grid = 75% bandwidth savings
+    const baseImageUrl = (row.ImageUrl || row.OriginalUrl || '').replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+    const baseThumbnailUrl = row.ThumbnailUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+    const baseOriginalUrl = row.OriginalUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+
+    // Optimize sizes for different contexts
+    const imageUrl = getOptimizedSmugMugUrl(baseImageUrl, 'grid') || baseImageUrl; // S-size (400px) for grids
+
+    // CRITICAL FIX: Don't use separate thumbnail if it's the same base URL as image
+    // This prevents duplicate fetches of the same image at different sizes
+    const isSameBaseUrl = baseThumbnailUrl && baseImageUrl.includes(row.image_key) && baseThumbnailUrl.includes(row.image_key);
+    const thumbnailUrl = isSameBaseUrl ? undefined : (getOptimizedSmugMugUrl(baseThumbnailUrl, 'thumbnail') || baseThumbnailUrl); // Th-size (100px) for blur
+
+    const originalUrl = baseOriginalUrl; // Keep original for downloads
 
     return {
       id: row.photo_id,
@@ -722,9 +786,16 @@ export async function fetchPhotosByPeriod(options: {
           return {
             ...period,
             featuredPhotos: (photos || []).map((row: PhotoMetadataRow) => {
-              const imageUrl = (row.ImageUrl || row.OriginalUrl || '').replace('photos.smugmug.com', 'ninochavez.smugmug.com');
-              const thumbnailUrl = row.ThumbnailUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
-              const originalUrl = row.OriginalUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+              // PERFORMANCE FIX: Use size-optimized SmugMug URLs
+              const baseImageUrl = (row.ImageUrl || row.OriginalUrl || '').replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+              const baseThumbnailUrl = row.ThumbnailUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+              const baseOriginalUrl = row.OriginalUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+
+              // Optimize sizes for timeline thumbnails
+              const imageUrl = getOptimizedSmugMugUrl(baseImageUrl, 'grid') || baseImageUrl; // S-size (400px)
+              const isSameBaseUrl = baseThumbnailUrl && baseImageUrl.includes(row.image_key) && baseThumbnailUrl.includes(row.image_key);
+              const thumbnailUrl = isSameBaseUrl ? undefined : (getOptimizedSmugMugUrl(baseThumbnailUrl, 'thumbnail') || baseThumbnailUrl);
+              const originalUrl = baseOriginalUrl;
 
               return {
                 id: row.photo_id,
@@ -854,9 +925,16 @@ export async function fetchPhotosByPeriod(options: {
             monthName: new Date(period.year, period.month - 1).toLocaleString('default', { month: 'long' }),
             photoCount: period.count,
             featuredPhotos: (photos || []).map((row: PhotoMetadataRow) => {
-              const imageUrl = (row.ImageUrl || row.OriginalUrl || '').replace('photos.smugmug.com', 'ninochavez.smugmug.com');
-              const thumbnailUrl = row.ThumbnailUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
-              const originalUrl = row.OriginalUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+              // PERFORMANCE FIX: Use size-optimized SmugMug URLs
+              const baseImageUrl = (row.ImageUrl || row.OriginalUrl || '').replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+              const baseThumbnailUrl = row.ThumbnailUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+              const baseOriginalUrl = row.OriginalUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+
+              // Optimize sizes for timeline thumbnails
+              const imageUrl = getOptimizedSmugMugUrl(baseImageUrl, 'grid') || baseImageUrl; // S-size (400px)
+              const isSameBaseUrl = baseThumbnailUrl && baseImageUrl.includes(row.image_key) && baseThumbnailUrl.includes(row.image_key);
+              const thumbnailUrl = isSameBaseUrl ? undefined : (getOptimizedSmugMugUrl(baseThumbnailUrl, 'thumbnail') || baseThumbnailUrl);
+              const originalUrl = baseOriginalUrl;
 
               return {
                 id: row.photo_id,

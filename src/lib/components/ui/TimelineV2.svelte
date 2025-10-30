@@ -11,6 +11,7 @@
 -->
 
 <script lang="ts">
+  import { untrack } from 'svelte';
   import Typography from '$lib/components/ui/Typography.svelte';
   import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
   import { Calendar, ChevronDown, ChevronUp, Filter, X } from 'lucide-svelte';
@@ -61,6 +62,20 @@
   let selectedYear: number | null = $state(null);
   let selectedMonth: number | null = $state(null);
   let showPeriodSelector = $state(false);
+
+  // Sync allPeriods with timelineData prop changes
+  $effect(() => {
+    allPeriods = timelineData;
+  });
+
+  // Sync other props
+  $effect(() => {
+    hasMorePeriods = hasMore;
+  });
+
+  $effect(() => {
+    currentPageNum = currentPage;
+  });
 
   // Animation state for period transitions
   let currentVisiblePeriod = $state<{ year: number; month?: number } | null>(null);
@@ -284,7 +299,8 @@
       (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting && hasMorePeriods && !isLoadingMore) {
-          loadMorePeriods();
+          // Use untrack to prevent reactive updates from triggering the effect
+          untrack(() => loadMorePeriods());
         }
       },
       {
@@ -300,6 +316,7 @@
 
   // Set up observer when sentinel element is available
   $effect(() => {
+    // Only initialize when sentinel element becomes available
     if (sentinelElement && !sentinelObserver) {
       initIntersectionObserver();
     }

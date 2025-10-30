@@ -6,7 +6,7 @@
  */
 
 import { error } from '@sveltejs/kit';
-import { supabaseServer } from '$lib/supabase/server';
+import { supabaseServer, transformPhotoRow } from '$lib/supabase/server';
 import type { PageServerLoad } from './$types';
 import type { Photo } from '$types/photo';
 
@@ -105,7 +105,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'comeback-stories') {
 		// HYBRID: Story (triumph + final minutes) + Quality floor (7/10)
@@ -122,7 +122,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'peak-intensity') {
 		// HYBRID: Story (peak action) + Quality floor (7/10)
@@ -138,7 +138,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'golden-hour-magic') {
 		const query = supabaseServer
@@ -152,7 +152,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'focus-and-determination') {
 		// HYBRID: Story (determination) + Higher quality floor (8/10 sharpness, 7/10 others)
@@ -168,7 +168,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'victory-celebrations') {
 		// HYBRID: Story (celebrations) + Quality floor (7/10)
@@ -184,7 +184,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'aerial-artistry') {
 		// HYBRID: Story (attack/block actions) + High quality (8/10+)
@@ -199,7 +199,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'early-game-energy') {
 		// HYBRID: Story (first_10_min) + Quality floor (7/10)
@@ -215,7 +215,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'defensive-masterclass') {
 		// HYBRID: Story (dig/block plays) + Quality floor (7/10)
@@ -231,7 +231,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'sunset-sessions') {
 		// HYBRID: Story (evening time) + Quality floor (7/10)
@@ -246,7 +246,7 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		const { data, count } = await query.range(offset, offset + pageSize - 1);
 
-		photos = (data || []) as Photo[];
+		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	}
 

@@ -17,6 +17,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { getOptimizedSmugMugUrl } from '$lib/utils/smugmug-image-optimizer';
 
 // Browser-safe environment variables (VITE_ prefix = exposed to browser)
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -131,12 +132,23 @@ export async function fetchPhotosByPeriod(options: {
 
           return {
             ...period,
-            featuredPhotos: (photos || []).map((row: any) => ({
+            featuredPhotos: (photos || []).map((row: any) => {
+              // PERFORMANCE FIX: Use size-optimized SmugMug URLs
+              const baseImageUrl = (row.ImageUrl || row.OriginalUrl || '').replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+              const baseThumbnailUrl = row.ThumbnailUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+              const baseOriginalUrl = row.OriginalUrl?.replace('photos.smugmug.com', 'ninochavez.smugmug.com');
+
+              const imageUrl = getOptimizedSmugMugUrl(baseImageUrl, 'grid') || baseImageUrl;
+              const isSameBaseUrl = baseThumbnailUrl && baseImageUrl.includes(row.image_key) && baseThumbnailUrl.includes(row.image_key);
+              const thumbnailUrl = isSameBaseUrl ? undefined : (getOptimizedSmugMugUrl(baseThumbnailUrl, 'thumbnail') || baseThumbnailUrl);
+              const originalUrl = baseOriginalUrl;
+
+              return {
               id: row.photo_id,
               image_key: row.image_key,
-              image_url: row.ImageUrl || row.OriginalUrl || '',
-              thumbnail_url: row.ThumbnailUrl || undefined,
-              original_url: row.OriginalUrl || undefined,
+              image_url: imageUrl,
+              thumbnail_url: thumbnailUrl,
+              original_url: originalUrl,
               title: row.image_key, // Placeholder
               caption: '',
               keywords: [],
@@ -168,7 +180,8 @@ export async function fetchPhotosByPeriod(options: {
                 ai_confidence: row.ai_confidence ?? 0,
                 enriched_at: row.enriched_at || new Date().toISOString(),
               },
-            }))
+            };
+          })
           };
         })
       );
@@ -273,10 +286,11 @@ export async function fetchPhotosByPeriod(options: {
                 ai_confidence: row.ai_confidence ?? 0,
                 enriched_at: row.enriched_at || new Date().toISOString(),
               },
-            }))
-          };
+            ))
+          }
         })
       );
+
 
       return periodsWithPhotos;
     }

@@ -86,6 +86,7 @@
 	};
 
 	$effect(() => {
+		console.log('[PhotoDetailModal $effect] open:', open, 'photo:', photo?.image_key);
 		if (open) {
 			document.body.style.overflow = 'hidden';
 		} else {

@@ -6,16 +6,16 @@
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
-	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
+	import Lightbox from '$lib/components/gallery/Lightbox.svelte';
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
 
 	// Svelte 5 Runes: $props to receive server data
 	let { data }: { data: PageData } = $props();
 
-	// Modal state
-	let modalOpen = $state(false);
-	let selectedPhoto = $state<Photo | null>(null);
+	// Lightbox state (same pattern as explore page)
+	let lightboxOpen = $state(false);
+	let selectedPhotoIndex = $state(0);
 
 	// Simple search (client-side)
 	let searchQuery = $state('');
@@ -33,8 +33,17 @@
 	});
 
 	function handlePhotoClick(photo: Photo) {
-		selectedPhoto = photo;
-		modalOpen = true;
+		// Find the index of the clicked photo in displayPhotos
+		const index = displayPhotos.findIndex((p) => p.image_key === photo.image_key);
+
+		if (index !== -1) {
+			selectedPhotoIndex = index;
+			lightboxOpen = true;
+		}
+	}
+
+	function handleLightboxNavigate(newIndex: number) {
+		selectedPhotoIndex = newIndex;
 	}
 
 	function goBackToAlbums() {
@@ -167,5 +176,11 @@
 	</div>
 </Motion>
 
-<!-- Photo Detail Modal -->
-<PhotoDetailModal bind:open={modalOpen} photo={selectedPhoto} />
+<!-- Lightbox (same component as explore page) -->
+<Lightbox
+	bind:open={lightboxOpen}
+	photo={displayPhotos[selectedPhotoIndex] || null}
+	photos={displayPhotos}
+	currentIndex={selectedPhotoIndex}
+	onNavigate={handleLightboxNavigate}
+/>

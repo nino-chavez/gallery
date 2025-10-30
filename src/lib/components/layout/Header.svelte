@@ -31,10 +31,9 @@
 	}
 
 	const navItems: NavItem[] = [
-		{ label: 'Home', path: '/', icon: Sparkles },
 		{ label: 'Explore', path: '/explore', icon: Camera },
-		{ label: 'Timeline', path: '/timeline', icon: Calendar },
 		{ label: 'Albums', path: '/albums', icon: Folder },
+		{ label: 'Timeline', path: '/timeline', icon: Calendar },
 		{ label: 'Collections', path: '/collections', icon: Grid },
 		{ label: 'Favorites', path: '/favorites', icon: Heart, badge: () => favorites.count },
 	];
@@ -75,13 +74,10 @@
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 			<div class="flex items-center justify-between h-16">
 				<!-- Logo/Brand -->
-				<div
+				<a
+					href="/"
 					class="flex items-center gap-3 cursor-pointer group"
-					role="button"
-					tabindex="0"
 					aria-label="Go to homepage"
-					onclick={(e) => handleNavClick('/', e)}
-					onkeydown={(e) => handleKeyDown(e, '/')}
 				>
 					<div
 						class="p-2 rounded-lg bg-gold-500/10 group-hover:bg-gold-500/20 transition-colors"
@@ -98,12 +94,7 @@
 					<Typography variant="h3" class="sm:hidden group-hover:text-gold-500 transition-colors">
 						NCG
 					</Typography>
-				</div>
-
-				<!-- Global Search -->
-				<div class="flex-1 max-w-md mx-4">
-					<GlobalSearch />
-				</div>
+				</a>
 
 				<!-- Navigation -->
 				<nav class="flex items-center gap-1" aria-label="Main navigation">
@@ -140,6 +131,11 @@
 						</Motion>
 					{/each}
 				</nav>
+
+				<!-- Global Search -->
+				<div class="max-w-md ml-4">
+					<GlobalSearch />
+				</div>
 			</div>
 		</div>
 	</header>

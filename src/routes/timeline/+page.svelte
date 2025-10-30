@@ -95,7 +95,7 @@
 
 <div class="min-h-screen bg-charcoal-950">
   <TimelineV2
-    timelineData={data.periods}
+    timelineData={timelineData}
     hasMore={data.hasMore}
     currentPage={data.currentPage}
     selectedSport={data.selectedSport}

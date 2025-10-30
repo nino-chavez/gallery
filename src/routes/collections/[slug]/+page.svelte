@@ -6,7 +6,7 @@
 	import { MOTION } from '$lib/motion-tokens';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
-	import PhotoDetailModal from '$lib/components/gallery/PhotoDetailModal.svelte';
+	import Lightbox from '$lib/components/gallery/Lightbox.svelte';
 	import Pagination from '$lib/components/ui/Pagination.svelte';
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
@@ -14,13 +14,22 @@
 	// Svelte 5 Runes: $props to receive server data
 	let { data }: { data: PageData } = $props();
 
-	// Modal state
-	let modalOpen = $state(false);
-	let selectedPhoto = $state<Photo | null>(null);
+	// Lightbox state (same pattern as explore/albums pages)
+	let lightboxOpen = $state(false);
+	let selectedPhotoIndex = $state(0);
 
 	function handlePhotoClick(photo: Photo) {
-		selectedPhoto = photo;
-		modalOpen = true;
+		// Find the index of the clicked photo in data.photos
+		const index = data.photos.findIndex((p) => p.image_key === photo.image_key);
+
+		if (index !== -1) {
+			selectedPhotoIndex = index;
+			lightboxOpen = true;
+		}
+	}
+
+	function handleLightboxNavigate(newIndex: number) {
+		selectedPhotoIndex = newIndex;
 	}
 
 	// Determine if this is Portfolio Excellence for special styling
@@ -149,5 +158,11 @@
 	</div>
 </Motion>
 
-<!-- Photo Detail Modal -->
-<PhotoDetailModal bind:open={modalOpen} photo={selectedPhoto} />
+<!-- Lightbox -->
+<Lightbox
+	bind:open={lightboxOpen}
+	photo={data.photos[selectedPhotoIndex] || null}
+	photos={data.photos}
+	currentIndex={selectedPhotoIndex}
+	onNavigate={handleLightboxNavigate}
+/>

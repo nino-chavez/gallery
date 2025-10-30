@@ -55,9 +55,12 @@ export const load: PageServerLoad = async ({ url, parent }) => {
   // Intelligent Filter System (Phase 1):
   // - If no filters active: use cached baseFilterCounts (fast, from layout cache)
   // - If filters active: fetch dynamic counts respecting current filters (shows compatible options)
+  const filterCountsStart = Date.now();
   const filterCounts = hasActiveFilters
     ? await getFilterCounts(filterOptions)
     : baseFilterCounts;
+  const filterCountsTime = Date.now() - filterCountsStart;
+  console.log(`[PERF] getFilterCounts took ${filterCountsTime}ms (hasActiveFilters: ${hasActiveFilters})`);
 
   // Phase 4: Auto-clear incompatible filters (server-side prevention)
   // Check each filter and clear if it has zero results with current combination
@@ -146,12 +149,15 @@ export const load: PageServerLoad = async ({ url, parent }) => {
   });
 
   // Fetch photos with pagination (after auto-clear)
+  const photosStart = Date.now();
   const photos = await fetchPhotos({
     ...filterOptions,
     limit: pageSize,
     offset,
     sortBy,
   });
+  const photosTime = Date.now() - photosStart;
+  console.log(`[PERF] fetchPhotos took ${photosTime}ms`);
 
   // DEBUG: Log first 3 photos returned
   console.log('[DEBUG] First 3 photos returned:', photos.slice(0, 3).map(p => ({
@@ -160,7 +166,11 @@ export const load: PageServerLoad = async ({ url, parent }) => {
   })));
 
   // Get total count for "Showing X of Y" (after auto-clear)
+  const countStart = Date.now();
   const totalCount = await getPhotoCount(filterOptions);
+  const countTime = Date.now() - countStart;
+  console.log(`[PERF] getPhotoCount took ${countTime}ms`);
+  console.log(`[PERF] TOTAL server load time: ${Date.now() - filterCountsStart}ms`);
 
   return {
     photos,

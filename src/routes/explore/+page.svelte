@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { Camera, X, Filter, SlidersHorizontal } from 'lucide-svelte';
+	import { page, navigating } from '$app/stores';
+	import { untrack } from 'svelte';
+	import { Camera, X, Filter, SlidersHorizontal, Loader2 } from 'lucide-svelte';
 	import { preferences } from '$lib/stores/preferences.svelte';
 	import { filterNotifications } from '$lib/stores/filter-notifications.svelte';
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import Pagination from '$lib/components/ui/Pagination.svelte';
+	import PaginationHybrid from '$lib/components/ui/PaginationHybrid.svelte';
 	import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
+	import PhotoGridSkeleton from '$lib/components/ui/PhotoGridSkeleton.svelte';
 	import Lightbox from '$lib/components/gallery/Lightbox.svelte';
 	import VisualDataLegend from '$lib/components/ui/VisualDataLegend.svelte';
 	import SearchAutocomplete from '$lib/components/search/SearchAutocomplete.svelte';
@@ -84,6 +86,9 @@
 
 	// Mobile drawer state
 	let mobileFilterDrawerOpen = $state(false);
+
+	// Loading state - derived from SvelteKit's navigating store
+	let isLoading = $derived($navigating !== null);
 
 	// Search
 	let searchQuery = $state(data.searchQuery || '');
@@ -461,6 +466,7 @@
 
 	// Track filter changes and add to history
 	$effect(() => {
+		// Read reactive dependencies first
 		const currentFilters = {
 			sport: data.selectedSport,
 			category: data.selectedCategory,
@@ -472,48 +478,76 @@
 			composition: data.selectedComposition,
 		};
 
-		// Track analytics
-		if (data.selectedSport) filterAnalytics.trackFilter('sports', data.selectedSport);
-		if (data.selectedCategory) filterAnalytics.trackFilter('categories', data.selectedCategory);
-		if (data.selectedPlayType) filterAnalytics.trackFilter('playTypes', data.selectedPlayType);
-		if (data.selectedIntensity) filterAnalytics.trackFilter('intensities', data.selectedIntensity);
-		if (data.selectedLighting) {
-			data.selectedLighting.forEach(l => filterAnalytics.trackFilter('lighting', l));
-		}
-		if (data.selectedColorTemp) filterAnalytics.trackFilter('colorTemps', data.selectedColorTemp);
-		if (data.selectedTimeOfDay) filterAnalytics.trackFilter('timesOfDay', data.selectedTimeOfDay);
-		if (data.selectedComposition) filterAnalytics.trackFilter('compositions', data.selectedComposition);
+		const filterCount = activeFilterCount;
 
-		// Track combination
-		if (activeFilterCount > 0) {
-			const filterCombination: Record<string, string | string[]> = {};
-			if (data.selectedSport) filterCombination.sport = data.selectedSport;
-			if (data.selectedCategory) filterCombination.category = data.selectedCategory;
-			if (data.selectedPlayType) filterCombination.playType = data.selectedPlayType;
-			if (data.selectedIntensity) filterCombination.intensity = data.selectedIntensity;
-			if (data.selectedLighting) filterCombination.lighting = data.selectedLighting;
-			if (data.selectedColorTemp) filterCombination.colorTemp = data.selectedColorTemp;
-			if (data.selectedTimeOfDay) filterCombination.timeOfDay = data.selectedTimeOfDay;
-			if (data.selectedComposition) filterCombination.composition = data.selectedComposition;
+		// Use untrack to prevent infinite loops when writing to stores
+		untrack(() => {
+			// Track analytics
+			if (data.selectedSport) filterAnalytics.trackFilter('sports', data.selectedSport);
+			if (data.selectedCategory) filterAnalytics.trackFilter('categories', data.selectedCategory);
+			if (data.selectedPlayType) filterAnalytics.trackFilter('playTypes', data.selectedPlayType);
+			if (data.selectedIntensity) filterAnalytics.trackFilter('intensities', data.selectedIntensity);
+			if (data.selectedLighting) {
+				data.selectedLighting.forEach(l => filterAnalytics.trackFilter('lighting', l));
+			}
+			if (data.selectedColorTemp) filterAnalytics.trackFilter('colorTemps', data.selectedColorTemp);
+			if (data.selectedTimeOfDay) filterAnalytics.trackFilter('timesOfDay', data.selectedTimeOfDay);
+			if (data.selectedComposition) filterAnalytics.trackFilter('compositions', data.selectedComposition);
 
-			filterAnalytics.trackCombination(filterCombination);
-		}
+			// Track combination
+			if (filterCount > 0) {
+				const filterCombination: Record<string, string | string[]> = {};
+				if (data.selectedSport) filterCombination.sport = data.selectedSport;
+				if (data.selectedCategory) filterCombination.category = data.selectedCategory;
+				if (data.selectedPlayType) filterCombination.playType = data.selectedPlayType;
+				if (data.selectedIntensity) filterCombination.intensity = data.selectedIntensity;
+				if (data.selectedLighting) filterCombination.lighting = data.selectedLighting;
+				if (data.selectedColorTemp) filterCombination.colorTemp = data.selectedColorTemp;
+				if (data.selectedTimeOfDay) filterCombination.timeOfDay = data.selectedTimeOfDay;
+				if (data.selectedComposition) filterCombination.composition = data.selectedComposition;
 
-		// Add to history (debounced via store logic)
-		filterHistory.addToHistory(currentFilters);
+				filterAnalytics.trackCombination(filterCombination);
+			}
+
+			// Add to history (debounced via store logic)
+			filterHistory.addToHistory(currentFilters);
+		});
 	});
 </script>
 
 <!-- Minimal Sticky Header -->
 <div class="sticky top-0 z-20 bg-charcoal-950/95 backdrop-blur-sm border-b border-charcoal-800/50">
+	<!-- Loading progress bar -->
+	{#if isLoading}
+		<div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-gold-500 via-gold-400 to-gold-500 animate-shimmer-fast"></div>
+	{/if}
+
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
 		<!-- Filters Header with Actions -->
 		<div class="flex items-center justify-between gap-2 mb-2">
 			<div class="flex items-center gap-2">
-				<!-- Share Button removed from here -->
+				<!-- Loading indicator -->
+				{#if isLoading}
+					<div class="flex items-center gap-2 text-gold-400 text-xs">
+						<Loader2 class="w-3 h-3 animate-spin" aria-hidden="true" />
+						<span>Loading...</span>
+					</div>
+				{/if}
 			</div>
 
 			<div class="flex items-center gap-2">
+				<!-- Share Button (inline with other controls) -->
+				<FilterShareButton
+					sport={data.selectedSport}
+					category={data.selectedCategory}
+					playType={data.selectedPlayType}
+					intensity={data.selectedIntensity}
+					lighting={data.selectedLighting}
+					colorTemp={data.selectedColorTemp}
+					timeOfDay={data.selectedTimeOfDay}
+					composition={data.selectedComposition}
+				/>
+
 				<!-- Mobile Filter Drawer Toggle (visible on small screens only) -->
 				<button
 					onclick={() => mobileFilterDrawerOpen = true}
@@ -540,24 +574,10 @@
 		</div>
 
 		<!-- Filter Presets Panel (Collapsible) -->
-		<div class="mb-3">
+		<div class="mb-2">
 			<FilterPresetsPanel
 				onApplyPreset={handleApplyPreset}
 				onApplyHistory={handleApplyHistory}
-			/>
-		</div>
-
-		<!-- Share Button - Always visible -->
-		<div class="flex justify-end mb-3">
-			<FilterShareButton
-				sport={data.selectedSport}
-				category={data.selectedCategory}
-				playType={data.selectedPlayType}
-				intensity={data.selectedIntensity}
-				lighting={data.selectedLighting}
-				colorTemp={data.selectedColorTemp}
-				timeOfDay={data.selectedTimeOfDay}
-				composition={data.selectedComposition}
 			/>
 		</div>
 
@@ -659,7 +679,7 @@
 </div>
 
 <!-- Main Content with Sidebar (Desktop) / Full Width (Mobile) -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 	<div class="flex gap-6">
 		<!-- Filter Sidebar (Desktop only) -->
 		<div class="hidden lg:block">
@@ -711,9 +731,12 @@
 		</select>
 	</div>
 
-	<!-- Photo Grid -->
-	{#if displayPhotos.length > 0}
-		<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-8">
+	<!-- Photo Grid with Loading State -->
+	{#if isLoading}
+		<!-- Show skeleton while navigating -->
+		<PhotoGridSkeleton count={data.pageSize} />
+	{:else if displayPhotos.length > 0}
+		<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
 			{#each displayPhotos as photo, index (photo.image_key)}
 				<PhotoCard {photo} {index} onclick={handlePhotoClick} priority={index < 8} />
 			{/each}
@@ -747,16 +770,15 @@
 		</div>
 	{/if}
 
-	<!-- Load More -->
+	<!-- Pagination -->
 	{#if displayPhotos.length > 0}
-		<div class="flex justify-center mt-8">
-			<Pagination
-				currentPage={data.currentPage}
-				totalCount={data.totalCount}
-				pageSize={data.pageSize}
-				onPageChange={handlePageChange}
-			/>
-		</div>
+		<PaginationHybrid
+			currentPage={data.currentPage}
+			totalCount={data.totalCount}
+			pageSize={data.pageSize}
+			onPageChange={handlePageChange}
+			class="mt-6"
+		/>
 	{/if}
 		</div><!-- End Gallery Content -->
 	</div><!-- End flex container -->
@@ -800,5 +822,20 @@
 
 	:global(.photo-card-link:hover) {
 		transform: translateY(-4px) scale(1.02);
+	}
+
+	/* Loading progress bar animation */
+	@keyframes shimmer-fast {
+		0% {
+			background-position: -200% 0;
+		}
+		100% {
+			background-position: 200% 0;
+		}
+	}
+
+	.animate-shimmer-fast {
+		background-size: 200% 100%;
+		animation: shimmer-fast 1.5s ease-in-out infinite;
 	}
 </style>
