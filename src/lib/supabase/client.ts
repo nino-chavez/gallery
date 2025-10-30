@@ -284,10 +284,10 @@ export async function fetchPhotosByPeriod(options: {
                 ai_provider: (row.ai_provider || 'gemini'),
                 ai_cost: row.ai_cost ?? 0,
                 ai_confidence: row.ai_confidence ?? 0,
-                enriched_at: row.enriched_at || new Date().toISOString(),
-              },
-            ))
-          }
+                enriched_at: row.enriched_at || new Date().toISOString()
+              }
+            }))
+          };
         })
       );
 

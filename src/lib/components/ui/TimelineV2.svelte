@@ -54,7 +54,6 @@
 
   // Lazy loading state
   let isLoadingMore = $state(false);
-  let allPeriods = $state(timelineData);
   let hasMorePeriods = $state(hasMore);
   let currentPageNum = $state(currentPage);
 
@@ -63,12 +62,7 @@
   let selectedMonth: number | null = $state(null);
   let showPeriodSelector = $state(false);
 
-  // Sync allPeriods with timelineData prop changes
-  $effect(() => {
-    allPeriods = timelineData;
-  });
-
-  // Sync other props
+  // Sync props to local state
   $effect(() => {
     hasMorePeriods = hasMore;
   });
@@ -88,7 +82,7 @@
   // Group periods by year for sticky year headers
   let periodsByYear = $derived.by(() => {
     const grouped: Record<number, TimelineEntry[]> = {};
-    allPeriods.forEach(entry => {
+    timelineData.forEach(entry => {
       if (!grouped[entry.year]) {
         grouped[entry.year] = [];
       }
@@ -107,13 +101,13 @@
 
   // Get unique years and months for navigation
   let availableYears = $derived.by(() => {
-    const years = new Set(allPeriods.map(entry => entry.year));
+    const years = new Set(timelineData.map(entry => entry.year));
     return Array.from(years).sort((a, b) => b - a); // Newest first
   });
 
   let availableMonths = $derived.by(() => {
     if (!selectedYear) return [];
-    return allPeriods
+    return timelineData
       .filter(entry => entry.year === selectedYear && entry.month)
       .map(entry => ({ month: entry.month!, monthName: entry.monthName! }))
       .sort((a, b) => b.month - a.month); // Newest first
@@ -151,48 +145,21 @@
     selectedSport = sport;
     // Reset to first page when filtering
     currentPageNum = 1;
-    // Reload data with new filters
-    reloadTimeline();
+    // Note: Filtering should be handled by parent component via URL changes
   }
 
   function handleCategorySelect(category: string | null) {
     selectedCategory = category;
     // Reset to first page when filtering
     currentPageNum = 1;
-    // Reload data with new filters
-    reloadTimeline();
+    // Note: Filtering should be handled by parent component via URL changes
   }
 
   function clearAllFilters() {
     selectedSport = null;
     selectedCategory = null;
     currentPageNum = 1;
-    reloadTimeline();
-  }
-
-  // Reload timeline with current filters
-  async function reloadTimeline() {
-    try {
-      isLoadingMore = true;
-      const params = new URLSearchParams({
-        page: '1',
-        limit: '6'
-      });
-
-      if (selectedSport) params.set('sport', selectedSport);
-      if (selectedCategory) params.set('category', selectedCategory);
-
-      const response = await fetch(`/api/timeline?${params}`);
-      const data = await response.json();
-
-      allPeriods = data.periods || [];
-      hasMorePeriods = data.hasMore || false;
-      currentPageNum = 1;
-    } catch (error) {
-      console.error('[Timeline] Failed to reload with filters:', error);
-    } finally {
-      isLoadingMore = false;
-    }
+    // Note: Filtering should be handled by parent component via URL changes
   }
 
   // Scroll to period function
@@ -258,35 +225,9 @@
 
   // Load more periods
   async function loadMorePeriods() {
-    if (isLoadingMore || !hasMorePeriods) return;
-
-    try {
-      isLoadingMore = true;
-      const nextPage = currentPageNum + 1;
-
-      const params = new URLSearchParams({
-        page: nextPage.toString(),
-        limit: '6'
-      });
-
-      if (selectedSport) params.set('sport', selectedSport);
-      if (selectedCategory) params.set('category', selectedCategory);
-
-      const response = await fetch(`/api/timeline?${params}`);
-      const data = await response.json();
-
-      if (data.periods && data.periods.length > 0) {
-        allPeriods = [...allPeriods, ...data.periods];
-        currentPageNum = nextPage;
-        hasMorePeriods = data.hasMore || false;
-      } else {
-        hasMorePeriods = false;
-      }
-    } catch (error) {
-      console.error('[Timeline] Failed to load more periods:', error);
-    } finally {
-      isLoadingMore = false;
-    }
+    // Note: Infinite scroll should be handled by parent component
+    // For now, disable to prevent errors
+    return;
   }
 
   // Initialize intersection observer for infinite scroll
@@ -371,24 +312,24 @@
             <!-- Jump to dropdown -->
             {#if availablePeriods.length > 0}
               <div class="flex items-center gap-2">
-                <Typography variant="label" class="text-charcoal-300 text-xs font-medium">
+                <Typography variant="label" class="hidden sm:inline text-charcoal-300 text-xs font-medium">
                   Jump to:
                 </Typography>
                 <div class="relative" data-dropdown>
                   <button
                     onclick={() => showPeriodSelector = !showPeriodSelector}
-                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-200 rounded-lg border border-charcoal-700 transition-colors"
+                    class="inline-flex items-center gap-2 px-3 py-2.5 text-sm bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-200 rounded-lg border border-charcoal-700 transition-colors min-h-[44px]"
                   >
-                    <span>{selectedYear && selectedMonth ? `${availablePeriods.find(p => p.year === selectedYear && p.month === selectedMonth)?.monthName} ${selectedYear}` : 'Select period'}</span>
+                    <span class="text-xs sm:text-sm">{selectedYear && selectedMonth ? `${availablePeriods.find(p => p.year === selectedYear && p.month === selectedMonth)?.monthName} ${selectedYear}` : 'Select period'}</span>
                     <ChevronDown class="w-3 h-3" />
                   </button>
 
                   {#if showPeriodSelector}
-                    <div class="absolute top-full right-0 mt-1 bg-charcoal-800 border border-charcoal-700 rounded-lg shadow-xl z-50 min-w-[160px] max-h-48 overflow-y-auto">
+                    <div class="absolute top-full right-0 mt-1 bg-charcoal-800 border border-charcoal-700 rounded-lg shadow-xl z-50 min-w-[180px] max-h-64 overflow-y-auto">
                       {#each availablePeriods as period}
                         <button
                           onclick={() => scrollToPeriod(period.year, period.month)}
-                          class="w-full text-left px-3 py-2 text-sm text-charcoal-200 hover:bg-charcoal-700 hover:text-white transition-colors first:rounded-t-lg last:rounded-b-lg"
+                          class="w-full text-left px-3 py-2.5 text-sm text-charcoal-200 hover:bg-charcoal-700 hover:text-white transition-colors first:rounded-t-lg last:rounded-b-lg min-h-[44px] flex items-center"
                         >
                           {period.label}
                         </button>
@@ -402,10 +343,10 @@
             {#if activeFilterCount > 0}
               <button
                 onclick={clearAllFilters}
-                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-charcoal-300 hover:text-gold-400 bg-charcoal-800/50 hover:bg-charcoal-800 transition-all rounded-lg border border-charcoal-700/50 hover:border-gold-500/50"
+                class="inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium text-charcoal-300 hover:text-gold-400 bg-charcoal-800/50 hover:bg-charcoal-800 transition-all rounded-lg border border-charcoal-700/50 hover:border-gold-500/50 min-h-[44px]"
               >
                 <X class="w-3 h-3" />
-                <span>Clear</span>
+                <span class="hidden sm:inline">Clear</span>
                 <span class="ml-1 px-1.5 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs font-bold">
                   {activeFilterCount}
                 </span>
@@ -493,7 +434,7 @@
 
             <!-- Photo Grid or Empty State -->
             {#if getFeaturedPhotos(entry.featuredPhotos).length > 0}
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6">
                 {#each getFeaturedPhotos(entry.featuredPhotos) as photo (photo.id)}
                   <PhotoCard
                     {photo}

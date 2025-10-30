@@ -107,7 +107,7 @@
 								use:motion
 								type="button"
 								class={cn(
-									'relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+									'relative flex items-center gap-2 px-3 py-3 sm:px-4 sm:py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px]',
 									active
 										? 'bg-gold-500/10 text-gold-500'
 										: 'text-charcoal-300 hover:text-white hover:bg-charcoal-800'
@@ -115,7 +115,7 @@
 								onclick={(e) => handleNavClick(item.path, e)}
 								aria-current={active ? 'page' : undefined}
 							>
-								<Icon class="w-4 h-4" aria-hidden="true" />
+								<Icon class="w-5 h-5 sm:w-4 sm:h-4" aria-hidden="true" />
 								<span class="hidden sm:inline">{item.label}</span>
 
 								<!-- Badge Count (NEW - Week 3 Bonus) -->

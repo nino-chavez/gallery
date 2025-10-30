@@ -583,7 +583,7 @@
 
 		<!-- Active Filter Chips (NEW: P0 Enhancement) -->
 		{#if activeFilterCount > 0}
-			<div class="flex flex-wrap items-center gap-2 mb-3 p-2 rounded-lg bg-charcoal-900/50 border border-charcoal-800/30">
+			<div class="flex flex-wrap items-center gap-3 mb-3 p-2 rounded-lg bg-charcoal-900/50 border border-charcoal-800/30">
 				<Typography variant="caption" class="text-charcoal-400 text-xs font-medium">Active:</Typography>
 
 				{#if data.selectedSport}
@@ -736,7 +736,7 @@
 		<!-- Show skeleton while navigating -->
 		<PhotoGridSkeleton count={data.pageSize} />
 	{:else if displayPhotos.length > 0}
-		<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+		<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-4 lg:gap-6">
 			{#each displayPhotos as photo, index (photo.image_key)}
 				<PhotoCard {photo} {index} onclick={handlePhotoClick} priority={index < 8} />
 			{/each}

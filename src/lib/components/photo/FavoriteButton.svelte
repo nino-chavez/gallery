@@ -39,7 +39,7 @@
 	>
 		<button
 			onclick={handleClick}
-			class="p-2 rounded-full {isFavorited
+			class="p-2 rounded-full min-w-[44px] min-h-[44px] flex items-center justify-center {isFavorited
 				? 'bg-red-500/90'
 				: 'bg-white/10 hover:bg-white/20'} backdrop-blur-sm transition-colors {className}"
 			aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
@@ -55,7 +55,7 @@
 	<Motion whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 		<button
 			onclick={handleClick}
-			class="p-2.5 rounded-lg {isFavorited
+			class="p-2.5 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center {isFavorited
 				? 'bg-red-500 hover:bg-red-600'
 				: 'bg-charcoal-900 border border-charcoal-800 hover:border-red-500/50 hover:bg-red-500/10'} transition-colors group {className}"
 			aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}

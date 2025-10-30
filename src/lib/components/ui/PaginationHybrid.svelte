@@ -136,7 +136,7 @@
 
 	<!-- Numbered Pagination (Secondary Navigation) -->
 	<nav
-		class="flex items-center justify-center gap-1 sm:gap-2"
+		class="flex items-center justify-center gap-2 sm:gap-2"
 		aria-label="Photo gallery pagination"
 		role="navigation"
 	>
@@ -145,7 +145,7 @@
 			<button
 				onclick={(e) => handlePageClick(currentPage - 1, e)}
 				onkeydown={(e) => handleKeyDown(e, currentPage - 1)}
-				class="flex items-center gap-1 px-2 sm:px-3 py-2 text-sm rounded-lg border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500"
+				class="flex items-center gap-1 px-3 py-2.5 text-sm rounded-lg border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 min-h-[44px]"
 				aria-label="Go to previous page"
 				type="button"
 			>
@@ -159,7 +159,7 @@
 			<button
 				onclick={(e) => handlePageClick(1, e)}
 				onkeydown={(e) => handleKeyDown(e, 1)}
-				class="flex items-center px-2 sm:px-3 py-2 text-sm rounded-lg border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500"
+				class="flex items-center px-3 py-2.5 text-sm rounded-lg border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 min-h-[44px] min-w-[44px] justify-center"
 				aria-label="Go to first page"
 				type="button"
 			>
@@ -180,7 +180,7 @@
 			<button
 				onclick={(e) => handlePageClick(page, e)}
 				onkeydown={(e) => handleKeyDown(e, page)}
-				class="min-w-[40px] px-3 py-2 text-sm rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 {isCurrentPage
+				class="min-w-[44px] min-h-[44px] px-3 py-2.5 text-sm rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 flex items-center justify-center {isCurrentPage
 					? 'border-gold-500 bg-gold-500 text-charcoal-950 font-medium'
 					: 'border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-300 hover:text-white'}"
 				aria-label="Go to page {page}"
@@ -203,7 +203,7 @@
 			<button
 				onclick={(e) => handlePageClick(totalPages, e)}
 				onkeydown={(e) => handleKeyDown(e, totalPages)}
-				class="flex items-center px-2 sm:px-3 py-2 text-sm rounded-lg border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500"
+				class="flex items-center px-3 py-2.5 text-sm rounded-lg border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 min-h-[44px] min-w-[44px] justify-center"
 				aria-label="Go to last page"
 				type="button"
 			>
@@ -216,7 +216,7 @@
 			<button
 				onclick={(e) => handlePageClick(currentPage + 1, e)}
 				onkeydown={(e) => handleKeyDown(e, currentPage + 1)}
-				class="flex items-center gap-1 px-2 sm:px-3 py-2 text-sm rounded-lg border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500"
+				class="flex items-center gap-1 px-3 py-2.5 text-sm rounded-lg border border-charcoal-700 bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 min-h-[44px]"
 				aria-label="Go to next page"
 				type="button"
 			>
@@ -243,11 +243,5 @@
 		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
-	/* Mobile optimizations */
-	@media (max-width: 640px) {
-		button {
-			min-width: 36px;
-			font-size: 0.8125rem;
-		}
-	}
+	/* Mobile optimizations - Removed min-width override to maintain 44px touch targets */
 </style>

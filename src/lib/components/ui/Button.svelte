@@ -48,11 +48,11 @@
 			'bg-transparent border-2 border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-charcoal-950 font-medium disabled:border-gold-500/50 disabled:text-gold-500/50 disabled:cursor-not-allowed',
 	};
 
-	// Size styles
+	// Size styles - All sizes ensure minimum 44px touch targets for mobile accessibility
 	const sizeClasses: Record<ButtonSize, string> = {
-		sm: 'px-3 py-1.5 text-sm',
-		md: 'px-6 py-3 text-base',
-		lg: 'px-8 py-4 text-lg',
+		sm: 'px-3 py-2.5 text-sm min-h-[44px]',
+		md: 'px-6 py-3 text-base min-h-[44px]',
+		lg: 'px-8 py-4 text-lg min-h-[44px]',
 	};
 
 	// Base classes (shared across all variants)

@@ -793,8 +793,7 @@ export async function fetchPhotosByPeriod(options: {
 
               // Optimize sizes for timeline thumbnails
               const imageUrl = getOptimizedSmugMugUrl(baseImageUrl, 'grid') || baseImageUrl; // S-size (400px)
-              const isSameBaseUrl = baseThumbnailUrl && baseImageUrl.includes(row.image_key) && baseThumbnailUrl.includes(row.image_key);
-              const thumbnailUrl = isSameBaseUrl ? undefined : (getOptimizedSmugMugUrl(baseThumbnailUrl, 'thumbnail') || baseThumbnailUrl);
+              const thumbnailUrl = getOptimizedSmugMugUrl(baseThumbnailUrl || baseImageUrl, 'thumbnail') || baseThumbnailUrl || baseImageUrl;
               const originalUrl = baseOriginalUrl;
 
               return {
@@ -932,8 +931,7 @@ export async function fetchPhotosByPeriod(options: {
 
               // Optimize sizes for timeline thumbnails
               const imageUrl = getOptimizedSmugMugUrl(baseImageUrl, 'grid') || baseImageUrl; // S-size (400px)
-              const isSameBaseUrl = baseThumbnailUrl && baseImageUrl.includes(row.image_key) && baseThumbnailUrl.includes(row.image_key);
-              const thumbnailUrl = isSameBaseUrl ? undefined : (getOptimizedSmugMugUrl(baseThumbnailUrl, 'thumbnail') || baseThumbnailUrl);
+              const thumbnailUrl = getOptimizedSmugMugUrl(baseThumbnailUrl || baseImageUrl, 'thumbnail') || baseThumbnailUrl || baseImageUrl;
               const originalUrl = baseOriginalUrl;
 
               return {

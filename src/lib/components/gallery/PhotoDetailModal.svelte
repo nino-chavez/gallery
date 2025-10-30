@@ -136,7 +136,7 @@
 								<Typography variant="h2" id="photo-detail-title" class="text-2xl">
 									Photo Details
 								</Typography>
-								<Button variant="ghost" size="sm" onclick={handleClose} aria-label="Close modal">
+								<Button variant="ghost" size="md" onclick={handleClose} aria-label="Close modal" class="min-w-[44px] min-h-[44px]">
 									<X class="w-5 h-5" />
 								</Button>
 							</div>

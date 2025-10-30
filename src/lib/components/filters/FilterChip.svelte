@@ -35,7 +35,7 @@
 	{#if onRemove}
 		<button
 			onclick={handleClick}
-			class="flex items-center justify-center w-4 h-4 rounded-full hover:bg-gold-500/40 transition-colors"
+			class="flex items-center justify-center min-w-[32px] min-h-[32px] rounded-full hover:bg-gold-500/40 transition-colors"
 			aria-label="Remove filter: {label}"
 		>
 			<X class="w-3 h-3" />
