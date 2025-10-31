@@ -78,6 +78,11 @@ export const load: PageServerLoad = async () => {
     // Fetch high-quality volleyball photos for hero display with album diversity
     // Strategy: Get MORE photos than needed, then distribute across albums
     // Schema v2: All photos are worthy, use internal quality metrics for selection
+    //
+    // COMPOSITION FILTER for Hero Section:
+    // - Prefer wide/landscape compositions that work well in 16:9 hero sections
+    // - Filter OUT portrait/vertical compositions (these look bad in landscape heroes)
+    // - Volleyball action is typically horizontal anyway (court is wide)
     const { data, error } = await supabaseServer
       .from('photo_metadata')
       .select('*')
@@ -86,6 +91,7 @@ export const load: PageServerLoad = async () => {
       .gte('composition_score', 7.5)          // Lower threshold for more diversity
       .gte('emotional_impact', 7.0)           // Lower threshold for more diversity
       .in('photo_category', ['action', 'celebration', 'portrait'])  // Hero-worthy categories
+      .not('composition', 'in', '("vertical", "portrait")')  // Exclude portrait-oriented images
       .not('sharpness', 'is', null)
       .order('photo_date', { ascending: false })  // Most recent first
       .limit(500); // Fetch many candidates to ensure album diversity
@@ -146,10 +152,16 @@ export const load: PageServerLoad = async () => {
 
     for (const [albumName, photos] of albumGroups.entries()) {
       // Sort by quality (sum of scores) and take top photos from each album
+      // Bonus points for landscape/wide compositions (better for hero display)
       const sorted = photos.sort((a, b) => {
         const scoreA = (a.sharpness || 0) + (a.composition_score || 0) + (a.emotional_impact || 0);
         const scoreB = (b.sharpness || 0) + (b.composition_score || 0) + (b.emotional_impact || 0);
-        return scoreB - scoreA;
+
+        // +2 bonus for landscape/wide compositions (hero-friendly)
+        const compositionBonusA = (a.composition === 'landscape' || a.composition === 'wide') ? 2 : 0;
+        const compositionBonusB = (b.composition === 'landscape' || b.composition === 'wide') ? 2 : 0;
+
+        return (scoreB + compositionBonusB) - (scoreA + compositionBonusA);
       });
 
       // Take up to MAX_PER_ALBUM photos from this album
