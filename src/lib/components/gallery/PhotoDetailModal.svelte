@@ -23,6 +23,7 @@
 	import SocialShareButtons from '$lib/components/social/SocialShareButtons.svelte';
 	import DownloadButton from '$lib/components/photo/DownloadButton.svelte';
 	import FavoriteButton from '$lib/components/photo/FavoriteButton.svelte';
+	import { getOptimizedSmugMugUrl, getSmugMugSrcSet, isSmugMugUrl } from '$lib/utils/smugmug-image-optimizer';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
@@ -43,6 +44,60 @@
 
 	// AI Insights collapsed by default (progressive disclosure)
 	let showAIInsights = $state(false);
+	
+	// Track viewport for responsive image loading
+	let viewportWidth = $state(typeof window !== 'undefined' ? window.innerWidth : 1920);
+	let devicePixelRatio = $state(typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
+	
+	// Update viewport on resize
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+		
+		function updateViewport() {
+			viewportWidth = window.innerWidth;
+			devicePixelRatio = window.devicePixelRatio || 1;
+		}
+		
+		window.addEventListener('resize', updateViewport);
+		updateViewport();
+		
+		return () => {
+			window.removeEventListener('resize', updateViewport);
+		};
+	});
+	
+	// Get optimized image URL (same strategy as Lightbox)
+	const optimizedImageUrl = $derived.by(() => {
+		if (!photo) return null;
+		
+		const baseUrl = photo.original_url || photo.image_url;
+		if (!baseUrl) return null;
+		
+		if (isSmugMugUrl(baseUrl)) {
+			const effectiveWidth = viewportWidth * devicePixelRatio;
+			
+			// For detail modal, use slightly larger sizes since it's side-by-side with metadata
+			if (effectiveWidth <= 1024) {
+				return getOptimizedSmugMugUrl(baseUrl, 'fullscreen'); // L (1024px) ~100-200KB
+			} else {
+				return getOptimizedSmugMugUrl(baseUrl, 'download'); // D (1600px) ~200-400KB
+			}
+		}
+		
+		return baseUrl;
+	});
+	
+	// Get srcset for responsive loading
+	const imageSrcSet = $derived.by(() => {
+		if (!photo) return undefined;
+		
+		const baseUrl = photo.original_url || photo.image_url;
+		if (!baseUrl || !isSmugMugUrl(baseUrl)) return undefined;
+		
+		return getSmugMugSrcSet(baseUrl);
+	});
+	
+	const imageSizes = $derived('(max-width: 1024px) 100vw, 50vw'); // Half width on desktop (side-by-side layout)
 
 	function handleClose(event?: MouseEvent) {
 		event?.stopPropagation();
@@ -145,11 +200,15 @@
 							<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
 								<!-- Photo Display -->
 								<div class="relative flex items-center justify-center bg-charcoal-900 rounded-lg aspect-[4/3] border border-charcoal-800 overflow-hidden">
-									{#if photo.original_url || photo.image_url}
+									{#if optimizedImageUrl || photo.image_url}
 										<img
-											src={photo.original_url || photo.image_url}
+											src={optimizedImageUrl || photo.image_url}
+											srcset={imageSrcSet}
+											sizes={imageSizes}
 											alt={photo.title || 'Photo'}
 											class="absolute inset-0 w-full h-full object-contain"
+											loading="eager"
+											decoding="async"
 										/>
 									{:else}
 										<Camera class="w-24 h-24 text-charcoal-600" aria-hidden="true" />

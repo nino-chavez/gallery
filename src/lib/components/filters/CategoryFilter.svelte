@@ -113,7 +113,15 @@
 		<div
 			transition:slide
 			class="absolute top-full left-0 mt-2 p-3 bg-charcoal-900 border border-charcoal-800 rounded-lg shadow-xl z-40 min-w-[240px]"
+			role="group"
+			aria-label="Category filter options"
+			tabindex="-1"
 			onclick={(e) => e.stopPropagation()}
+			onkeydown={(e) => {
+				if (e.key === 'Escape') {
+					isExpanded = false;
+				}
+			}}
 		>
 			<!-- Filter Pills - Phase 2: Intelligent Filter System -->
 			<div class="flex flex-wrap gap-2">

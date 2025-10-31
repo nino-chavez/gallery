@@ -136,14 +136,14 @@
 				</div>
 
 				<!-- Visual Intensity Bar -->
-				<div class="mt-3 flex items-center gap-1">
+				<div class="mt-3 flex items-center gap-1" role="presentation" aria-hidden="true">
 					{#each intensities as intensity, i}
 						<div
 							class="flex-1 h-1.5 rounded-full transition-all duration-200 {selectedIntensity ===
 								intensity.value || selectedIntensity === null
 								? intensity.activeClass
 								: 'bg-charcoal-800/30'}"
-						/>
+						></div>
 					{/each}
 				</div>
 			</div>

@@ -130,11 +130,12 @@ export function getOptimizedSmugMugUrl(
 export function getSmugMugSrcSet(url: string | undefined): string | undefined {
   if (!url) return undefined;
 
+  // Optimized srcset for lightbox: focus on sizes actually needed
+  // Browser will choose the best match based on viewport and device pixel ratio
   const sizes: Array<{ size: SmugMugSize; width: number }> = [
-    { size: 'S', width: 400 },
-    { size: 'M', width: 600 },
-    { size: 'L', width: 1024 },
-    { size: 'D', width: 1600 }
+    { size: 'L', width: 1024 },   // ~100-200KB - Mobile/tablet
+    { size: 'D', width: 1600 },   // ~200-400KB - Desktop standard
+    { size: 'X2', width: 2048 }   // ~400-800KB - Retina/high zoom (avoid X3/X4/X5)
   ];
 
   return sizes

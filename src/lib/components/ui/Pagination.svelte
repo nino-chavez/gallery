@@ -87,17 +87,14 @@
 		}
 	}
 
-	// Don't render if only one page or no content
-	if (totalPages <= 1 || totalCount === 0) {
-		// Don't render anything
-	}
+	// Determine if pagination should render
+	let shouldRender = $derived(totalPages > 1 && totalCount > 0);
 </script>
 
-{#if totalPages > 1 && totalCount > 0}
+{#if shouldRender}
 <nav
 	class={cn('flex items-center justify-center gap-1 sm:gap-2', className)}
 	aria-label="Photo gallery pagination"
-	role="navigation"
 >
 	<!-- Previous Button -->
 	{#if hasPrev}

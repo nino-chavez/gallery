@@ -3,8 +3,18 @@
 
   Features:
   - Year/month grouping for large datasets
-  - Photo grids
+  - Date-based timeline navigation (year/month dots aligned to actual dates)
+  - Clickable year labels with active state tracking
+  - Visual hierarchy: Years above timeline, months on timeline
+  - Scroll position tracking for active year highlighting
+  - Photo grids with lazy loading
   - Mobile-responsive design
+
+  Navigation IA:
+  - Top level: Year labels (clickable, show active state)
+  - Second level: Month dots (clickable, positioned by actual date)
+  - Visual feedback: Active year highlighted, hover states on all elements
+  - Progress indicator shows current scroll position
 
   Usage:
   <TimelineV2 {timelineData} />
@@ -14,6 +24,7 @@
   import { untrack } from 'svelte';
   import Typography from '$lib/components/ui/Typography.svelte';
   import PhotoCard from '$lib/components/gallery/PhotoCard.svelte';
+  import Lightbox from '$lib/components/gallery/Lightbox.svelte';
   import { Calendar, ChevronDown, ChevronUp, Filter, X } from 'lucide-svelte';
   import SportFilter from '$lib/components/filters/SportFilter.svelte';
   import CategoryFilter from '$lib/components/filters/CategoryFilter.svelte';
@@ -140,6 +151,57 @@
     return count;
   });
 
+  // Lightbox state - collect all photos from timeline for full navigation
+  let lightboxOpen = $state(false);
+  let selectedPhotoIndex = $state(0);
+  
+  // Collect all featured photos from all periods for lightbox navigation
+  let allTimelinePhotos = $derived.by(() => {
+    const photos: Photo[] = [];
+    timelineData.forEach(entry => {
+      if (entry.featuredPhotos && entry.featuredPhotos.length > 0) {
+        photos.push(...entry.featuredPhotos);
+      }
+    });
+    return photos;
+  });
+
+  // Photo click handler - find photo in full timeline collection
+  // Consistent with other pages: opens full lightbox with all timeline photos
+  // PhotoCard's onclick handler already prevents default navigation
+  function handlePhotoClick(photo: Photo) {
+    console.log('[Timeline] Photo clicked:', photo.image_key);
+    console.log('[Timeline] All timeline photos count:', allTimelinePhotos.length);
+    
+    // Find the photo in the full timeline collection
+    const index = allTimelinePhotos.findIndex((p) => p.image_key === photo.image_key);
+    
+    console.log('[Timeline] Found photo at index:', index);
+    
+    if (index !== -1) {
+      selectedPhotoIndex = index;
+      lightboxOpen = true;
+      console.log('[Timeline] Opening lightbox with index:', index);
+    } else {
+      // Fallback: if photo not found, try to add it temporarily or use first photo
+      console.warn('[Timeline] Photo not found in allTimelinePhotos:', photo.image_key);
+      console.warn('[Timeline] Available photo keys:', allTimelinePhotos.slice(0, 5).map(p => p.image_key));
+      
+      // If we have photos, use the first one as fallback
+      if (allTimelinePhotos.length > 0) {
+        selectedPhotoIndex = 0;
+        lightboxOpen = true;
+        console.log('[Timeline] Using fallback: opening first photo');
+      } else {
+        console.error('[Timeline] No photos available in timeline!');
+      }
+    }
+  }
+
+  function handleLightboxNavigate(newIndex: number) {
+    selectedPhotoIndex = newIndex;
+  }
+
   // Filter handlers
   function handleSportSelect(sport: string | null) {
     selectedSport = sport;
@@ -167,7 +229,14 @@
     const periodId = month ? `month-${year}-${month}` : `year-${year}`;
     const element = document.getElementById(periodId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const offset = getScrollOffset();
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
       selectedYear = year;
       selectedMonth = month || null;
       showPeriodSelector = false;
@@ -207,6 +276,138 @@
     }
   }
 
+  // Visual Timeline Navigator State
+  let hoveredPeriod = $state<{ year: number; month: number; monthName: string } | null>(null);
+
+  // Calculate scroll offset for sticky headers
+  // Header: h-16 (64px) + Timeline navigator: top-16 (64px offset) + height (~108px) = ~172px
+  function getScrollOffset(): number {
+    // Measure actual timeline navigator height dynamically
+    const timelineNav = document.querySelector('[data-timeline-nav]');
+    if (timelineNav) {
+      const navHeight = timelineNav.getBoundingClientRect().height;
+      // Header (64px) + Navigator height + padding (20px)
+      return 64 + navHeight + 20;
+    }
+    // Fallback: Header (64px) + Navigator estimated (~108px) + padding (20px)
+    return 192;
+  }
+
+  function scrollToNavPeriod(year: number, month: number) {
+    const periodId = `month-${year}-${month}`;
+    const element = document.getElementById(periodId);
+    if (element) {
+      const offset = getScrollOffset();
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  // Calculate timeline positions (0-100%) for each period
+  let timelinePositions = $derived.by(() => {
+    if (availablePeriods.length === 0) return [];
+
+    // Get min and max dates
+    const firstPeriod = availablePeriods[availablePeriods.length - 1]; // Oldest
+    const lastPeriod = availablePeriods[0]; // Newest
+
+    const minDate = new Date(firstPeriod.year, firstPeriod.month - 1, 1);
+    const maxDate = new Date(lastPeriod.year, lastPeriod.month - 1, 1);
+    const totalRange = maxDate.getTime() - minDate.getTime();
+
+    return availablePeriods.map(period => {
+      const periodDate = new Date(period.year, period.month - 1, 1);
+      const position = ((periodDate.getTime() - minDate.getTime()) / totalRange) * 100;
+      return {
+        ...period,
+        position: 100 - position // Reverse so newest is on the right
+      };
+    });
+  });
+
+  // Get unique years for milestones with proper date-based positioning
+  let yearMilestones = $derived.by(() => {
+    if (availablePeriods.length === 0) return [];
+    
+    const years = new Set(availablePeriods.map(p => p.year));
+    const yearsArray = Array.from(years).sort((a, b) => b - a); // Newest first
+    
+    // Get min and max dates for proper positioning
+    const firstPeriod = availablePeriods[availablePeriods.length - 1]; // Oldest
+    const lastPeriod = availablePeriods[0]; // Newest
+    const minDate = new Date(firstPeriod.year, firstPeriod.month - 1, 1);
+    const maxDate = new Date(lastPeriod.year, lastPeriod.month - 1, 1);
+    const totalRange = maxDate.getTime() - minDate.getTime();
+    
+    // Calculate position for each year (use January 1st of that year)
+    return yearsArray.map(year => {
+      const yearDate = new Date(year, 0, 1); // January 1st
+      // Clamp to min/max range
+      const clampedDate = yearDate < minDate ? minDate : yearDate > maxDate ? maxDate : yearDate;
+      const position = ((clampedDate.getTime() - minDate.getTime()) / totalRange) * 100;
+      return {
+        year,
+        position: 100 - position // Reverse so newest is on the right
+      };
+    });
+  });
+
+  // Track currently visible year based on scroll position
+  let currentVisibleYear = $state<number | null>(null);
+  
+  // Update visible year based on scroll position
+  function updateVisibleYear() {
+    const scrollY = window.scrollY + 200; // Offset for sticky header
+    const yearElements = document.querySelectorAll('[id^="year-"]');
+    
+    let newVisibleYear: number | null = null;
+    yearElements.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const elTop = rect.top + window.scrollY;
+      const elBottom = elTop + rect.height;
+      
+      if (scrollY >= elTop && scrollY < elBottom) {
+        const yearId = el.id.replace('year-', '');
+        newVisibleYear = parseInt(yearId);
+      }
+    });
+    
+    if (newVisibleYear !== currentVisibleYear) {
+      currentVisibleYear = newVisibleYear;
+    }
+  }
+
+  // Scroll to year function
+  function scrollToYear(year: number) {
+    const element = document.getElementById(`year-${year}`);
+    if (element) {
+      const offset = getScrollOffset();
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+      selectedYear = year;
+      selectedMonth = null;
+    }
+  }
+
+  // Track scroll position for progress indicator
+  let scrollProgress = $state(0);
+
+  function handleScroll() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    scrollProgress = (scrollTop / docHeight) * 100;
+  }
+
   // Effects for event listeners
   $effect(() => {
     if (showPeriodSelector) {
@@ -217,6 +418,19 @@
         document.removeEventListener('keydown', handleKeydown);
       };
     }
+  });
+
+  // Scroll tracking effect
+  $effect(() => {
+    function scrollHandler() {
+      handleScroll();
+      updateVisibleYear();
+    }
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+    updateVisibleYear(); // Initial check
+    return () => {
+      window.removeEventListener('scroll', scrollHandler);
+    };
   });
 
   // Intersection observer for infinite scroll
@@ -257,26 +471,114 @@
 
   // Set up observer when sentinel element is available
   $effect(() => {
-    // Only initialize when sentinel element becomes available
-    if (sentinelElement && !sentinelObserver) {
-      initIntersectionObserver();
-    }
+    // Only track sentinelElement changes, not sentinelObserver
+    const element = sentinelElement;
+
+    // Use untrack to prevent infinite loop from reading/writing sentinelObserver
+    untrack(() => {
+      if (element && !sentinelObserver) {
+        initIntersectionObserver();
+      }
+    });
 
     return () => {
-      if (sentinelObserver) {
-        sentinelObserver.disconnect();
-        sentinelObserver = null;
-      }
+      untrack(() => {
+        if (sentinelObserver) {
+          sentinelObserver.disconnect();
+          sentinelObserver = null;
+        }
+      });
     };
   });
 </script>
 
 <div class="relative w-full bg-charcoal-950">
-  <!-- Compact Header with Navigation -->
-  <div class="sticky top-0 z-50 bg-charcoal-950/95 backdrop-blur-sm border-b border-charcoal-800/50">
-    <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-10">
-      <div class="flex items-center justify-end gap-3 py-4">
-        <!-- Header is now empty but kept for future use -->
+  <!-- Visual Timeline Navigator -->
+  <div class="sticky top-16 z-40 bg-charcoal-950/95 backdrop-blur-sm border-b border-charcoal-800/50 shadow-lg" data-timeline-nav>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <!-- Timeline Label -->
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-charcoal-400 text-xs font-medium flex-shrink-0">Timeline</span>
+        <div class="flex-1 h-px bg-charcoal-800"></div>
+      </div>
+
+      <!-- Visual Timeline Bar -->
+      <div class="relative h-16">
+        <!-- Horizontal timeline line -->
+        <div class="absolute top-8 left-0 right-0 h-0.5 bg-charcoal-800"></div>
+
+        <!-- Year milestones (clickable, positioned above timeline) -->
+        {#each yearMilestones as milestone}
+          {@const isActive = currentVisibleYear === milestone.year}
+          <button
+            onclick={() => scrollToYear(milestone.year)}
+            class="absolute top-0 transform -translate-x-1/2 group cursor-pointer transition-all"
+            style="left: {milestone.position}%"
+            aria-label="Jump to {milestone.year}"
+          >
+            <!-- Year marker -->
+            <div class="flex flex-col items-center">
+              <!-- Year label -->
+              <div
+                class="px-2 py-1 rounded-md transition-all"
+                class:bg-gold-500={isActive}
+                class:text-charcoal-950={isActive}
+                class:text-charcoal-300={!isActive}
+                class:hover:bg-gold-400={!isActive}
+                class:hover:text-charcoal-950={!isActive}
+              >
+                <Typography 
+                  variant="caption" 
+                  class={`text-sm font-semibold whitespace-nowrap ${isActive ? 'text-white' : 'text-charcoal-300'}`}
+                >
+                  {milestone.year}
+                </Typography>
+              </div>
+              <!-- Year marker line and dot -->
+              <div class="w-px h-3 bg-charcoal-600 group-hover:bg-gold-500 transition-colors mt-1"
+                   class:bg-gold-500={isActive}></div>
+              <div class="w-2 h-2 rounded-full bg-charcoal-600 group-hover:bg-gold-500 -mt-px transition-colors"
+                   class:bg-gold-500={isActive}></div>
+            </div>
+          </button>
+        {/each}
+
+        <!-- Month dots (only periods with photos, positioned on timeline) -->
+        {#each timelinePositions as period}
+          <button
+            onclick={() => scrollToNavPeriod(period.year, period.month)}
+            onmouseenter={() => hoveredPeriod = { year: period.year, month: period.month, monthName: period.monthName }}
+            onmouseleave={() => hoveredPeriod = null}
+            class="absolute top-7 transform -translate-x-1/2 group cursor-pointer z-20"
+            style="left: {period.position}%"
+            aria-label="Jump to {period.monthName} {period.year}"
+          >
+            <!-- Month dot -->
+            <div class="relative">
+              <div class="w-2.5 h-2.5 rounded-full bg-gold-500 group-hover:bg-gold-400 transition-all group-hover:scale-150 shadow-lg ring-1 ring-gold-600"></div>
+
+              <!-- Hover tooltip -->
+              {#if hoveredPeriod && hoveredPeriod.year === period.year && hoveredPeriod.month === period.month}
+                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-1.5 bg-charcoal-900 border border-charcoal-700 rounded shadow-xl whitespace-nowrap z-50">
+                  <Typography variant="caption" class="text-white text-xs font-medium">
+                    {period.monthName} {period.year}
+                  </Typography>
+                  <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
+                    <div class="border-4 border-transparent border-t-charcoal-900"></div>
+                  </div>
+                </div>
+              {/if}
+            </div>
+          </button>
+        {/each}
+
+        <!-- Progress indicator (current scroll position) -->
+        <div
+          class="absolute top-7 transform -translate-x-1/2 z-10 pointer-events-none"
+          style="left: {scrollProgress}%"
+        >
+          <div class="w-3 h-3 rounded-full bg-white border-2 border-gold-500 shadow-lg"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -287,9 +589,9 @@
       <!-- Sticky Year Header -->
       <div
         id="year-{yearGroup.year}"
-        class="sticky top-20 z-30 bg-charcoal-950/95 backdrop-blur-sm border-y border-charcoal-800/50 mb-8 -mx-4 px-4 py-6 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10"
+        class="sticky top-[88px] z-30 mb-8"
       >
-        <div class="flex items-center justify-between">
+        <div class="bg-charcoal-950 border-b border-charcoal-800/50 -mx-4 px-4 pb-6 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10">
           <div class="flex items-center gap-4">
             <!-- Year Marker -->
             <div class="h-12 w-12 rounded-full bg-gold-500 flex items-center justify-center shadow-lg">
@@ -305,69 +607,6 @@
                 {yearGroup.periods.reduce((total, period) => total + period.photoCount, 0)} photos this year
               </Typography>
             </div>
-          </div>
-
-          <!-- Filters and navigation aligned with year row -->
-          <div class="flex items-center gap-2">
-            <!-- Jump to dropdown -->
-            {#if availablePeriods.length > 0}
-              <div class="flex items-center gap-2">
-                <Typography variant="label" class="hidden sm:inline text-charcoal-300 text-xs font-medium">
-                  Jump to:
-                </Typography>
-                <div class="relative" data-dropdown>
-                  <button
-                    onclick={() => showPeriodSelector = !showPeriodSelector}
-                    class="inline-flex items-center gap-2 px-3 py-2.5 text-sm bg-charcoal-800 hover:bg-charcoal-700 text-charcoal-200 rounded-lg border border-charcoal-700 transition-colors min-h-[44px]"
-                  >
-                    <span class="text-xs sm:text-sm">{selectedYear && selectedMonth ? `${availablePeriods.find(p => p.year === selectedYear && p.month === selectedMonth)?.monthName} ${selectedYear}` : 'Select period'}</span>
-                    <ChevronDown class="w-3 h-3" />
-                  </button>
-
-                  {#if showPeriodSelector}
-                    <div class="absolute top-full right-0 mt-1 bg-charcoal-800 border border-charcoal-700 rounded-lg shadow-xl z-50 min-w-[180px] max-h-64 overflow-y-auto">
-                      {#each availablePeriods as period}
-                        <button
-                          onclick={() => scrollToPeriod(period.year, period.month)}
-                          class="w-full text-left px-3 py-2.5 text-sm text-charcoal-200 hover:bg-charcoal-700 hover:text-white transition-colors first:rounded-t-lg last:rounded-b-lg min-h-[44px] flex items-center"
-                        >
-                          {period.label}
-                        </button>
-                      {/each}
-                    </div>
-                  {/if}
-                </div>
-              </div>
-            {/if}
-
-            {#if activeFilterCount > 0}
-              <button
-                onclick={clearAllFilters}
-                class="inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium text-charcoal-300 hover:text-gold-400 bg-charcoal-800/50 hover:bg-charcoal-800 transition-all rounded-lg border border-charcoal-700/50 hover:border-gold-500/50 min-h-[44px]"
-              >
-                <X class="w-3 h-3" />
-                <span class="hidden sm:inline">Clear</span>
-                <span class="ml-1 px-1.5 py-0.5 bg-gold-500/20 text-gold-400 rounded-full text-xs font-bold">
-                  {activeFilterCount}
-                </span>
-              </button>
-            {/if}
-
-            {#if sports && sports.length > 0}
-              <SportFilter
-                {sports}
-                selectedSport={selectedSport}
-                onSelect={handleSportSelect}
-              />
-            {/if}
-
-            {#if categories && categories.length > 0}
-              <CategoryFilter
-                {categories}
-                selectedCategory={selectedCategory}
-                onSelect={handleCategorySelect}
-              />
-            {/if}
           </div>
         </div>
       </div>
@@ -400,22 +639,11 @@
 
           <!-- Month Content -->
           <div class="ml-12">
-            <!-- Description -->
-            {#if entry.description}
-              <Typography variant="body" class="text-charcoal-300 mb-4">
-                {entry.description}
-              </Typography>
-            {/if}
-
             <!-- Diversity Indicators -->
             {#if entry.featuredPhotos && entry.featuredPhotos.length > 0}
               {@const diversity = getContentDiversity(entry.featuredPhotos)}
-              <div class="flex items-center gap-4 mb-4">
-                <Typography variant="caption" class="text-charcoal-400">
-                  {entry.photoCount} photos from this month
-                </Typography>
-
-                <div class="flex items-center gap-2 text-xs text-charcoal-500">
+              {#if diversity.sportCount > 1 || diversity.categoryCount > 1}
+                <div class="flex items-center gap-3 mb-4 text-xs text-charcoal-500">
                   {#if diversity.sportCount > 1}
                     <span class="flex items-center gap-1">
                       <span class="w-2 h-2 bg-gold-500 rounded-full"></span>
@@ -429,16 +657,18 @@
                     </span>
                   {/if}
                 </div>
-              </div>
+              {/if}
             {/if}
 
             <!-- Photo Grid or Empty State -->
             {#if getFeaturedPhotos(entry.featuredPhotos).length > 0}
+              {@const featuredPhotos = getFeaturedPhotos(entry.featuredPhotos)}
               <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6">
-                {#each getFeaturedPhotos(entry.featuredPhotos) as photo (photo.id)}
+                {#each featuredPhotos as photo, photoIndex (photo.id)}
                   <PhotoCard
                     {photo}
-                    index={0}
+                    index={photoIndex}
+                    onclick={handlePhotoClick}
                   />
                 {/each}
               </div>
@@ -457,11 +687,11 @@
 
             <!-- View All Link -->
             <a
-              href="/explore?year={entry.year}{entry.month ? `&month=${entry.month}` : ''}"
+              href="/photos/{entry.year}/{entry.month}"
               class="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors text-sm"
             >
               <Typography variant="body" class="font-medium">
-                View all {entry.photoCount} photos
+                View gallery
               </Typography>
               <ChevronDown class="w-4 h-4 rotate-[-90deg]" />
             </a>
@@ -494,5 +724,14 @@
       <div class="w-full bg-gradient-to-b from-gold-400 to-gold-600 rounded-full h-full"></div>
     </div>
   </div>
+
+  <!-- Lightbox - consistent with other pages, shows all timeline photos -->
+  <Lightbox
+    bind:open={lightboxOpen}
+    photo={allTimelinePhotos[selectedPhotoIndex] || null}
+    photos={allTimelinePhotos}
+    currentIndex={selectedPhotoIndex}
+    onNavigate={handleLightboxNavigate}
+  />
 
 </div>

@@ -83,8 +83,9 @@
 			>
 				<!-- Icon (optional) -->
 				{#if icon}
+					{@const IconComponent = icon}
 					<div class="shrink-0 mt-0.5">
-						<svelte:component this={icon} class="w-5 h-5" />
+						<IconComponent class="w-5 h-5" />
 					</div>
 				{/if}
 

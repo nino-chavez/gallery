@@ -55,12 +55,6 @@ const COLLECTIONS = [
 		description: 'Athletes suspended in air, captured at the peak of their flight. These photos showcase the beauty of vertical movement—blocks, spikes, jumps—frozen in time with exceptional composition and sharpness.',
 	},
 	{
-		slug: 'early-game-energy',
-		title: 'Early Game Energy',
-		narrative: 'The fresh intensity of first contact',
-		description: 'Opening moments when teams are at their sharpest. These photos capture the explosive energy and focus of the first 10 minutes—when strategy meets execution and every play matters.',
-	},
-	{
 		slug: 'defensive-masterclass',
 		title: 'Defensive Masterclass',
 		narrative: 'The art of reading, reacting, and rescuing',
@@ -70,7 +64,7 @@ const COLLECTIONS = [
 		slug: 'sunset-sessions',
 		title: 'Sunset Sessions',
 		narrative: 'Evening light transforms competition into cinema',
-		description: 'The drama of evening competition bathed in warm light. These photos capture the intersection of athletic performance and natural beauty as daylight fades into dusk.',
+		description: 'The drama of evening competition bathed in warm light. These photos showcase exceptional composition and emotional impact, capturing the intersection of athletic performance and natural beauty as daylight fades into dusk.',
 	},
 ];
 
@@ -201,22 +195,6 @@ export const load: PageServerLoad = async ({ params, url }) => {
 
 		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
-	} else if (slug === 'early-game-energy') {
-		// HYBRID: Story (first_10_min) + Quality floor (7/10)
-		const query = supabaseServer
-			.from('photo_metadata')
-			.select('*', { count: 'exact' })
-			.eq('time_in_game', 'first_10_min')
-			.gte('sharpness', 7)
-			.gte('emotional_impact', 7)
-			.gte('composition_score', 7)
-			.not('sharpness', 'is', null)
-			.order('emotional_impact', { ascending: false });
-
-		const { data, count } = await query.range(offset, offset + pageSize - 1);
-
-		photos = (data || []).map(transformPhotoRow);
-		totalCount = count || 0;
 	} else if (slug === 'defensive-masterclass') {
 		// HYBRID: Story (dig/block plays) + Quality floor (7/10)
 		const query = supabaseServer
@@ -234,12 +212,14 @@ export const load: PageServerLoad = async ({ params, url }) => {
 		photos = (data || []).map(transformPhotoRow);
 		totalCount = count || 0;
 	} else if (slug === 'sunset-sessions') {
-		// HYBRID: Story (evening time) + Quality floor (7/10)
+		// HYBRID: Story (evening time) + Higher quality thresholds for curation
+		// Narrowed from 53% to ~37% by requiring composition≥8 and emotional_impact≥8
 		const query = supabaseServer
 			.from('photo_metadata')
 			.select('*', { count: 'exact' })
 			.eq('time_of_day', 'evening')
-			.gte('composition_score', 7)
+			.gte('composition_score', 8)
+			.gte('emotional_impact', 8)
 			.gte('sharpness', 7)
 			.not('sharpness', 'is', null)
 			.order('composition_score', { ascending: false });

@@ -68,13 +68,6 @@ const COLLECTIONS = [
 		coverPhotoIndex: 0,
 	},
 	{
-		slug: 'early-game-energy',
-		title: 'Early Game Energy',
-		narrative: 'The fresh intensity of first contact',
-		description: 'Opening moments when teams are at their sharpest. These photos capture the explosive energy and focus of the first 10 minutes—when strategy meets execution and every play matters.',
-		coverPhotoIndex: 0,
-	},
-	{
 		slug: 'defensive-masterclass',
 		title: 'Defensive Masterclass',
 		narrative: 'The art of reading, reacting, and rescuing',
@@ -85,7 +78,7 @@ const COLLECTIONS = [
 		slug: 'sunset-sessions',
 		title: 'Sunset Sessions',
 		narrative: 'Evening light transforms competition into cinema',
-		description: 'The drama of evening competition bathed in warm light. These photos capture the intersection of athletic performance and natural beauty as daylight fades into dusk.',
+		description: 'The drama of evening competition bathed in warm light. These photos showcase exceptional composition and emotional impact, capturing the intersection of athletic performance and natural beauty as daylight fades into dusk.',
 		coverPhotoIndex: 0,
 	},
 ];
@@ -175,15 +168,6 @@ export const load: PageServerLoad = async () => {
 				.gte('composition_score', 8)
 				.not('sharpness', 'is', null)
 				.order('composition_score', { ascending: false });
-		} else if (collection.slug === 'early-game-energy') {
-			// HYBRID: Story (first_10_min) + Quality floor (7/10)
-			query = query
-				.eq('time_in_game', 'first_10_min')
-				.gte('sharpness', 7)
-				.gte('emotional_impact', 7)
-				.gte('composition_score', 7)
-				.not('sharpness', 'is', null)
-				.order('emotional_impact', { ascending: false });
 		} else if (collection.slug === 'defensive-masterclass') {
 			// HYBRID: Story (dig/block plays) + Quality floor (7/10)
 			query = query
@@ -194,10 +178,12 @@ export const load: PageServerLoad = async () => {
 				.not('sharpness', 'is', null)
 				.order('sharpness', { ascending: false });
 		} else if (collection.slug === 'sunset-sessions') {
-			// HYBRID: Story (evening time) + Quality floor (7/10)
+			// HYBRID: Story (evening time) + Higher quality thresholds for curation
+			// Narrowed from 53% to ~37% by requiring composition≥8 and emotional_impact≥8
 			query = query
 				.eq('time_of_day', 'evening')
-				.gte('composition_score', 7)
+				.gte('composition_score', 8)
+				.gte('emotional_impact', 8)
 				.gte('sharpness', 7)
 				.not('sharpness', 'is', null)
 				.order('composition_score', { ascending: false });

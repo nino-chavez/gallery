@@ -137,8 +137,8 @@
   >
       <!-- Optional icon -->
       {#if icon}
-        <svelte:component
-          this={icon}
+        {@const IconComponent = icon}
+        <IconComponent
           class="
             {sizes.icon}
             {state === 'active' ? 'text-charcoal-950' : 'text-charcoal-400 group-hover:text-charcoal-200'}

@@ -363,6 +363,7 @@
 		url.searchParams.delete('color_temp');
 		url.searchParams.delete('time_of_day');
 		url.searchParams.delete('composition');
+		url.searchParams.delete('emotion'); // Clear emotion filter
 		url.searchParams.delete('q'); // Clear search query too
 		url.searchParams.delete('page');
 		goto(url.toString());
@@ -379,6 +380,7 @@
 		url.searchParams.delete('color_temp');
 		url.searchParams.delete('time_of_day');
 		url.searchParams.delete('composition');
+		url.searchParams.delete('emotion');
 		// Keep search query
 
 		// Apply preset filters
@@ -413,6 +415,7 @@
 		url.searchParams.delete('color_temp');
 		url.searchParams.delete('time_of_day');
 		url.searchParams.delete('composition');
+		url.searchParams.delete('emotion');
 		// Keep search query
 
 		// Apply history filters

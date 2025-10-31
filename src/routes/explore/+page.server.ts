@@ -26,6 +26,7 @@ export const load: PageServerLoad = async ({ url, parent }) => {
   let colorTempFilter = url.searchParams.get('color_temp') || undefined;
   let timeOfDayFilter = url.searchParams.get('time_of_day') || undefined;
   let compositionFilter = url.searchParams.get('composition') || undefined;
+  let emotionFilter = url.searchParams.get('emotion') || undefined; // Bucket 2, but used for "Similar Photos"
   let searchQuery = url.searchParams.get('q') || undefined;
 
   // DEBUG: Log the sport filter
@@ -46,11 +47,12 @@ export const load: PageServerLoad = async ({ url, parent }) => {
     colorTemperature: colorTempFilter ? [colorTempFilter as any] : undefined,
     timeOfDay: timeOfDayFilter ? [timeOfDayFilter as any] : undefined,
     compositions: compositionFilter ? [compositionFilter as any] : undefined, // Fixed: was 'composition', now 'compositions'
+    emotion: emotionFilter as any, // Bucket 2, but used for "Similar Photos" feature
   };
 
   // Check if any filters are active
   const hasActiveFilters = !!(sportFilter || categoryFilter || playTypeFilter || intensityFilter ||
-    lightingFilters.length > 0 || colorTempFilter || timeOfDayFilter || compositionFilter);
+    lightingFilters.length > 0 || colorTempFilter || timeOfDayFilter || compositionFilter || emotionFilter);
 
   // Intelligent Filter System (Phase 1):
   // - If no filters active: use cached baseFilterCounts (fast, from layout cache)
@@ -188,6 +190,7 @@ export const load: PageServerLoad = async ({ url, parent }) => {
     selectedColorTemp: colorTempFilter || null,
     selectedTimeOfDay: timeOfDayFilter || null,
     selectedComposition: compositionFilter || null,
+    selectedEmotion: emotionFilter || null, // Bucket 2, but used for "Similar Photos" feature
     filterCounts, // NEW: Dynamic result counts for smart filtering
     clearedFilters, // Phase 4: List of auto-cleared filters for notification
     searchQuery, // Global search query from URL

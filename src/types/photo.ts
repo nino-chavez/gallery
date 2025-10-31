@@ -196,6 +196,11 @@ export interface PhotoFilterState {
   colorTemperature?: ColorTemperature[];  // NEW
 
   // ==========================================================================
+  // Emotion Filter (Bucket 2, but used for "Similar Photos" feature)
+  // ==========================================================================
+  emotion?: EmotionType;
+
+  // ==========================================================================
   // Context Filters
   // ==========================================================================
   albumKey?: string;

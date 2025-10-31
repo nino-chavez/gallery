@@ -14,6 +14,7 @@
 	import Typography from '$lib/components/ui/Typography.svelte';
 	import DownloadButton from '$lib/components/photo/DownloadButton.svelte';
 	import { generatePhotoTitle, generatePhotoCaption, generateMetadataSummary } from '$lib/photo-utils';
+	import { getOptimizedSmugMugUrl, getSmugMugSrcSet, isSmugMugUrl } from '$lib/utils/smugmug-image-optimizer';
 	import type { Photo } from '$types/photo';
 
 	interface Props {
@@ -44,6 +45,78 @@
 	let isDragging = $state(false);
 	let dragStart = $state({ x: 0, y: 0 });
 	let imagePosition = $state({ x: 0, y: 0 });
+	
+	// Track viewport size for responsive image loading
+	let viewportWidth = $state(typeof window !== 'undefined' ? window.innerWidth : 1920);
+	let devicePixelRatio = $state(typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
+	
+	// Update viewport on resize
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+		
+		function updateViewport() {
+			viewportWidth = window.innerWidth;
+			devicePixelRatio = window.devicePixelRatio || 1;
+		}
+		
+		window.addEventListener('resize', updateViewport);
+		updateViewport(); // Initial call
+		
+		return () => {
+			window.removeEventListener('resize', updateViewport);
+		};
+	});
+	
+	// Get optimized image URL based on viewport and zoom level
+	// Progressive loading: Start smaller, upgrade on zoom
+	const optimizedImageUrl = $derived.by(() => {
+		if (!photo) return null;
+		
+		const baseUrl = photo.original_url || photo.image_url;
+		if (!baseUrl) return null;
+		
+		// For SmugMug URLs, use size optimization
+		if (isSmugMugUrl(baseUrl)) {
+			// Calculate effective display width needed
+			// Account for viewport width, zoom level, and device pixel ratio
+			const displayWidth = viewportWidth * Math.max(1, zoomLevel);
+			const effectiveWidth = displayWidth * devicePixelRatio;
+			
+			// Conservative sizing strategy:
+			// - Mobile portrait (< 480px): L (1024px) ~100-200KB
+			// - Mobile landscape/Tablet (< 1024px): D (1600px) ~200-400KB  
+			// - Desktop (> 1024px): D (1600px) ~200-400KB
+			// - Desktop Retina (2x): Still D (1600px) is usually enough
+			// - Only use X2/X3 for extreme zoom (> 2x) or very large Retina displays
+			if (effectiveWidth <= 1024) {
+				// Small screens or low zoom
+				return getOptimizedSmugMugUrl(baseUrl, 'fullscreen'); // L (1024px) ~100-200KB
+			} else if (effectiveWidth <= 2048 && zoomLevel <= 2) {
+				// Standard desktop or moderate zoom
+				return getOptimizedSmugMugUrl(baseUrl, 'download'); // D (1600px) ~200-400KB
+			} else {
+				// High zoom (> 2x) or very large Retina displays - use X2 (2048px) ~400-800KB
+				// Avoid X3/X4/X5 unless absolutely necessary (those are 20MB+)
+				return getOptimizedSmugMugUrl(baseUrl, 'download'); // Stay conservative with D size
+			}
+		}
+		
+		// Fallback to original URL for non-SmugMug images
+		return baseUrl;
+	});
+	
+	// Get srcset for responsive loading (allows browser to choose optimal size)
+	const imageSrcSet = $derived.by(() => {
+		if (!photo) return undefined;
+		
+		const baseUrl = photo.original_url || photo.image_url;
+		if (!baseUrl || !isSmugMugUrl(baseUrl)) return undefined;
+		
+		return getSmugMugSrcSet(baseUrl);
+	});
+	
+	// Sizes attribute for responsive images
+	const imageSizes = $derived('100vw'); // Full viewport width
 
 	// Touch gesture state
 	let isTouch = $state(false);
@@ -348,12 +421,16 @@
 					style="cursor: {zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'}"
 				>
 					<img
-						src={photo.original_url || photo.image_url}
+						src={optimizedImageUrl || photo.image_url}
+						srcset={imageSrcSet}
+						sizes={imageSizes}
 						alt={displayTitle}
 						class="max-w-full max-h-full object-contain select-none transition-transform duration-200 touch-none"
 						style="transform: scale({zoomLevel}) translate({imagePosition.x /
 							zoomLevel}px, {imagePosition.y / zoomLevel}px)"
 						draggable="false"
+						loading="eager"
+						decoding="async"
 					/>
 				</div>
 

@@ -178,6 +178,11 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
     query = query.in('color_temperature', filters.colorTemperature);
   }
 
+  // Emotion filter (Bucket 2, but used for "Similar Photos" feature)
+  if (filters?.emotion) {
+    query = query.eq('emotion', filters.emotion);
+  }
+
   // Context filters
   if (filters?.albumKey) {
     query = query.eq('album_key', filters.albumKey);
@@ -309,6 +314,11 @@ export async function getPhotoCount(filters?: PhotoFilterState): Promise<number>
 
   if (filters?.colorTemperature && filters.colorTemperature.length > 0) {
     query = query.in('color_temperature', filters.colorTemperature);
+  }
+
+  // Emotion filter (Bucket 2, but used for "Similar Photos" feature)
+  if (filters?.emotion) {
+    query = query.eq('emotion', filters.emotion);
   }
 
   const { count, error } = await query;
@@ -1081,5 +1091,113 @@ export async function fetchAllPeriods(options?: {
         monthName: new Date(period.year, period.month - 1).toLocaleString('default', { month: 'long' }),
         photoCount: period.count
       }));
+  }
+}
+
+/**
+ * Fetch all photos for a specific year and month
+ * Used by the month detail page (/photos/[year]/[month])
+ */
+export async function fetchPhotosByYearMonth(
+  year: number,
+  month: number,
+  options: { sortBy?: 'newest' | 'oldest' | 'quality' } = {}
+): Promise<Photo[]> {
+  const { sortBy = 'newest' } = options;
+
+  try {
+    // Calculate date range for the month
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+
+    console.log(`[fetchPhotosByYearMonth] Fetching photos for ${year}-${month}`, {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      sortBy
+    });
+
+    let query = supabaseServer
+      .from('photo_metadata')
+      .select('*')
+      .not('sharpness', 'is', null)
+      .gte('upload_date', startDate.toISOString())
+      .lte('upload_date', endDate.toISOString());
+
+    // Apply sorting
+    if (sortBy === 'newest') {
+      query = query.order('upload_date', { ascending: false });
+    } else if (sortBy === 'oldest') {
+      query = query.order('upload_date', { ascending: true });
+    } else if (sortBy === 'quality') {
+      query = query.order('emotional_impact', { ascending: false }).order('upload_date', { ascending: false });
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('[fetchPhotosByYearMonth] Query failed:', error);
+      throw error;
+    }
+
+    console.log(`[fetchPhotosByYearMonth] Fetched ${data?.length || 0} photos`);
+
+    return (data || []).map(transformPhotoRow);
+  } catch (error) {
+    console.error('[fetchPhotosByYearMonth] Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get adjacent month information for navigation
+ * Returns null if no photos exist in that month
+ */
+export async function getAdjacentMonth(
+  year: number,
+  month: number,
+  direction: 'prev' | 'next'
+): Promise<{ year: number; month: number; monthName: string; photoCount: number } | null> {
+  try {
+    const date = new Date(year, month - 1, 1);
+
+    // Calculate adjacent month
+    if (direction === 'prev') {
+      date.setMonth(date.getMonth() - 1);
+    } else {
+      date.setMonth(date.getMonth() + 1);
+    }
+
+    const adjYear = date.getFullYear();
+    const adjMonth = date.getMonth() + 1;
+
+    // Check if photos exist in that month
+    const startDate = new Date(adjYear, adjMonth - 1, 1);
+    const endDate = new Date(adjYear, adjMonth, 0, 23, 59, 59);
+
+    const { count, error } = await supabaseServer
+      .from('photo_metadata')
+      .select('*', { count: 'exact', head: true })
+      .not('sharpness', 'is', null)
+      .gte('upload_date', startDate.toISOString())
+      .lte('upload_date', endDate.toISOString());
+
+    if (error) {
+      console.error('[getAdjacentMonth] Query failed:', error);
+      return null;
+    }
+
+    if (!count || count === 0) {
+      return null;
+    }
+
+    return {
+      year: adjYear,
+      month: adjMonth,
+      monthName: date.toLocaleString('default', { month: 'long' }),
+      photoCount: count
+    };
+  } catch (error) {
+    console.error('[getAdjacentMonth] Error:', error);
+    return null;
   }
 }
