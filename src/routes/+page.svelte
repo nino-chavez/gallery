@@ -55,13 +55,13 @@
 	<PremiumHero
 		backgroundImage={heroBackgroundImage}
 		title="VOLLEYBALL PHOTOGRAPHY"
-		subtitle="ACTION & MOMENTS"
+		subtitle="INTENSITY • DETERMINATION • TRIUMPH"
 	/>
 {:else}
 	<!-- Fallback hero without background image -->
 	<PremiumHero
 		title="VOLLEYBALL PHOTOGRAPHY"
-		subtitle="ACTION & MOMENTS"
+		subtitle="INTENSITY • DETERMINATION • TRIUMPH"
 	/>
 {/if}
 
