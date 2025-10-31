@@ -1,134 +1,145 @@
 <!--
-  CollectionCard Component - Preview card for photo collections
+  CollectionCard Component - Elegant card with reveal hover effect
 
   Features:
-  - Displays collection title and emotion color
-  - Shows photo count and preview thumbnails
-  - Hover effects with scale animation
-  - Click to navigate or trigger action
-  - Fully accessible
+  - Smooth gradient reveal on hover
+  - Content slides up with image zoom
+  - Gold accent shine effect
+  - Optimized image loading with SmugMug sizes
+  - Fully accessible with keyboard navigation
+  - Adheres to design system (charcoal/gold theme)
 
   Usage:
   <CollectionCard
-    emotion="triumph"
-    photoCount={24}
-    onclick={() => handleClick()}
+    collection={collection}
+    href="/collections/{collection.slug}"
   />
 -->
 
 <script lang="ts">
-	import { Motion } from 'svelte-motion';
-	import { Camera } from 'lucide-svelte';
-	import { MOTION, EMOTION_PALETTE } from '$lib/motion-tokens';
+	import { Award } from 'lucide-svelte';
 	import Typography from '$lib/components/ui/Typography.svelte';
-	import Card from '$lib/components/ui/Card.svelte';
-	import { cn } from '$lib/utils';
+	import type { CoverPhotoRow } from '$types/database';
+
+	interface CollectionWithPhotos {
+		slug: string;
+		title: string;
+		narrative: string;
+		description: string;
+		photoCount: number;
+		coverPhoto: CoverPhotoRow | null;
+	}
 
 	interface Props {
-		emotion: string;
-		photoCount: number;
-		previewPhotos?: Array<{ id: string }>;
-		onclick?: () => void;
-		class?: string;
+		collection: CollectionWithPhotos;
+		href: string;
 	}
 
-	let {
-		emotion,
-		photoCount,
-		previewPhotos = [],
-		onclick,
-		class: className,
-	}: Props = $props();
+	let { collection, href }: Props = $props();
 
-	// Get emotion palette
-	const emotionPalette = $derived(
-		EMOTION_PALETTE[emotion as keyof typeof EMOTION_PALETTE] || EMOTION_PALETTE.triumph
-	);
+	const isPortfolio = collection.slug === 'portfolio-excellence';
 
-	function handleClick(event?: MouseEvent) {
-		event?.stopPropagation();
-		onclick?.();
-	}
+	// Get optimized SmugMug image URL
+	function getOptimizedImageUrl(imageUrl: string | null): string {
+		if (!imageUrl) return '';
 
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Enter' || event.key === ' ') {
-			event.preventDefault();
-			handleClick();
+		// SmugMug optimization - use Large size (800px) for collection cards
+		if (imageUrl.includes('smugmug.com')) {
+			const baseUrl = imageUrl.replace(/-[A-Z]\d?\./, '.');
+			return baseUrl.replace(/(\.[^.]+)$/, '-L$1');
 		}
+
+		return imageUrl;
 	}
+
+	let coverImageUrl = $derived(getOptimizedImageUrl(collection.coverPhoto?.ImageUrl || null));
 </script>
 
-<Motion
-	let:motion
-	whileHover={{ scale: 1.02, y: -4 }}
-	transition={MOTION.spring.snappy}
+<a
+	{href}
+	data-sveltekit-preload="hover"
+	class="group block relative aspect-[3/4] rounded-xl overflow-hidden bg-charcoal-900 border border-charcoal-800 hover:border-gold-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-gold-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-950"
+	aria-label="View {collection.title} collection with {collection.photoCount} photos"
 >
-	<div
-		use:motion
-		class={cn(
-			'group cursor-pointer',
-			className
-		)}
-		role="button"
-		tabindex="0"
-		aria-label={`View ${emotion} collection with ${photoCount} photos`}
-		onclick={handleClick}
-		onkeydown={handleKeyDown}
-	>
-		<Card
-			padding="lg"
-			class="h-full border-charcoal-800 hover:border-gold-500/50 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/50 transition-colors"
-		>
-			<!-- Collection Header -->
-			<div class="flex items-center gap-3 mb-4">
-				<div
-					class="w-3 h-3 rounded-full flex-shrink-0 group-hover:scale-125 transition-transform"
-					style="background: {emotionPalette.color}"
-					aria-hidden="true"
-				></div>
-				<Typography variant="h3" class="capitalize group-hover:text-gold-500 transition-colors">
-					{emotion}
-				</Typography>
-			</div>
+	<!-- Cover Image with Zoom Effect -->
+	{#if coverImageUrl}
+		<div class="absolute inset-0">
+			<img
+				src={coverImageUrl}
+				alt="{collection.title} cover"
+				class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+				loading="lazy"
+			/>
+			<!-- Gradient Overlay - darkens slightly on hover -->
+			<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent group-hover:from-black/95 group-hover:via-black/60 transition-all duration-500"></div>
+		</div>
+	{:else}
+		<!-- Fallback gradient -->
+		<div class="absolute inset-0 bg-gradient-to-br from-charcoal-900 to-charcoal-800"></div>
+	{/if}
 
-			<!-- Photo Count -->
-			<Typography variant="caption" class="text-charcoal-400 mb-4 block">
-				{photoCount} {photoCount === 1 ? 'photo' : 'photos'}
-			</Typography>
-
-			<!-- Preview Grid -->
-			{#if previewPhotos.length > 0}
-				<div class="grid grid-cols-3 gap-2">
-					{#each previewPhotos.slice(0, 3) as photo}
-						<div
-							class="aspect-square bg-charcoal-900 rounded-lg border border-charcoal-800 flex items-center justify-center overflow-hidden"
-						>
-							<Camera class="w-8 h-8 text-charcoal-600" aria-hidden="true" />
-						</div>
-					{/each}
-				</div>
-			{:else}
-				<div
-					class="aspect-[3/2] bg-charcoal-900 rounded-lg border border-charcoal-800 flex items-center justify-center"
-				>
-					<Camera class="w-16 h-16 text-charcoal-600" aria-hidden="true" />
-				</div>
-			{/if}
-
-			<!-- Emotion Badge -->
-			<div class="mt-4 pt-4 border-t border-charcoal-800">
-				<div
-					class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium"
-					style="background: {emotionPalette.color}20; color: {emotionPalette.color}"
-				>
-					<div
-						class="w-1.5 h-1.5 rounded-full"
-						style="background: {emotionPalette.color}"
-						aria-hidden="true"
-					></div>
-					<span class="capitalize">{emotion} Collection</span>
-				</div>
-			</div>
-		</Card>
+	<!-- Gold Shine Effect on Hover -->
+	<div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+		<div class="absolute inset-0 bg-gradient-to-tr from-transparent via-gold-500/10 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out"></div>
 	</div>
-</Motion>
+
+	<!-- Portfolio Excellence Badge -->
+	{#if isPortfolio}
+		<div class="absolute top-4 right-4 z-10">
+			<div class="bg-gold-500 text-charcoal-950 px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-semibold shadow-lg">
+				<Award class="w-3.5 h-3.5" />
+				<span>Excellence</span>
+			</div>
+		</div>
+	{/if}
+
+	<!-- Content - Slides up on hover -->
+	<div class="absolute inset-x-0 bottom-0 p-6 transform transition-transform duration-500 ease-out group-hover:-translate-y-2">
+		<!-- Photo Count -->
+		<div class="flex items-center gap-2 mb-3">
+			<div class="flex items-center gap-1.5 px-2.5 py-1 bg-charcoal-900/80 backdrop-blur-sm rounded-full border border-charcoal-700/50 group-hover:border-gold-500/50 transition-colors duration-300">
+				<div class="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse"></div>
+				<span class="text-xs text-charcoal-300 font-medium">{collection.photoCount} photos</span>
+			</div>
+		</div>
+
+		<!-- Title -->
+		<Typography
+			variant="h3"
+			class="text-xl font-bold text-white mb-2 group-hover:text-gold-400 transition-colors duration-300 line-clamp-2"
+		>
+			{collection.title}
+		</Typography>
+
+		<!-- Narrative - appears on hover -->
+		<div class="overflow-hidden max-h-0 group-hover:max-h-24 transition-all duration-500 ease-out">
+			<Typography
+				variant="body"
+				class="text-sm text-charcoal-300 italic line-clamp-2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
+			>
+				{collection.narrative}
+			</Typography>
+		</div>
+
+		<!-- Description - fades in on hover -->
+		<Typography
+			variant="body"
+			class="text-xs text-charcoal-400 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200"
+		>
+			{collection.description}
+		</Typography>
+
+		<!-- View Collection CTA - appears on hover -->
+		<div class="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-300">
+			<div class="inline-flex items-center gap-2 text-xs font-medium text-gold-500 hover:text-gold-400 transition-colors">
+				<span>View Collection</span>
+				<svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+				</svg>
+			</div>
+		</div>
+	</div>
+
+	<!-- Border Glow Effect -->
+	<div class="absolute inset-0 rounded-xl border border-gold-500/0 group-hover:border-gold-500/20 transition-all duration-500 pointer-events-none"></div>
+</a>
