@@ -161,13 +161,13 @@
   >
     <div
       use:motion
-      class="relative z-10 text-center px-6 sm:px-8 max-w-4xl mx-auto"
+      class="relative z-10 text-center px-4 sm:px-8 max-w-4xl mx-auto"
     >
       <!-- Main heading with premium typography -->
       <Typography
         variant="h1"
-        class="text-5xl sm:text-6xl lg:text-7xl font-bold text-white uppercase tracking-wider leading-none mb-4"
-        style="font-family: 'Montserrat', 'Helvetica Neue', sans-serif; letter-spacing: 3px; font-weight: 700;"
+        class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white uppercase tracking-wide leading-tight mb-4"
+        style="font-family: 'Montserrat', 'Helvetica Neue', sans-serif; letter-spacing: 0.1em; font-weight: 700;"
       >
         {title}
       </Typography>
@@ -175,8 +175,8 @@
       <!-- Subtitle with lighter styling -->
       <Typography
         variant="h2"
-        class="text-lg sm:text-xl lg:text-2xl font-light text-charcoal-200 uppercase tracking-widest mb-12"
-        style="font-family: 'Montserrat', 'Helvetica Neue', sans-serif; letter-spacing: 2px; font-weight: 300;"
+        class="text-base sm:text-lg md:text-xl lg:text-2xl font-light text-charcoal-200 uppercase tracking-widest mb-12"
+        style="font-family: 'Montserrat', 'Helvetica Neue', sans-serif; letter-spacing: 0.15em; font-weight: 300;"
       >
         {subtitle}
       </Typography>
