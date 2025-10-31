@@ -53,6 +53,11 @@ export interface PhotoMetadataRow {
 	ai_cost: number | null;
 	ai_confidence: number | null;
 
+	// Image dimensions (from SmugMug ArchivedSize)
+	width: number | null;
+	height: number | null;
+	aspect_ratio: string | null; // Stored as DECIMAL string, cast to number in queries
+
 	// Album/Collection associations
 	album_key: string | null;
 	album_name: string | null;

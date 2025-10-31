@@ -79,12 +79,14 @@ export const load: PageServerLoad = async () => {
     // Strategy: Get MORE photos than needed, then distribute across albums
     // Schema v2: All photos are worthy, use internal quality metrics for selection
     //
-    // NOTE: Composition values in DB are: rule_of_thirds, centered, leading_lines, symmetry, frame_within_frame
-    // No orientation data available - need to add width/height dimensions from SmugMug API
+    // ASPECT RATIO FILTER: Only landscape/square photos (aspect_ratio >= 1.0)
+    // - Portrait images (aspect_ratio < 1.0) look terrible in 16:9 hero section
+    // - Landscape/square images fill the width without awkward cropping
     const { data, error } = await supabaseServer
       .from('photo_metadata')
       .select('*')
       .eq('sport_type', 'volleyball')         // Volleyball photos only
+      .gte('aspect_ratio', 1.0)               // 🎯 Landscape/Square only (width >= height)
       .gte('sharpness', 7.5)                  // Lower threshold for more diversity
       .gte('composition_score', 7.5)          // Lower threshold for more diversity
       .gte('emotional_impact', 7.0)           // Lower threshold for more diversity
