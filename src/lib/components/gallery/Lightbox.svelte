@@ -348,10 +348,10 @@
 		tabindex="0"
 	>
 				<!-- Top Controls -->
-				<div class="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/50 to-transparent">
+				<div class="absolute top-0 left-0 right-0 z-10 p-3 md:p-4 bg-gradient-to-b from-black/50 to-transparent">
 					<div class="max-w-7xl mx-auto flex items-center justify-between">
-						<!-- Photo Info -->
-						<div class="flex-1">
+						<!-- Photo Info - Hidden on mobile, shown on desktop -->
+						<div class="flex-1 hidden md:block">
 							<Typography variant="h3" class="text-white text-lg">
 								{displayTitle}
 							</Typography>
@@ -367,8 +367,17 @@
 							{/if}
 						</div>
 
-						<!-- Zoom Controls -->
-						<div class="flex items-center gap-2 mr-4">
+						<!-- Mobile: Just counter and close -->
+						<div class="flex-1 md:hidden">
+							{#if photos.length > 0}
+								<Typography variant="caption" class="text-white/80 text-sm">
+									{currentIndex + 1} / {photos.length}
+								</Typography>
+							{/if}
+						</div>
+
+						<!-- Zoom Controls - Desktop only -->
+						<div class="hidden md:flex items-center gap-2 mr-4">
 							<button
 								onclick={handleZoomOut}
 								disabled={zoomLevel <= 1}
@@ -392,19 +401,19 @@
 							</button>
 						</div>
 
-						<!-- Download Button (NEW - Week 3) -->
-						<div class="mr-4">
+						<!-- Download Button - Desktop only -->
+						<div class="hidden md:block mr-4">
 							<DownloadButton {photo} variant="compact" />
 						</div>
 
 						<!-- Close Button -->
 						<button
 							onclick={handleClose}
-							class="p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors min-h-[48px] min-w-[48px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500"
+							class="p-2 md:p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-gold-500"
 							aria-label="Close lightbox"
 							title="Close (ESC)"
 						>
-							<X class="w-6 h-6 text-white" />
+							<X class="w-5 md:w-6 h-5 md:h-6 text-white" />
 						</button>
 					</div>
 				</div>
@@ -412,7 +421,7 @@
 				<!-- Main Image Container -->
 				<div
 					use:swipe={{ onSwipe: handleSwipe }}
-					class="relative w-full h-full flex items-center justify-center p-4 md:p-20"
+					class="relative w-full h-full flex items-center justify-center p-0 md:p-20"
 					onmousedown={handleMouseDown}
 					ontouchstart={handleTouchStart}
 					ontouchmove={handleTouchMove}
@@ -461,9 +470,9 @@
 					{/if}
 				{/if}
 
-				<!-- Bottom Info/Metadata Bar -->
+				<!-- Bottom Info/Metadata Bar - Desktop only -->
 				<div
-					class="absolute bottom-0 left-0 right-0 z-10 p-4 bg-gradient-to-t from-black/50 to-transparent"
+					class="hidden md:block absolute bottom-0 left-0 right-0 z-10 p-4 bg-gradient-to-t from-black/50 to-transparent"
 				>
 					<div class="max-w-7xl mx-auto flex items-center justify-between">
 						<div class="flex items-center gap-6 text-white/80 text-sm">
@@ -490,20 +499,10 @@
 							{/if}
 						</div>
 
-						<!-- Mobile/Desktop Hints -->
-						{#if isTouch}
-							<Typography variant="caption" class="text-white/40 text-xs">
-								{#if zoomLevel > 1}
-									Pinch to zoom • Double-tap to reset
-								{:else}
-									Swipe to navigate • Double-tap to zoom • Swipe down to close
-								{/if}
-							</Typography>
-						{:else}
-							<Typography variant="caption" class="text-white/40">
-								Use arrow keys to navigate • +/- to zoom • ESC to close
-							</Typography>
-						{/if}
+						<!-- Desktop Hints -->
+						<Typography variant="caption" class="text-white/40">
+							Use arrow keys to navigate • +/- to zoom • ESC to close
+						</Typography>
 					</div>
 				</div>
 			</div>
