@@ -31,23 +31,46 @@ let baseFilterCountsCache: CachedData<FilterCounts> | null = null;
 export const load: LayoutServerLoad = async () => {
   const now = Date.now();
 
+  // PERFORMANCE: Refresh expired caches in parallel
+  // When cache expires, all 3 queries execute simultaneously instead of sequentially
+  const refreshPromises: Promise<void>[] = [];
+
   // Check if sport cache is valid
   if (!sportsCache || now - sportsCache.timestamp > CACHE_DURATION_MS) {
-    const sports = await getSportDistribution();
-    sportsCache = { data: sports, timestamp: now };
+    refreshPromises.push(
+      getSportDistribution().then((sports) => {
+        sportsCache = { data: sports, timestamp: now };
+      })
+    );
   }
 
   // Check if category cache is valid
   if (!categoriesCache || now - categoriesCache.timestamp > CACHE_DURATION_MS) {
-    const categories = await getCategoryDistribution();
-    categoriesCache = { data: categories, timestamp: now };
+    refreshPromises.push(
+      getCategoryDistribution().then((categories) => {
+        categoriesCache = { data: categories, timestamp: now };
+      })
+    );
   }
 
   // Check if base filter counts cache is valid
   // These are counts with NO filters applied (baseline for entire gallery)
   if (!baseFilterCountsCache || now - baseFilterCountsCache.timestamp > CACHE_DURATION_MS) {
-    const baseFilterCounts = await getFilterCounts(); // No filters = base counts
-    baseFilterCountsCache = { data: baseFilterCounts, timestamp: now };
+    refreshPromises.push(
+      getFilterCounts().then((baseFilterCounts) => {
+        baseFilterCountsCache = { data: baseFilterCounts, timestamp: now };
+      })
+    );
+  }
+
+  // Wait for all cache refreshes to complete in parallel
+  if (refreshPromises.length > 0) {
+    await Promise.all(refreshPromises);
+  }
+
+  // TypeScript safety: Ensure all caches are populated (should always be true after awaits)
+  if (!sportsCache || !categoriesCache || !baseFilterCountsCache) {
+    throw new Error('Failed to initialize layout data caches');
   }
 
   return {
