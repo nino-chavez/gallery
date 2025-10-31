@@ -38,7 +38,7 @@
   }: Props = $props();
 
   // Generate optimized background image URL with SmugMug size parameters
-  function getOptimizedBackgroundUrl(imageUrl: string, size: 'mobile' | 'desktop'): string {
+  function getOptimizedBackgroundUrl(imageUrl: string, size: 'mobile' | 'desktop' | 'thumbnail'): string {
     if (!imageUrl) return '';
 
     // SmugMug image optimization using size suffixes
@@ -48,17 +48,26 @@
       // Remove existing size suffix if present
       const baseUrl = imageUrl.replace(/-[A-Z]\d?\./, '.');
 
+      // Thumbnail: Use -Th suffix (~5KB, loads instantly)
       // Mobile: Use X2Large (1600px) - optimal for phones/tablets in portrait
       // Desktop: Use X3Large (2048px) - optimal for desktop/large screens
-      const suffix = size === 'mobile' ? '-X2' : '-X3';
+      let suffix = '-X3';
+      if (size === 'thumbnail') suffix = '-Th';
+      else if (size === 'mobile') suffix = '-X2';
+
       return baseUrl.replace(/(\.[^.]+)$/, `${suffix}$1`);
     }
 
     // Supabase storage optimization
     if (imageUrl.includes('supabase')) {
       const url = new URL(imageUrl);
-      url.searchParams.set('width', size === 'mobile' ? '1200' : '1920');
-      url.searchParams.set('quality', size === 'mobile' ? '85' : '90');
+      if (size === 'thumbnail') {
+        url.searchParams.set('width', '100');
+        url.searchParams.set('quality', '60');
+      } else {
+        url.searchParams.set('width', size === 'mobile' ? '1200' : '1920');
+        url.searchParams.set('quality', size === 'mobile' ? '85' : '90');
+      }
       url.searchParams.set('format', 'webp');
       return url.toString();
     }
@@ -68,34 +77,76 @@
   }
 
   // Generate responsive URLs
+  let thumbnailBackground = $derived(getOptimizedBackgroundUrl(backgroundImage, 'thumbnail'));
   let mobileBackground = $derived(getOptimizedBackgroundUrl(backgroundImage, 'mobile'));
   let desktopBackground = $derived(getOptimizedBackgroundUrl(backgroundImage, 'desktop'));
+
+  // Track image loading state
+  let mobileImageLoaded = $state(false);
+  let desktopImageLoaded = $state(false);
 </script>
 
 <section
   class={cn(
-    "relative h-screen w-full flex items-center justify-center overflow-hidden",
+    "relative h-screen w-full flex items-center justify-center overflow-hidden bg-charcoal-950",
     className
   )}
   role="banner"
   aria-label="Hero section"
 >
-  <!-- Responsive background images -->
-  <!-- Mobile background (up to 1024px) -->
-  <div
-    class="absolute inset-0 bg-cover bg-center bg-no-repeat md:hidden"
-    style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('{mobileBackground}');"
-    aria-hidden="true"
-  ></div>
+  <!-- Progressive loading with blur-up technique -->
 
-  <!-- Desktop background (1024px and up) -->
-  <div
-    class="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
-    style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('{desktopBackground}');"
-    aria-hidden="true"
-  ></div>
+  <!-- Layer 1: Solid background (instant) -->
+  <div class="absolute inset-0 bg-charcoal-950" aria-hidden="true"></div>
 
-  <!-- Dark overlay for depth and text readability -->
+  <!-- Layer 2: Blurred thumbnail placeholder (loads first, ~5KB) -->
+  {#if thumbnailBackground}
+    <div
+      class="absolute inset-0 bg-cover bg-center bg-no-repeat blur-xl scale-110"
+      style="background-image: url('{thumbnailBackground}');"
+      aria-hidden="true"
+    ></div>
+  {/if}
+
+  <!-- Layer 3: Mobile high-res image (up to 1024px) -->
+  {#if mobileBackground}
+    <div
+      class="absolute inset-0 bg-cover bg-center bg-no-repeat md:hidden transition-opacity duration-700"
+      class:opacity-0={!mobileImageLoaded}
+      class:opacity-100={mobileImageLoaded}
+      style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('{mobileBackground}');"
+      aria-hidden="true"
+    >
+      <img
+        src={mobileBackground}
+        alt=""
+        class="hidden"
+        onload={() => { mobileImageLoaded = true; }}
+        onerror={() => { mobileImageLoaded = true; }}
+      />
+    </div>
+  {/if}
+
+  <!-- Layer 4: Desktop high-res image (1024px and up) -->
+  {#if desktopBackground}
+    <div
+      class="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block transition-opacity duration-700"
+      class:opacity-0={!desktopImageLoaded}
+      class:opacity-100={desktopImageLoaded}
+      style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('{desktopBackground}');"
+      aria-hidden="true"
+    >
+      <img
+        src={desktopBackground}
+        alt=""
+        class="hidden"
+        onload={() => { desktopImageLoaded = true; }}
+        onerror={() => { desktopImageLoaded = true; }}
+      />
+    </div>
+  {/if}
+
+  <!-- Layer 5: Dark overlay for depth and text readability -->
   <div
     class="absolute inset-0 bg-gradient-to-b from-charcoal-950/20 via-transparent to-charcoal-950/30 pointer-events-none"
     aria-hidden="true"
