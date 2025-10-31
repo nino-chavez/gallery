@@ -79,17 +79,26 @@ export const load: PageServerLoad = async () => {
     // Strategy: Get MORE photos than needed, then distribute across albums
     // Schema v2: All photos are worthy, use internal quality metrics for selection
     //
-    // ASPECT RATIO FILTER: Only landscape/square photos (aspect_ratio >= 1.0)
-    // - Portrait images (aspect_ratio < 1.0) look terrible in 16:9 hero section
-    // - Landscape/square images fill the width without awkward cropping
+    // HERO SELECTION CRITERIA (Premium Quality):
+    // - Landscape/square orientation (aspect_ratio >= 1.0) - fills 16:9 hero section
+    // - Excellent technical quality (8.0+ scores) - hero-worthy images only
+    // - Recent photos (last 2 years) - fresh, current content
+    // - Volleyball action only - portfolio focus
+
+    // Calculate date 2 years ago
+    const twoYearsAgo = new Date();
+    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+    const twoYearsAgoISO = twoYearsAgo.toISOString();
+
     const { data, error } = await supabaseServer
       .from('photo_metadata')
       .select('*')
       .eq('sport_type', 'volleyball')         // Volleyball photos only
       .gte('aspect_ratio', 1.0)               // 🎯 Landscape/Square only (width >= height)
-      .gte('sharpness', 7.5)                  // Lower threshold for more diversity
-      .gte('composition_score', 7.5)          // Lower threshold for more diversity
-      .gte('emotional_impact', 7.0)           // Lower threshold for more diversity
+      .gte('sharpness', 8.0)                  // ⭐ Excellent sharpness (raised from 7.5)
+      .gte('composition_score', 8.0)          // ⭐ Excellent composition (raised from 7.5)
+      .gte('emotional_impact', 8.0)           // ⭐ Strong emotional impact (raised from 7.0)
+      .gte('photo_date', twoYearsAgoISO)      // 📅 Last 2 years (fresh content)
       .in('photo_category', ['action', 'celebration', 'portrait'])  // Hero-worthy categories
       .not('sharpness', 'is', null)
       .order('photo_date', { ascending: false })  // Most recent first
@@ -98,6 +107,24 @@ export const load: PageServerLoad = async () => {
     if (error) {
       console.error('[Homepage] Error fetching hero photo:', error);
       return { heroPhoto: null, featuredAlbums: [] };
+    }
+
+    // Debug: Log query results to verify filtering
+    console.log(`[Homepage] Hero query returned ${data?.length || 0} photos`);
+
+    // Debug: Check if any non-volleyball photos snuck through
+    const sportTypes = new Set(data?.map(p => p.sport_type) || []);
+    console.log('[Homepage] Sports in hero pool:', Array.from(sportTypes).join(', '));
+
+    if (sportTypes.size > 1 || (sportTypes.size === 1 && !sportTypes.has('volleyball'))) {
+      console.warn('⚠️ [Homepage] NON-VOLLEYBALL photos found in hero pool!', {
+        sports: Array.from(sportTypes),
+        samplePhotos: data?.slice(0, 5).map(p => ({
+          image_key: p.image_key,
+          sport: p.sport_type,
+          album: p.album_name
+        }))
+      });
     }
 
     if (!data || data.length === 0) {
@@ -164,6 +191,19 @@ export const load: PageServerLoad = async () => {
     // Pick random photo from the balanced set
     const randomIndex = Math.floor(Math.random() * balancedPhotos.length);
     const row = balancedPhotos[randomIndex];
+
+    // Debug: Log the selected hero photo
+    console.log('[Homepage] Selected hero photo:', {
+      image_key: row.image_key,
+      sport_type: row.sport_type,
+      album: row.album_name,
+      aspect_ratio: row.aspect_ratio,
+      quality_scores: {
+        sharpness: row.sharpness,
+        composition: row.composition_score,
+        impact: row.emotional_impact
+      }
+    });
 
     // Fetch three featured albums for homepage
     const featuredAlbums = await fetchFeaturedAlbums();
