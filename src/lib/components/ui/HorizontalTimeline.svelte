@@ -3,10 +3,16 @@
 
   Two-tier horizontal timeline:
   - Top tier: Years (clickable segments)
-  - Bottom tier: Months within selected year
+  - Bottom tier: Months within selected year (desktop) or Quarters (mobile)
 
   Click year → Load that year's photos
   Click month → Jump to that month within year
+  Click quarter (mobile) → Jump to first month of that quarter
+
+  Mobile Optimization:
+  - Shows quarters (Q1-Q4) instead of individual months on mobile (< 768px)
+  - Quarters are easier to tap and less compressed
+  - Desktop still shows all months for precision
 
   Props:
   - availableYears: { year: number, photoCount: number }[]
@@ -69,11 +75,61 @@
 		return Math.max(minWidth, proportion * 800);
 	}
 
+	// Calculate quarter width (larger minimum for better mobile tap targets)
+	function getQuarterWidth(photoCount: number, yearTotal: number): number {
+		const minWidth = 90; // Larger minimum for mobile
+		const maxWidth = 200;
+		const proportion = photoCount / yearTotal;
+		return Math.max(minWidth, proportion * 1200);
+	}
+
 	let yearTotal = $derived(
 		selectedYear
 			? availableYears.find((y) => y.year === selectedYear)?.photoCount || 0
 			: 0
 	);
+
+	// Group months into quarters for mobile view
+	interface QuarterData {
+		quarter: number; // 1-4
+		quarterName: string; // "Q1", "Q2", etc.
+		months: MonthData[];
+		photoCount: number;
+		firstMonth: number; // 0-11, for navigation
+	}
+
+	let quarters = $derived.by(() => {
+		if (availableMonths.length === 0) return [];
+
+		const quartersData: QuarterData[] = [
+			{ quarter: 1, quarterName: 'Q1', months: [], photoCount: 0, firstMonth: 0 },
+			{ quarter: 2, quarterName: 'Q2', months: [], photoCount: 0, firstMonth: 3 },
+			{ quarter: 3, quarterName: 'Q3', months: [], photoCount: 0, firstMonth: 6 },
+			{ quarter: 4, quarterName: 'Q4', months: [], photoCount: 0, firstMonth: 9 }
+		];
+
+		// Group months by quarter
+		for (const month of availableMonths) {
+			const quarterIndex = Math.floor(month.month / 3);
+			if (quartersData[quarterIndex]) {
+				quartersData[quarterIndex].months.push(month);
+				quartersData[quarterIndex].photoCount += month.photoCount;
+			}
+		}
+
+		// Only return quarters that have months
+		return quartersData.filter((q) => q.months.length > 0);
+	});
+
+	function handleQuarterClick(quarter: QuarterData, event: MouseEvent): void {
+		event.stopPropagation();
+
+		if (!selectedYear) return;
+
+		// Navigate to the first month of the quarter (or first available month in quarter)
+		const firstAvailableMonth = quarter.months[0]?.month ?? quarter.firstMonth;
+		onMonthSelect(selectedYear, firstAvailableMonth);
+	}
 
 	function handleYearClick(year: number, event: MouseEvent): void {
 		event.stopPropagation();
@@ -160,7 +216,7 @@
 			</div>
 		</div>
 
-		<!-- Months Timeline (only when year is selected) -->
+		<!-- Months/Quarters Timeline (only when year is selected) -->
 		{#if selectedYear !== null && availableMonths.length > 0}
 			<Motion
 				let:motion
@@ -171,11 +227,57 @@
 			>
 				<div use:motion class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3 border-t border-charcoal-800/50 pt-3">
 					<div class="flex items-center gap-2 mb-2">
-						<span class="text-xs text-charcoal-400 font-medium">Months in {selectedYear}</span>
+						<span class="text-xs text-charcoal-400 font-medium">
+							<span class="md:hidden">Quarters</span>
+							<span class="hidden md:inline">Months</span> in {selectedYear}
+						</span>
 					</div>
 
-					<!-- Months Bar -->
-					<div class="flex items-stretch gap-1 overflow-x-auto scrollbar-thin scrollbar-thumb-charcoal-700 scrollbar-track-charcoal-900 pb-2">
+					<!-- Quarters Bar (Mobile) -->
+					<div class="flex items-stretch gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-charcoal-700 scrollbar-track-charcoal-900 pb-2 md:hidden">
+						{#each quarters as quarterData}
+							{@const isSelected = selectedMonth !== null && quarterData.months.some(m => m.month === selectedMonth)}
+							{@const width = getQuarterWidth(quarterData.photoCount, yearTotal)}
+
+							<button
+								onclick={(e) => handleQuarterClick(quarterData, e)}
+								class="relative flex-shrink-0 rounded-lg border transition-all duration-200 overflow-hidden group"
+								class:bg-gold-500={isSelected}
+								class:text-charcoal-950={isSelected}
+								class:border-gold-400={isSelected}
+								class:unselected-bg={!isSelected}
+								class:text-white={!isSelected}
+								class:border-charcoal-700={!isSelected}
+								class:hover:border-gold-500={!isSelected}
+								class:hover:bg-charcoal-700={!isSelected}
+								style="width: {width}px; min-height: 56px;"
+								title="{quarterData.quarterName} {selectedYear} - {quarterData.photoCount.toLocaleString()} photos"
+							>
+								<!-- Quarter Label -->
+								<div class="absolute inset-0 flex flex-col items-center justify-center p-2">
+									<span class="text-base font-bold">{quarterData.quarterName}</span>
+									<span class="text-xs opacity-75 mt-0.5">
+										{quarterData.photoCount.toLocaleString()}
+									</span>
+									<span class="text-[10px] opacity-60 mt-0.5">
+										{quarterData.months.map(m => m.monthName.substring(0, 3)).join(', ')}
+									</span>
+								</div>
+
+								<!-- Photo count bar -->
+								<div
+									class="absolute bottom-0 left-0 right-0 h-1 transition-all"
+									class:bg-charcoal-950={isSelected}
+									class:bg-gold-500={!isSelected}
+									class:opacity-30={!isSelected}
+									class:group-hover:opacity-60={!isSelected}
+								></div>
+							</button>
+						{/each}
+					</div>
+
+					<!-- Months Bar (Desktop) -->
+					<div class="hidden md:flex items-stretch gap-1 overflow-x-auto scrollbar-thin scrollbar-thumb-charcoal-700 scrollbar-track-charcoal-900 pb-2">
 						{#each availableMonths as monthData}
 							{@const isSelected = selectedMonth === monthData.month}
 							{@const width = getMonthWidth(monthData.photoCount, yearTotal)}
