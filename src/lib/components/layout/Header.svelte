@@ -89,10 +89,10 @@
 						variant="h3"
 						class="hidden sm:block group-hover:text-gold-500 transition-colors"
 					>
-						Nino Chavez Gallery
+						Nino Chavez Photography
 					</Typography>
 					<Typography variant="h3" class="sm:hidden group-hover:text-gold-500 transition-colors">
-						NCG
+						NCP
 					</Typography>
 				</a>
 
