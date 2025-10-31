@@ -357,28 +357,55 @@
     });
   });
 
-  // Track currently visible year based on scroll position
+  // Track currently visible year and month based on scroll position
   let currentVisibleYear = $state<number | null>(null);
-  
-  // Update visible year based on scroll position
+  let currentVisibleMonth = $state<{ year: number; month: number } | null>(null);
+
+  // Update visible year and month based on scroll position
   function updateVisibleYear() {
     const scrollY = window.scrollY + 200; // Offset for sticky header
     const yearElements = document.querySelectorAll('[id^="year-"]');
-    
+    const monthElements = document.querySelectorAll('[id^="month-"]');
+
     let newVisibleYear: number | null = null;
     yearElements.forEach((el) => {
       const rect = el.getBoundingClientRect();
       const elTop = rect.top + window.scrollY;
       const elBottom = elTop + rect.height;
-      
+
       if (scrollY >= elTop && scrollY < elBottom) {
         const yearId = el.id.replace('year-', '');
         newVisibleYear = parseInt(yearId);
       }
     });
-    
+
     if (newVisibleYear !== currentVisibleYear) {
       currentVisibleYear = newVisibleYear;
+    }
+
+    // Track visible month (find the month section closest to viewport top)
+    let closestMonth: { year: number; month: number; distance: number } | null = null;
+    monthElements.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const distance = Math.abs(rect.top);
+
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        const monthId = el.id.replace('month-', '');
+        const [year, month] = monthId.split('-').map(Number);
+
+        if (!closestMonth || distance < closestMonth.distance) {
+          closestMonth = { year, month, distance };
+        }
+      }
+    });
+
+    if (closestMonth) {
+      const newMonth = { year: closestMonth.year, month: closestMonth.month };
+      if (!currentVisibleMonth ||
+          currentVisibleMonth.year !== newMonth.year ||
+          currentVisibleMonth.month !== newMonth.month) {
+        currentVisibleMonth = newMonth;
+      }
     }
   }
 
@@ -545,6 +572,10 @@
 
         <!-- Month dots (only periods with photos, positioned on timeline) -->
         {#each timelinePositions as period}
+          {@const isActiveMonth = currentVisibleMonth?.year === period.year && currentVisibleMonth?.month === period.month}
+          {@const monthNumStr = String(period.month).padStart(2, '0')}
+          {@const yearShortStr = String(period.year).slice(-2)}
+
           <button
             onclick={() => scrollToNavPeriod(period.year, period.month)}
             onmouseenter={() => hoveredPeriod = { year: period.year, month: period.month, monthName: period.monthName }}
@@ -553,14 +584,31 @@
             style="left: {period.position}%"
             aria-label="Jump to {period.monthName} {period.year}"
           >
-            <!-- Month dot -->
+            <!-- Month dot with dimmed/active states -->
             <div class="relative">
-              <div class="w-2.5 h-2.5 rounded-full bg-gold-500 group-hover:bg-gold-400 transition-all group-hover:scale-150 shadow-lg ring-1 ring-gold-600"></div>
+              <!-- Dimmed by default, highlighted when active or hovered -->
+              <div
+                class="w-2.5 h-2.5 rounded-full transition-all duration-200"
+                class:bg-charcoal-600={!isActiveMonth}
+                class:opacity-40={!isActiveMonth}
+                class:bg-gold-500={isActiveMonth}
+                class:opacity-100={isActiveMonth}
+                class:shadow-lg={isActiveMonth}
+                class:ring-1={isActiveMonth}
+                class:ring-gold-600={isActiveMonth}
+                class:group-hover:bg-gold-400={true}
+                class:group-hover:opacity-100={true}
+                class:group-hover:scale-150={true}
+                class:scale-125={isActiveMonth}
+              ></div>
 
-              <!-- Hover tooltip -->
+              <!-- Hover tooltip with MM/YY format -->
               {#if hoveredPeriod && hoveredPeriod.year === period.year && hoveredPeriod.month === period.month}
-                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-1.5 bg-charcoal-900 border border-charcoal-700 rounded shadow-xl whitespace-nowrap z-50">
+                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-1.5 bg-charcoal-900 border border-gold-500/30 rounded shadow-xl whitespace-nowrap z-50 backdrop-blur-sm">
                   <Typography variant="caption" class="text-white text-xs font-medium">
+                    {monthNumStr}/{yearShortStr}
+                  </Typography>
+                  <Typography variant="caption" class="text-charcoal-400 text-[10px]">
                     {period.monthName} {period.year}
                   </Typography>
                   <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
