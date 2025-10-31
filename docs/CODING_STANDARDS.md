@@ -486,6 +486,134 @@ export const load: LayoutServerLoad = async () => {
 };
 ```
 
+### Navigation and Prefetch Patterns
+
+**CRITICAL:** Always use `<a>` tags for navigation, never `<button>` with `goto()`.
+
+#### Why Anchor Tags Matter
+
+SvelteKit's prefetch only works on `<a>` tags. Using buttons prevents:
+- Route preloading (adds 1-2 second delay)
+- SEO benefits (search engines can't crawl buttons)
+- Keyboard navigation (tab key doesn't focus buttons-as-links)
+- Right-click "Open in new tab"
+
+#### Prefetch Strategies
+
+**Use `data-sveltekit-preload="tap"` for navigation headers:**
+- Preloads on touchstart (mobile) or mousedown (desktop)
+- Best for frequently accessed routes
+- Used in: Main navigation, primary CTAs
+
+```svelte
+<!-- ✅ GOOD - Main navigation with tap prefetch -->
+<nav>
+  <a href="/explore" data-sveltekit-preload="tap">
+    Explore
+  </a>
+</nav>
+```
+
+**Use `data-sveltekit-preload="hover"` for secondary links:**
+- Preloads when user hovers (200-500ms before click)
+- Good balance of performance and bandwidth
+- Used in: Album cards, collection cards, footer links
+
+```svelte
+<!-- ✅ GOOD - Album card with hover prefetch -->
+<a
+  href="/albums/{album.albumKey}"
+  data-sveltekit-preload="hover"
+  class="album-card"
+>
+  {album.name}
+</a>
+```
+
+**Use `data-sveltekit-preload="viewport"` for high-priority visible links:**
+- Preloads as soon as link enters viewport
+- Most aggressive, uses more bandwidth
+- Used in: Homepage hero CTA, featured content
+
+```svelte
+<!-- ✅ GOOD - Hero CTA with viewport prefetch -->
+<a
+  href="/explore"
+  data-sveltekit-preload="viewport"
+  class="cta-button"
+>
+  Browse Gallery
+</a>
+```
+
+#### When NOT to Prefetch
+
+**Disable prefetch for:**
+- External links (SmugMug, social media)
+- Links with side effects (logout, delete actions)
+- Low-priority links (legal pages, help docs)
+
+```svelte
+<!-- External link - no prefetch -->
+<a
+  href="https://smugmug.com/..."
+  data-sveltekit-reload
+  target="_blank"
+>
+  View on SmugMug
+</a>
+
+<!-- Photo detail - prefetch data causes layout shift -->
+<a
+  href="/photo/{id}"
+  data-sveltekit-preload-data="false"
+>
+  View Photo
+</a>
+```
+
+#### Anti-Patterns
+
+```svelte
+<!-- ❌ BAD - Button with goto() prevents prefetch -->
+<button onclick={() => goto('/explore')}>
+  Explore
+</button>
+
+<!-- ❌ BAD - Div with click handler, no prefetch -->
+<div role="button" onclick={handleNavigate}>
+  Browse Gallery
+</div>
+
+<!-- ✅ GOOD - Anchor with prefetch -->
+<a href="/explore" data-sveltekit-preload="tap">
+  Explore
+</a>
+```
+
+#### Bundle Size Optimization
+
+**Lazy load heavy components with dynamic imports:**
+
+```svelte
+<script>
+  // Lazy load filter sidebar (27KB)
+  const FilterSidebarPromise = import('$lib/components/filters/FilterSidebar.svelte');
+</script>
+
+<!-- Render with skeleton loading state -->
+{#await FilterSidebarPromise}
+  <div class="w-64 h-96 bg-charcoal-900/50 rounded-lg animate-pulse" />
+{:then FilterSidebarModule}
+  <FilterSidebarModule.default {...props} />
+{/await}
+```
+
+**Benefits:**
+- Reduces initial page load by 30-40%
+- Mobile users don't load desktop-only components
+- Improves Time to Interactive (TTI)
+
 ---
 
 ## Accessibility Requirements

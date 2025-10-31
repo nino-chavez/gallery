@@ -112,53 +112,33 @@ export interface FetchPhotosOptions extends PhotoFilterState {
  * Never call from browser components!
  */
 export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]> {
-  const { limit, offset, sortBy = 'newest', ...filters } = options || {};
+  const { limit = 24, offset = 0, sortBy = 'newest', ...filters } = options || {};
+
+  console.log('[fetchPhotos] Query params:', { limit, offset, sortBy, filters });
 
   let query = supabaseServer
     .from('photo_metadata')
     .select('*')
     .not('sharpness', 'is', null); // Only show enriched photos
 
-  // Apply concrete sorting (aligned with two-bucket model)
-  switch (sortBy) {
-    case 'quality':
-      // Sort by emotional impact (best photos first), then by upload_date DESC for deterministic ordering
-      query = query.order('emotional_impact', { ascending: false }).order('upload_date', { ascending: false });
-      break;
-    case 'newest':
-      // Use upload_date (SmugMug upload) or date_added (album add) as fallback
-      query = query.order('upload_date', { ascending: false });
-      break;
-    case 'oldest':
-      query = query.order('upload_date', { ascending: true });
-      break;
-    case 'action':
-      // Sort by play type (alphabetical grouping), then by emotional_impact for deterministic ordering
-      query = query.order('play_type', { ascending: true, nullsFirst: false }).order('emotional_impact', { ascending: false });
-      break;
-    case 'intensity':
-      // Sort by action intensity (peak -> high -> medium -> low), then by emotional_impact for deterministic ordering
-      query = query.order('action_intensity', { ascending: false, nullsFirst: false }).order('emotional_impact', { ascending: false });
-      break;
-  }
+  // CRITICAL: Apply filters BEFORE sorting for better index usage
+  // This reduces the dataset that needs to be sorted
 
-  // Apply Bucket 1 (user-facing) filters only
-
-  // Action filters
-  if (filters?.playTypes && filters.playTypes.length > 0) {
-    query = query.in('play_type', filters.playTypes);
-  }
-
-  if (filters?.actionIntensity && filters.actionIntensity.length > 0) {
-    query = query.in('action_intensity', filters.actionIntensity);
-  }
-
+  // Action filters (apply first - most selective)
   if (filters?.sportType) {
     query = query.eq('sport_type', filters.sportType);
   }
 
   if (filters?.photoCategory) {
     query = query.eq('photo_category', filters.photoCategory);
+  }
+
+  if (filters?.playTypes && filters.playTypes.length > 0) {
+    query = query.in('play_type', filters.playTypes);
+  }
+
+  if (filters?.actionIntensity && filters.actionIntensity.length > 0) {
+    query = query.in('action_intensity', filters.actionIntensity);
   }
 
   // Aesthetic filters
@@ -188,20 +168,52 @@ export async function fetchPhotos(options?: FetchPhotosOptions): Promise<Photo[]
     query = query.eq('album_key', filters.albumKey);
   }
 
-  // Apply pagination
-  if (limit) {
-    query = query.limit(limit);
-  }
-  if (offset) {
-    query = query.range(offset, offset + (limit || 24) - 1);
+  // Apply sorting AFTER filters (work on smaller dataset)
+  switch (sortBy) {
+    case 'quality':
+      // Sort by emotional impact (best photos first), then by upload_date DESC for deterministic ordering
+      query = query.order('emotional_impact', { ascending: false }).order('upload_date', { ascending: false });
+      break;
+    case 'newest':
+      // Use upload_date (SmugMug upload) or date_added (album add) as fallback
+      query = query.order('upload_date', { ascending: false });
+      break;
+    case 'oldest':
+      query = query.order('upload_date', { ascending: true });
+      break;
+    case 'action':
+      // Sort by play type (alphabetical grouping), then by emotional_impact for deterministic ordering
+      query = query.order('play_type', { ascending: true, nullsFirst: false }).order('emotional_impact', { ascending: false });
+      break;
+    case 'intensity':
+      // Sort by action intensity (peak -> high -> medium -> low), then by emotional_impact for deterministic ordering
+      query = query.order('action_intensity', { ascending: false, nullsFirst: false }).order('emotional_impact', { ascending: false });
+      break;
   }
 
+  // Apply pagination (AFTER sorting and filtering)
+  query = query.range(offset, offset + limit - 1);
+
+  const queryStart = Date.now();
   const { data, error } = await query;
+  const queryTime = Date.now() - queryStart;
 
   if (error) {
-    console.error('[Supabase Server] Error fetching photos:', error);
+    console.error('[Supabase Server] Error fetching photos:', {
+      error,
+      query: { limit, offset, sortBy, filters },
+      queryTime: `${queryTime}ms`
+    });
+
+    // Provide helpful error messages
+    if (error.code === '57014') {
+      throw new Error('Database query timeout - try adding filters to narrow your search');
+    }
+
     throw new Error(`Failed to fetch photos: ${error.message}`);
   }
+
+  console.log(`[fetchPhotos] Query completed in ${queryTime}ms, returned ${data?.length || 0} photos`);
 
   // Map photo_metadata to Photo type (two-bucket model)
   // Filter out photos with missing/invalid image URLs

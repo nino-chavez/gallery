@@ -15,10 +15,9 @@
 	import SearchAutocomplete from '$lib/components/search/SearchAutocomplete.svelte';
 	import FilterChip from '$lib/components/filters/FilterChip.svelte';
 	import ConsolidatedFilter from '$lib/components/filters/ConsolidatedFilter.svelte';
-	import FilterSidebar from '$lib/components/filters/FilterSidebar.svelte';
+	// Lazy-loaded components (heavy filters only loaded when needed)
 	import FilterSidebarDrawer from '$lib/components/filters/FilterSidebarDrawer.svelte';
 	import FilterShareButton from '$lib/components/filters/FilterShareButton.svelte';
-	import FilterPresetsPanel from '$lib/components/filters/FilterPresetsPanel.svelte';
 	import Toast from '$lib/components/ui/Toast.svelte';
 	import { filterHistory, type FilterHistoryEntry } from '$lib/stores/filter-history.svelte';
 	import { filterAnalytics } from '$lib/stores/filter-analytics.svelte';
@@ -32,6 +31,10 @@
 	} from '$lib/utils/filter-compatibility';
 	import type { PageData } from './$types';
 	import type { Photo } from '$types/photo';
+
+	// Dynamic imports for heavy components (lazy-loaded on first use)
+	const FilterSidebarPromise = import('$lib/components/filters/FilterSidebar.svelte');
+	const FilterPresetsPanelPromise = import('$lib/components/filters/FilterPresetsPanel.svelte');
 
 	// Label mappings for user-friendly display
 	const compositionLabels: Record<string, string> = {
@@ -576,12 +579,16 @@
 			</div>
 		</div>
 
-		<!-- Filter Presets Panel (Collapsible) -->
+		<!-- Filter Presets Panel (Collapsible) - Lazy Loaded -->
 		<div class="mb-2">
-			<FilterPresetsPanel
-				onApplyPreset={handleApplyPreset}
-				onApplyHistory={handleApplyHistory}
-			/>
+			{#await FilterPresetsPanelPromise}
+				<div class="h-10 bg-charcoal-900/50 rounded-lg animate-pulse"></div>
+			{:then FilterPresetsPanelModule}
+				<FilterPresetsPanelModule.default
+					onApplyPreset={handleApplyPreset}
+					onApplyHistory={handleApplyHistory}
+				/>
+			{/await}
 		</div>
 
 		<!-- Active Filter Chips (NEW: P0 Enhancement) -->
@@ -684,31 +691,35 @@
 <!-- Main Content with Sidebar (Desktop) / Full Width (Mobile) -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 	<div class="flex gap-6">
-		<!-- Filter Sidebar (Desktop only) -->
+		<!-- Filter Sidebar (Desktop only) - Lazy Loaded -->
 		<div class="hidden lg:block">
 			{#if data.sports && data.sports.length > 0 && data.categories && data.categories.length > 0}
-				<FilterSidebar
-					sports={data.sports}
-					categories={data.categories}
-					selectedSport={data.selectedSport}
-					selectedCategory={data.selectedCategory}
-					selectedPlayType={data.selectedPlayType}
-					selectedIntensity={data.selectedIntensity}
-					selectedLighting={data.selectedLighting}
-					selectedColorTemp={data.selectedColorTemp}
-					selectedTimeOfDay={data.selectedTimeOfDay}
-					selectedComposition={data.selectedComposition}
-					onSportSelect={handleSportSelect}
-					onCategorySelect={handleCategorySelect}
-					onPlayTypeSelect={handlePlayTypeSelect}
-					onIntensitySelect={handleIntensitySelect}
-					onLightingSelect={handleLightingSelect}
-					onColorTempSelect={handleColorTempSelect}
-					onTimeOfDaySelect={handleTimeOfDaySelect}
-					onCompositionSelect={handleCompositionSelect}
-					onClearAll={clearAllFilters}
-					filterCounts={data.filterCounts}
-				/>
+				{#await FilterSidebarPromise}
+					<div class="w-64 h-96 bg-charcoal-900/50 rounded-lg animate-pulse"></div>
+				{:then FilterSidebarModule}
+					<FilterSidebarModule.default
+						sports={data.sports}
+						categories={data.categories}
+						selectedSport={data.selectedSport}
+						selectedCategory={data.selectedCategory}
+						selectedPlayType={data.selectedPlayType}
+						selectedIntensity={data.selectedIntensity}
+						selectedLighting={data.selectedLighting}
+						selectedColorTemp={data.selectedColorTemp}
+						selectedTimeOfDay={data.selectedTimeOfDay}
+						selectedComposition={data.selectedComposition}
+						onSportSelect={handleSportSelect}
+						onCategorySelect={handleCategorySelect}
+						onPlayTypeSelect={handlePlayTypeSelect}
+						onIntensitySelect={handleIntensitySelect}
+						onLightingSelect={handleLightingSelect}
+						onColorTempSelect={handleColorTempSelect}
+						onTimeOfDaySelect={handleTimeOfDaySelect}
+						onCompositionSelect={handleCompositionSelect}
+						onClearAll={clearAllFilters}
+						filterCounts={data.filterCounts}
+					/>
+				{/await}
 			{/if}
 		</div>
 

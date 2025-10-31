@@ -25,7 +25,7 @@
 	interface Props {
 		album: Album;
 		index?: number;
-		onclick?: (album: Album) => void;
+		onclick?: (album: Album) => void; // Deprecated: Use href navigation instead
 	}
 
 	let { album, index = 0, onclick }: Props = $props();
@@ -34,16 +34,17 @@
 	let imageLoaded = $state(false);
 	let imageError = $state(false);
 
-	function handleClick(event?: MouseEvent) {
-		event?.stopPropagation();
-		onclick?.(album);
-	}
+	// Generate album URL for navigation
+	let albumUrl = $derived(`/albums/${album.albumKey}`);
 
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Enter' || event.key === ' ') {
+	function handleClick(event: MouseEvent) {
+		// If onclick callback provided, prevent default navigation and use callback instead
+		if (onclick) {
 			event.preventDefault();
-			handleClick();
+			event.stopPropagation();
+			onclick(album);
 		}
+		// Otherwise, let the anchor tag navigate naturally
 	}
 
 	function handleImageLoad() {
@@ -120,14 +121,13 @@
 	transition={{ ...MOTION.spring.snappy, delay: index * 0.05 }}
 	whileHover={{ scale: 1.05, y: -4 }}
 >
-	<div
+	<a
 		use:motion
-		class="group relative aspect-[4/3] bg-charcoal-900 rounded-lg overflow-hidden border border-charcoal-800 hover:border-gold-500/50 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/50 transition-colors cursor-pointer outline-none"
-		role="button"
-		tabindex="0"
+		href={albumUrl}
+		data-sveltekit-preload="hover"
+		class="group relative aspect-[4/3] bg-charcoal-900 rounded-lg overflow-hidden border border-charcoal-800 hover:border-gold-500/50 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/50 transition-colors cursor-pointer outline-none block"
 		aria-label={`Album: ${album.albumName}, ${album.photoCount} photos`}
 		onclick={handleClick}
-		onkeydown={handleKeyDown}
 	>
 		<!-- Loading/Fallback State -->
 		{#if !imageLoaded || imageError || !album.coverImageUrl}
@@ -201,5 +201,5 @@
 			class="absolute inset-0 border-2 border-gold-500/0 group-hover:border-gold-500/30 rounded-lg transition-colors pointer-events-none"
 			aria-hidden="true"
 		></div>
-	</div>
+	</a>
 </Motion>

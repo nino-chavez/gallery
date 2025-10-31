@@ -11,15 +11,29 @@
 
 	let { data }: Props = $props();
 
-	// Get optimized image URL using Supabase transforms
+	// Get optimized image URL using SmugMug size parameters
 	function getOptimizedImageUrl(imageUrl: string | null, width: number): string {
 		if (!imageUrl) return '';
 
-		// If URL contains Supabase storage, add transform parameters
+		// SmugMug image optimization using size suffixes
+		if (imageUrl.includes('smugmug.com')) {
+			// Remove existing size suffix if present
+			const baseUrl = imageUrl.replace(/-[A-Z]\d?\./, '.');
+
+			// Use appropriate size based on width
+			let suffix = '-M'; // Default: Medium (600px)
+			if (width >= 800) suffix = '-L';   // Large (800px)
+			if (width >= 1024) suffix = '-XL'; // XLarge (1024px)
+			if (width >= 400 && width < 600) suffix = '-S'; // Small (400px)
+
+			return baseUrl.replace(/(\.[^.]+)$/, `${suffix}$1`);
+		}
+
+		// Supabase storage optimization
 		if (imageUrl.includes('supabase')) {
 			const url = new URL(imageUrl);
 			url.searchParams.set('width', width.toString());
-			url.searchParams.set('quality', '95');
+			url.searchParams.set('quality', '85');
 			url.searchParams.set('format', 'webp');
 			return url.toString();
 		}
@@ -41,8 +55,8 @@
 		}
 	}
 
-	// Hero background image with high quality for premium feel
-	let heroBackgroundImage = $derived(getOptimizedImageUrl(data.heroPhoto?.image_url || null, 1920));
+	// Hero background image - pass original URL, PremiumHero handles responsive optimization
+	let heroBackgroundImage = $derived(data.heroPhoto?.image_url || '');
 </script>
 
 <svelte:head>
@@ -94,6 +108,7 @@
 						}
 						<a
 							href={albumLink}
+							data-sveltekit-preload="hover"
 							class="group bg-charcoal-900 border border-charcoal-800 rounded-lg overflow-hidden
 							       hover:border-gold-500/50 transition-all duration-200 block"
 						>
@@ -163,6 +178,7 @@
 				<div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
 					<a
 						href="/explore"
+						data-sveltekit-preload="viewport"
 						class="group bg-charcoal-900 border border-charcoal-800 rounded-lg p-6
 						       hover:border-gold-500/50 transition-all duration-200"
 					>
@@ -180,6 +196,7 @@
 
 					<a
 						href="/collections"
+						data-sveltekit-preload="hover"
 						class="group bg-charcoal-900 border border-charcoal-800 rounded-lg p-6
 						       hover:border-gold-500/50 transition-all duration-200"
 					>
@@ -197,6 +214,7 @@
 
 					<a
 						href="/albums"
+						data-sveltekit-preload="hover"
 						class="group bg-charcoal-900 border border-charcoal-800 rounded-lg p-6
 						       hover:border-gold-500/50 transition-all duration-200"
 					>

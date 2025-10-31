@@ -14,7 +14,6 @@
 
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import { Motion } from 'svelte-motion';
 	import { Camera, Grid, Sparkles, Folder, Heart, Calendar } from 'lucide-svelte';
 	import { MOTION } from '$lib/motion-tokens';
@@ -46,18 +45,6 @@
 			return currentPath === '/';
 		}
 		return currentPath.startsWith(path);
-	}
-
-	function handleNavClick(path: string, event?: MouseEvent) {
-		event?.stopPropagation();
-		goto(path);
-	}
-
-	function handleKeyDown(event: KeyboardEvent, path: string) {
-		if (event.key === 'Enter' || event.key === ' ') {
-			event.preventDefault();
-			goto(path);
-		}
 	}
 </script>
 
@@ -103,16 +90,16 @@
 						{@const Icon = item.icon}
 						{@const badgeCount = item.badge?.() || 0}
 						<Motion let:motion whileHover={{ scale: 1.05 }} transition={MOTION.spring.snappy}>
-							<button
+							<a
 								use:motion
-								type="button"
+								href={item.path}
+								data-sveltekit-preload="tap"
 								class={cn(
 									'relative flex items-center gap-2 px-3 py-3 sm:px-4 sm:py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px]',
 									active
 										? 'bg-gold-500/10 text-gold-500'
 										: 'text-charcoal-300 hover:text-white hover:bg-charcoal-800'
 								)}
-								onclick={(e) => handleNavClick(item.path, e)}
 								aria-current={active ? 'page' : undefined}
 							>
 								<Icon class="w-5 h-5 sm:w-4 sm:h-4" aria-hidden="true" />
@@ -127,7 +114,7 @@
 										{badgeCount > 99 ? '99+' : badgeCount}
 									</span>
 								{/if}
-							</button>
+							</a>
 						</Motion>
 					{/each}
 				</nav>

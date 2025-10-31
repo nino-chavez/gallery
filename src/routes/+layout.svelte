@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
-	import { page } from '$app/stores';
+	import { page, navigating } from '$app/stores';
 	import '../app.css';
 	import Header from '$lib/components/layout/Header.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
@@ -17,6 +17,9 @@
 			},
 		},
 	});
+
+	// Navigation loading state
+	let isNavigating = $derived($navigating !== null);
 
 	// SEO metadata
 	const siteTitle = 'Nino Chavez Photography';
@@ -95,6 +98,13 @@
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>
+	<!-- Global Navigation Loading Bar -->
+	{#if isNavigating}
+		<div class="fixed top-0 left-0 right-0 z-[9999] h-1 bg-gold-500/20">
+			<div class="h-full bg-gold-500 animate-progress-bar origin-left"></div>
+		</div>
+	{/if}
+
 	<div class="min-h-screen bg-charcoal-950 text-white flex flex-col">
 		<Header />
 
@@ -108,3 +118,22 @@
 	<!-- Global Toast Notifications -->
 	<ToastContainer />
 </QueryClientProvider>
+
+<style>
+	/* Progress bar animation */
+	@keyframes progress {
+		0% {
+			transform: scaleX(0);
+		}
+		50% {
+			transform: scaleX(0.5);
+		}
+		100% {
+			transform: scaleX(0.95);
+		}
+	}
+
+	:global(.animate-progress-bar) {
+		animation: progress 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+	}
+</style>

@@ -6,6 +6,7 @@
   - Dark semi-transparent overlay for moody feel
   - Perfectly centered content with premium typography
   - Responsive design with mobile optimizations
+  - Optimized image loading with SmugMug size parameters
   - Uses design system colors and motion tokens
 
   Usage:
@@ -36,24 +37,39 @@
     class: className
   }: Props = $props();
 
-  // Generate optimized background image URL
-  function getOptimizedBackgroundUrl(imageUrl: string): string {
+  // Generate optimized background image URL with SmugMug size parameters
+  function getOptimizedBackgroundUrl(imageUrl: string, size: 'mobile' | 'desktop'): string {
     if (!imageUrl) return '';
 
-    // If URL contains Supabase storage, add transform parameters for hero quality
+    // SmugMug image optimization using size suffixes
+    // Available sizes: -Th (thumbnail), -S (400px), -M (600px), -L (800px),
+    //                  -XL (1024px), -X2 (1600px), -X3 (2048px), -O (original)
+    if (imageUrl.includes('smugmug.com')) {
+      // Remove existing size suffix if present
+      const baseUrl = imageUrl.replace(/-[A-Z]\d?\./, '.');
+
+      // Mobile: Use X2Large (1600px) - optimal for phones/tablets in portrait
+      // Desktop: Use X3Large (2048px) - optimal for desktop/large screens
+      const suffix = size === 'mobile' ? '-X2' : '-X3';
+      return baseUrl.replace(/(\.[^.]+)$/, `${suffix}$1`);
+    }
+
+    // Supabase storage optimization
     if (imageUrl.includes('supabase')) {
       const url = new URL(imageUrl);
-      url.searchParams.set('width', '1920');
-      url.searchParams.set('height', '1080');
-      url.searchParams.set('quality', '95');
+      url.searchParams.set('width', size === 'mobile' ? '1200' : '1920');
+      url.searchParams.set('quality', size === 'mobile' ? '85' : '90');
       url.searchParams.set('format', 'webp');
       return url.toString();
     }
 
+    // Fallback: return original URL
     return imageUrl;
   }
 
-  let optimizedBackground = $derived(getOptimizedBackgroundUrl(backgroundImage));
+  // Generate responsive URLs
+  let mobileBackground = $derived(getOptimizedBackgroundUrl(backgroundImage, 'mobile'));
+  let desktopBackground = $derived(getOptimizedBackgroundUrl(backgroundImage, 'desktop'));
 </script>
 
 <section
@@ -61,10 +77,24 @@
     "relative h-screen w-full flex items-center justify-center overflow-hidden",
     className
   )}
-  style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('{optimizedBackground}'); background-size: cover; background-position: center; background-repeat: no-repeat;"
   role="banner"
   aria-label="Hero section"
 >
+  <!-- Responsive background images -->
+  <!-- Mobile background (up to 1024px) -->
+  <div
+    class="absolute inset-0 bg-cover bg-center bg-no-repeat md:hidden"
+    style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('{mobileBackground}');"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Desktop background (1024px and up) -->
+  <div
+    class="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
+    style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('{desktopBackground}');"
+    aria-hidden="true"
+  ></div>
+
   <!-- Dark overlay for depth and text readability -->
   <div
     class="absolute inset-0 bg-gradient-to-b from-charcoal-950/20 via-transparent to-charcoal-950/30 pointer-events-none"
@@ -138,14 +168,10 @@
   /* Custom font loading for premium feel */
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,700&display=swap');
 
-  /* Ensure smooth background loading */
-  section {
-    background-attachment: fixed;
-  }
-
-  @media (max-width: 768px) {
-    section {
-      background-attachment: scroll;
+  /* Parallax effect on desktop only */
+  @media (min-width: 1024px) {
+    section > div:first-of-type {
+      background-attachment: fixed;
     }
   }
 </style>
