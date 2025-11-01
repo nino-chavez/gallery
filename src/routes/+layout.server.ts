@@ -38,18 +38,34 @@ export const load: LayoutServerLoad = async () => {
   // Check if sport cache is valid
   if (!sportsCache || now - sportsCache.timestamp > CACHE_DURATION_MS) {
     refreshPromises.push(
-      getSportDistribution().then((sports) => {
-        sportsCache = { data: sports, timestamp: now };
-      })
+      getSportDistribution()
+        .then((sports) => {
+          sportsCache = { data: sports, timestamp: now };
+        })
+        .catch((error) => {
+          console.error('[Layout] Failed to refresh sports cache:', error);
+          // Keep existing cache if available, otherwise initialize empty
+          if (!sportsCache) {
+            sportsCache = { data: [], timestamp: now };
+          }
+        })
     );
   }
 
   // Check if category cache is valid
   if (!categoriesCache || now - categoriesCache.timestamp > CACHE_DURATION_MS) {
     refreshPromises.push(
-      getCategoryDistribution().then((categories) => {
-        categoriesCache = { data: categories, timestamp: now };
-      })
+      getCategoryDistribution()
+        .then((categories) => {
+          categoriesCache = { data: categories, timestamp: now };
+        })
+        .catch((error) => {
+          console.error('[Layout] Failed to refresh categories cache:', error);
+          // Keep existing cache if available, otherwise initialize empty
+          if (!categoriesCache) {
+            categoriesCache = { data: [], timestamp: now };
+          }
+        })
     );
   }
 
@@ -57,20 +73,57 @@ export const load: LayoutServerLoad = async () => {
   // These are counts with NO filters applied (baseline for entire gallery)
   if (!baseFilterCountsCache || now - baseFilterCountsCache.timestamp > CACHE_DURATION_MS) {
     refreshPromises.push(
-      getFilterCounts().then((baseFilterCounts) => {
-        baseFilterCountsCache = { data: baseFilterCounts, timestamp: now };
-      })
+      getFilterCounts()
+        .then((baseFilterCounts) => {
+          baseFilterCountsCache = { data: baseFilterCounts, timestamp: now };
+        })
+        .catch((error) => {
+          console.error('[Layout] Failed to refresh filter counts cache:', error);
+          // Keep existing cache if available, otherwise initialize empty
+          if (!baseFilterCountsCache) {
+            baseFilterCountsCache = {
+              data: {
+                sports: [],
+                categories: [],
+                playTypes: [],
+                intensities: [],
+                lighting: [],
+                colorTemperatures: [],
+                timesOfDay: [],
+                compositions: [],
+              },
+              timestamp: now
+            };
+          }
+        })
     );
   }
 
   // Wait for all cache refreshes to complete in parallel
+  // Errors are caught individually above, so this won't throw
   if (refreshPromises.length > 0) {
     await Promise.all(refreshPromises);
   }
 
-  // TypeScript safety: Ensure all caches are populated (should always be true after awaits)
+  // TypeScript safety: Ensure all caches are populated
+  // With error handlers above, caches will always exist (possibly empty on errors)
   if (!sportsCache || !categoriesCache || !baseFilterCountsCache) {
-    throw new Error('Failed to initialize layout data caches');
+    console.error('[Layout] Critical: Cache initialization failed completely');
+    // Return empty data rather than crashing the entire app
+    return {
+      sports: [],
+      categories: [],
+      baseFilterCounts: {
+        sports: [],
+        categories: [],
+        playTypes: [],
+        intensities: [],
+        lighting: [],
+        colorTemperatures: [],
+        timesOfDay: [],
+        compositions: [],
+      },
+    };
   }
 
   return {
